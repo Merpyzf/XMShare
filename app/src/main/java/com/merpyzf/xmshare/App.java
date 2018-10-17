@@ -112,8 +112,7 @@ public class App extends LitePalApplication {
     /**
      * 重置待发送文件集合的状态
      */
-    public static void resetSendFileList() {
-
+    public static void resetSelectedFilesStatus() {
         for (int i = 0; i < mSendFileList.size(); i++) {
             FileInfo fileInfo = mSendFileList.get(i);
             fileInfo.reset();

@@ -303,7 +303,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                             // 文件全部传输成功之后重置待传输文件的状态
                             if (fileInfo.getIsLast() == Const.IS_LAST) {
-                                App.resetSendFileList();
+                                App.resetSelectedFilesStatus();
                             }
 
                             Log.i(TAG, "传输完毕TRANSFER_SUCCESS");

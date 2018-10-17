@@ -164,7 +164,7 @@ public class TransferSendFragment extends Fragment {
     public void onDestroy() {
         mUnbinder.unbind();
         SenderManager.getInstance(mContext).release();
-        App.resetSendFileList();
+        App.resetSelectedFilesStatus();
         super.onDestroy();
     }
 

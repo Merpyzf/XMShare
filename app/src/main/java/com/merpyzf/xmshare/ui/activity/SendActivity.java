@@ -21,6 +21,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.fragment.ScanPeerFragment;
@@ -235,7 +236,7 @@ public class SendActivity extends BaseActivity implements OnPairActionListener {
         if (mPeerManager != null) {
             mPeerManager.stopMsgListener();
         }
-        SenderManager.getInstance(mContext).release();
+        App.resetSelectedFilesStatus();
         super.onDestroy();
     }
 
