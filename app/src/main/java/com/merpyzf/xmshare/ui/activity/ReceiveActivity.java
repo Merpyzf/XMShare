@@ -22,6 +22,7 @@ import com.merpyzf.xmshare.ui.fragment.ReceivePeerFragment;
 import com.merpyzf.xmshare.ui.fragment.transfer.TransferReceiveFragment;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.merpyzf.xmshare.util.SingleThreadPool;
+import com.merpyzf.xmshare.util.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -118,6 +119,7 @@ public class ReceiveActivity extends AppCompatActivity {
                         public void onTransferProgress(FileInfo fileInfo) {
 
                         }
+
                         // TODO: 2018/1/28 增加一个文件全部传输完毕的回调
                         @Override
                         public void onTransferStatus(FileInfo fileInfo) {
@@ -129,11 +131,12 @@ public class ReceiveActivity extends AppCompatActivity {
 
                         @Override
                         public void onTransferError(String error) {
-
+                            ToastUtils.showShort(mContext, error);
+                            finish();
                         }
                     });
 
-                   SingleThreadPool.getSingleton().execute(receiverManager);
+                    SingleThreadPool.getSingleton().execute(receiverManager);
                     // 当接收到待传输的文件列表时，跳转到文件传输的界面
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
 

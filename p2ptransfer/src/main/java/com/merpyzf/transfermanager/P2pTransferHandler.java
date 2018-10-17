@@ -65,7 +65,7 @@ public class P2pTransferHandler extends Handler {
                 Exception exception = (Exception) msg.obj;
                 exception.printStackTrace();
                 for (int i = 0; i < mTransferObservers.size(); i++) {
-                    mTransferObservers.get(i).onTransferError("传输出错");
+                    mTransferObservers.get(i).onTransferError("传输错误！log: " + exception.getMessage());
                 }
                 break;
 

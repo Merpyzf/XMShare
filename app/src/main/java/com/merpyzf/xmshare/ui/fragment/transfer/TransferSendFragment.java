@@ -138,10 +138,9 @@ public class TransferSendFragment extends Fragment {
 
 
             }
-
             @Override
             public void onTransferError(String error) {
-                ToastUtils.showShort(mContext, error);
+
             }
         });
     }

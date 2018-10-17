@@ -52,6 +52,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
 
     /**
      * 接收文件头信息列表
+     *
      * @throws Exception
      */
     @Override
@@ -59,11 +60,14 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
         mReceiveFileList = new ArrayList<>();
         while (true) {
             FileInfo fileInfo = decodeFileHeader(mInputStream);
-            receiveThumbToLocal(fileInfo);
-            mReceiveFileList.add(FileInfoFactory.convertFileType(fileInfo));
-            if (fileInfo.getIsLast() == Const.IS_LAST) {
-                break;
+            if (null != fileInfo) {
+                receiveThumbToLocal(fileInfo);
+                mReceiveFileList.add(FileInfoFactory.convertFileType(fileInfo));
+                if (fileInfo.getIsLast() == Const.IS_LAST) {
+                    break;
+                }
             }
+
         }
         sendMessage(mReceiveFileList, Const.TransferStatus.TRANSFER_FILE_LIST_SUCCESS);
     }
@@ -94,6 +98,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             }
         }
     }
+
     /**
      * 接收文件的缩略图存储到本地
      *
@@ -112,15 +117,22 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
 
     private FileInfo decodeFileHeader(InputStream inputStream) throws Exception {
         byte[] buffer = new byte[Const.FILE_HEADER_LENGTH];
-        int readLength = inputStream.read(buffer, 0, buffer.length);
-        if (readLength == 0) {
-            throw new Exception("未读取到文件的头信息");
+        int available = inputStream.available();
+        if (available >= Const.FILE_HEADER_LENGTH) {
+            Log.i("WW2K", "available--> " + available);
+            int readLength = inputStream.read(buffer, 0, Const.FILE_HEADER_LENGTH);
+            Log.i("WW2k", "readLength--> " + readLength);
+            if (readLength != Const.FILE_HEADER_LENGTH) {
+                throw new Exception("读取到文件的头信息出错");
+            }
+            String strHeader = new String(buffer, Const.S_CHARSET);
+            Log.i("WW2K", "strHeader--> " + strHeader);
+            strHeader = trimLastSpaces(strHeader);
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.decodeHeader(strHeader);
+            return fileInfo;
         }
-        String strHeader = new String(buffer, Const.S_CHARSET);
-        strHeader = trimLastSpaces(strHeader);
-        FileInfo fileInfo = new FileInfo();
-        fileInfo.decodeHeader(strHeader);
-        return fileInfo;
+        return null;
     }
 
     /**

@@ -28,6 +28,7 @@ import com.merpyzf.xmshare.ui.fragment.ScanPeerFragment;
 import com.merpyzf.xmshare.ui.fragment.transfer.TransferSendFragment;
 import com.merpyzf.xmshare.ui.interfaces.OnPairActionListener;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.util.ToastUtils;
 
 import java.util.List;
 
@@ -107,9 +108,6 @@ public class SendActivity extends BaseActivity implements OnPairActionListener {
 
     @Override
     public void onSendConnRequest() {
-
-        Log.i(TAG, "显示火箭的图标");
-        // 设为可见状态
         mLinearRocket.setVisibility(View.VISIBLE);
         mLinearRocket.setFocusable(true);
         mFrameContent.setFocusable(false);
@@ -144,7 +142,8 @@ public class SendActivity extends BaseActivity implements OnPairActionListener {
 
             @Override
             public void onTransferError(String error) {
-
+                ToastUtils.showShort(mContext, error);
+                finish();
             }
 
         });

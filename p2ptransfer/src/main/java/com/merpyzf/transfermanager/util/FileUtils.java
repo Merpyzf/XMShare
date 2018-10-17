@@ -210,17 +210,13 @@ public class FileUtils {
      * @param length
      */
     public static void writeStream2SdCard(File file, InputStream inputStream, int length) {
-
         int totalSize = 0;
-
         BufferedOutputStream bos = null;
         try {
             bos = new BufferedOutputStream(new FileOutputStream(file));
-
             if (bos == null) {
                 return;
             }
-
             byte[] buffer = new byte[Const.BUFFER_LENGTH];
             // 读取文件
             while (length > 0) {
@@ -231,14 +227,9 @@ public class FileUtils {
                     readLength = inputStream.read(buffer, 0, (int) length);
                 }
                 bos.write(buffer, 0, readLength);
-
                 totalSize += readLength;
                 length -= readLength;
             }
-
-            System.out.println("写入到文件的字节数:" + totalSize);
-
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -251,10 +242,8 @@ public class FileUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
-
     /**
      * 获取待写入的File对象，根据要保存的文件类型在不同的目录下创建
      *

@@ -291,7 +291,7 @@ public class FileInfo extends DataSupport implements Serializable {
         if (currentLength < Const.FILE_HEADER_LENGTH) {
             // 少于的部分使用空格填充
             for (int j = 0; j < Const.FILE_HEADER_LENGTH - currentLength; j++) {
-                Header.append("*");
+                Header.append(Const.FILL_CHARACTER);
             }
         }
         return Header.toString();
@@ -303,15 +303,20 @@ public class FileInfo extends DataSupport implements Serializable {
      * @param strHeader
      * @return
      */
-    public void decodeHeader(String strHeader) {
-        String[] split = strHeader.split(Const.S_SEPARATOR);
-        this.setType(Integer.valueOf(split[0]));
-        this.setName(split[1]);
-        this.setSuffix(split[2]);
-        this.setLength(Integer.valueOf(split[3]));
-        this.setThumbLength(Integer.valueOf(split[4]));
-        this.setMd5(split[5]);
-        this.setIsLast(Integer.valueOf(split[6]));
+    public void decodeHeader(String strHeader) throws Exception {
+        try {
+            String[] split = strHeader.split(Const.S_SEPARATOR);
+            this.setType(Integer.valueOf(split[0]));
+            this.setName(split[1]);
+            this.setSuffix(split[2]);
+            this.setLength(Integer.valueOf(split[3]));
+            this.setThumbLength(Integer.valueOf(split[4]));
+            this.setMd5(split[5]);
+            this.setIsLast(Integer.valueOf(split[6]));
+        }catch (NumberFormatException e){
+            throw e;
+        }finally {
+        }
     }
 
 
@@ -320,6 +325,7 @@ public class FileInfo extends DataSupport implements Serializable {
      */
     public void reset() {
         progress = 0;
+        isLast = 0;
         setFileTransferStatus(Const.TransferStatus.TRANSFER_WAITING);
     }
 

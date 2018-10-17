@@ -21,7 +21,8 @@ public class Const {
     // sp文件, 存储用户信息
     public static final String SP_USER = "sp_user_info";
     // 字符读取时结束的标记位
-    public static final String S_END = "\0";
+    public static final String S_END = "-1";
+    public static final String FILL_CHARACTER = "*";
     public static final int IS_LAST = 1;
     public static final int NOT_LAST = 0;
     // 传输过程中参数间的分割符
@@ -35,8 +36,7 @@ public class Const {
     public static final String S_CHARSET = "utf-8";
     public static final String BROADCAST = "255.255.255.255";
     // 头信息的长度
-    //public static final int HEADER_LENGTH = 200;
-    public static final int FILE_HEADER_LENGTH = 150;
+    public static final int FILE_HEADER_LENGTH = 100;
     // 发送缩略图的尺寸
     public static final int SEND_FILE_THUMB_SIZE = 100;
     // Android O以下版本所建立热点的前缀标识

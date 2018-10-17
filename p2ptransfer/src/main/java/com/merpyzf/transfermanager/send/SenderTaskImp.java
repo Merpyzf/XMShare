@@ -2,6 +2,7 @@ package com.merpyzf.transfermanager.send;
 
 import android.content.Context;
 import android.os.Message;
+import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
@@ -69,21 +70,20 @@ public class SenderTaskImp implements SendTask, Runnable {
      */
     @Override
     public void sendHeader(FileInfo fileInfo) throws Exception {
-        mOutputStream.write(fileInfo.getHeader(mContext).getBytes());
+        String header = fileInfo.getHeader(mContext);
+        Log.i("WW2K", "header--> " + header);
+        mOutputStream.write(header.getBytes());
         if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE) {
             mOutputStream.write(fileInfo.getFileThumbArray());
         }
         mOutputStream.flush();
     }
-
-
     @Override
     public void sendFileList() {
         for (FileInfo fileInfo : mFileList) {
             sendFileBody(fileInfo);
         }
     }
-
     /**
      * 发送文件的内容
      *
