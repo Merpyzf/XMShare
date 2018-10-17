@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.merpyzf.xmshare.ui.MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:popupTheme="@style/AppTheme.PopupOverlay"></android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <EditText
+        android:id="@+id/edt_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入昵称:"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="设置昵称" />
+
+
+    <Button
+        android:id="@+id/btn_start_server"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开启文件服务器" />
+
+
+    <Button
+        android:id="@+id/btn_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="发送文件" />
+
+
+    <Button
+        android:id="@+id/btn_receive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="接收文件" />
+
+    <Button
+        android:id="@+id/btn_receive_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="接收文件" />
+
+
+</LinearLayout>

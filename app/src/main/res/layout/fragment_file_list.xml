@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/colorTransBackground"
+tools:context=".ui.fragment.FileListFragment">
+
+
+<RelativeLayout
+    android:id="@+id/rl_top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="false"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:padding="10dp"
+        android:text="应用(0)"
+        android:textColor="@color/colorSecondaryText"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/checkbox_all"
+        android:padding="10dp"
+        android:text="全选"
+        android:textColor="@color/colorSecondaryText"
+        android:textSize="13sp" />
+
+    <CheckBox
+        android:id="@+id/checkbox_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:button="@drawable/selector_rb_check"
+        android:buttonTint="@color/colorAccent" />
+
+</RelativeLayout>
+
+
+<com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+    android:id="@+id/rv_music_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/rl_top"
+    app:fastScrollPopupBgColor="@color/colorAccent"
+    app:fastScrollPopupTextColor="@color/white"
+    app:fastScrollThumbColor="@color/colorAccent"></com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
+
+<ProgressBar
+    android:id="@+id/pb_loading"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true" />
+
+
+</RelativeLayout>

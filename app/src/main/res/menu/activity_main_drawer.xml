@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_receive"
+            android:icon="@drawable/ic_menu_receive"
+            android:title="接收文件" />
+        <item
+            android:id="@+id/nav_transfer2pc"
+            android:icon="@drawable/ic_menu_desktop_mac"
+            android:title="电脑传" />
+        <item
+            android:id="@+id/nav_invite"
+            android:icon="@drawable/ic_menu_invite"
+            android:title="邀请安装" />
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="设置" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="分享应用" />
+            <item
+                android:id="@+id/nav_update"
+                android:icon="@drawable/ic_menu_update"
+                android:title="检查新版本" />
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@drawable/ic_menu_feedback"
+                android:title="反馈" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_about"
+                android:title="关于" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_view_empty"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_file_empty"
+        android:layout_width="166dp"
+        android:layout_height="215dp"
+        android:layout_centerInParent="true"
+        app:srcCompat="@drawable/ic_file_empty" />
+
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_below="@id/iv_file_empty"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="未扫描到任何文件"
+        android:textColor="@color/colorSecondaryText" />
+</RelativeLayout>

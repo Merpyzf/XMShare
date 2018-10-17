@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{title}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            height: 80px;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(7, 17, 27, .1);
+            top: 0;
+            left: 0;
+            position: fixed;
+        }
+
+        header nav img {
+            height: 80px;
+            margin-left: 10px;
+            float: left;
+        }
+
+        .title {
+            height: 80px;
+            display: block;
+            font-weight: 400;
+            color: #4D555D;
+            font-size: 18px;
+            line-height: 80px;
+            margin-left: 10px;
+            float: left;
+        }
+
+        .dir_path {
+            float: left;
+            line-height: 80px;
+            margin-left: 20px;
+            font-weight: 400;
+            color: #4D555D;
+            font-size: 16px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
+
+        .file_item {
+            height: 70px;
+            border-radius: 4px;
+            background-color: white;
+            box-shadow: 0 0px 6px 0 rgba(0, 0, 6, .1);
+            margin-bottom: 10px;
+        }
+
+        .cover {
+            width: 56px;
+            height: 56px;
+            border-radius: 4px;
+            float: left;
+            margin: 7px 7px;
+        }
+
+        .file_info h3 {
+            height: 30px;
+            line-height: 30px;
+            font-weight: 400;
+            font-size: 18px;
+        }
+
+        .file_info h4 {
+            height: 30px;
+            line-height: 30px;
+            font-weight: 300;
+            font-size: 16px;
+        }
+
+        .file_info {
+            left: 90px;
+            float: left;
+            margin-top: 5px;
+            margin-left: 20px;
+        }
+        a {
+           color: #6e6e6e;
+        }
+         a:hover{
+            color: #ff8400;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<header>
+    <nav>
+        <img class="logo"
+             src="https://camo.githubusercontent.com/887bb783f18bfb55f20d51bf8aab1ee044546c7c/687474703a2f2f6f74646d72757034792e626b742e636c6f7564646e2e636f6d2f39443942424333352d353336442d343833412d424244442d4442393945314135453846302e706e67">
+        <h4 class="title">{nav_title}</h4>
+        <p class="dir_path">{current_path}</p>
+        <a href="https://github.com/merpyzf">
+            <img style="position: absolute; top: 0; right: 0; border: 0;"
+                 src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
+                 alt="Fork me on GitHub"></a>
+    </nav>
+</header>
+<div class="container">
+    {container}
+</div>
+</body>
+</html>

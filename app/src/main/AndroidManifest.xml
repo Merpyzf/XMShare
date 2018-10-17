@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.merpyzf.xmshare">
+
+    <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <!-- 文件读取 需要动态申请 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- 网络状态相关的权限 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <!-- 蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- 获取位置信息的权限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="com.merpyzf.xmshare.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true"
+        tools:ignore="WrongManifestParent">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+    </provider>
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.SplashActivity" />
+        <activity
+            android:name=".ui.activity.ReceiveActivity"
+            android:label="接收文件" />
+        <activity
+            android:name=".ui.activity.SendActivity"
+            android:label="发送文件" />
+        <activity android:name=".ui.activity.SelectFilesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.test.BottomSheetDialogActivity" />
+        <activity android:name=".ui.test.TestRadarViewActivity" />
+        <activity android:name=".ui.test.ScanVideoActivity" />
+
+        <receiver
+            android:name=".receiver.FileSelectedListChangedReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".ui.activity.SettingActivity" />
+        <activity android:name=".ui.test.APActivity" />
+        <activity android:name=".ui.test.HostActivity" />
+
+        <receiver
+            android:name=".receiver.APChangedReceiver"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".receiver.WifiChangedReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".ui.activity.PersonalActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <activity android:name=".ui.test.TestBluetoothActivity" />
+        <activity android:name=".ui.activity.InviteActivity" />
+        <activity android:name=".ui.test.TestSearchActivity" >
+
+
+
+        </activity>
+        <activity android:name=".ui.test.TestFileIndicatorActivity" />
+        <activity android:name=".ui.test.TestChangeSkinActivity" />
+        <activity android:name=".ui.test.TestApActivity" />
+        <activity android:name=".ui.test.QRTestActivity" />
+        <activity android:name=".ui.activity.InputHotspotPwdActivity" />
+        <activity android:name=".ui.test.PinnedActivity" />
+        <activity android:name=".ui.activity.ReceivedFileActivity" />
+        <activity android:name=".ui.activity.TestFileServerActivity" />
+        <activity
+            android:name=".ui.activity.SearchActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".ui.activity.HelloWordActivity"></activity>
+    </application>
+
+</manifest>

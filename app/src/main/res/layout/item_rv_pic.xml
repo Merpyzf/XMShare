@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.merpyzf.xmshare.ui.widget.SquareView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="2dp"
+    android:foreground="@drawable/card_foreground"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_cover"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop" />
+
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/gif_iv"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop" />
+
+
+        </FrameLayout>
+
+        <View
+            android:id="@+id/view_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#40000000"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_margin="2dp"
+            android:clickable="false"
+            android:src="@drawable/ic_cb_checked"
+            android:tint="@color/colorAccent"
+            android:visibility="invisible" />
+
+    </FrameLayout>
+
+</com.merpyzf.xmshare.ui.widget.SquareView>

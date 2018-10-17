@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:text="传输中..." />
+
+    <RelativeLayout
+        android:id="@+id/rl_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp">
+
+
+        <ImageView
+            android:id="@+id/iv_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_transfer_speed"
+
+
+            />
+
+
+        <TextView
+
+            android:id="@+id/tv_speed"
+            android:text="~ mb/s"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:maxEms="10"
+            android:singleLine="true"
+            android:layout_toRightOf="@id/iv_speed" />
+
+
+        <ImageView
+            android:id="@+id/iv_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+
+            android:layout_marginStart="11dp"
+            android:layout_toEndOf="@+id/tv_speed"
+            android:src="@drawable/ic_transfer_save" />
+
+        <TextView
+
+            android:id="@+id/tv_save"
+            android:text="0Mb"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:maxEms="10"
+            android:singleLine="true"
+            android:layout_toRightOf="@id/iv_save" />
+    </RelativeLayout>
+</RelativeLayout>

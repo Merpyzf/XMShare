@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="正在等待发送者连接..."
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <FrameLayout
+        android:id="@+id/fl_net_info_container"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true">
+
+        <include layout="@layout/include_receive_peer_qrcode_info" />
+
+        <include layout="@layout/include_receive_peer_radarlayout" />
+
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_show_peers_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fl_net_info_container"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="10dp"
+            android:text="点击以接收文件"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+
+            />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_peers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_change_ap"
+        android:layout_centerHorizontal="true"
+        android:text="tip：您正在使用同网模式"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/btn_change_ap"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_shape"
+        android:gravity="center"
+        android:padding="10dp"
+        android:stateListAnimator="@drawable/btn_state_list_animator"
+        android:text="切换到热点模式"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+
+        />
+
+
+</RelativeLayout>
