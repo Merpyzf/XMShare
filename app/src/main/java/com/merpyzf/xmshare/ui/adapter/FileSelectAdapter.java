@@ -36,7 +36,7 @@ import pl.droidsonroids.gif.GifDrawable;
  * Created by wangke on 2017/12/24.
  */
 
-public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
+public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     private Context mContext;
     private List<T> mFileInfoList;
 
@@ -62,14 +62,9 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
         ImageView imageView = helper.getView(R.id.iv_file_thumb);
 
         if (item instanceof ApkFile) {
-
             ApkFile apkFile = (ApkFile) item;
             imageView.setImageDrawable(apkFile.getApkDrawable());
-
-
         } else if (item instanceof MusicFile) {
-
-
             MusicFile musicFile = (MusicFile) item;
             File albumFile = new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
             if (albumFile.exists()) {
@@ -81,40 +76,25 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
             }
-
-
         } else if (item instanceof PicFile) {
-
-
             PicFile picFile = (PicFile) item;
-
             String suffix = FileUtils.getFileSuffix(picFile.getPath()).toLowerCase();
-
             if ("gif".equals(suffix)) {
-
                 try {
                     GifDrawable gifDrawable = new GifDrawable(picFile.getPath());
                     imageView.setImageDrawable(gifDrawable);
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
             } else {
-
                 Glide.with(mContext)
                         .load(picFile.getPath())
                         .crossFade()
                         .centerCrop()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
-
             }
-
         } else if (item instanceof VideoFile) {
-
-
             VideoFile videoFile = (VideoFile) item;
             String videoThumbPath = Const.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
             Glide.with(mContext)
@@ -123,19 +103,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
-
         }
-
         ImageView ivRemove = helper.getView(R.id.iv_remove);
-
-
-    }
-
-
-    @NonNull
-    @Override
-    public String getSectionName(int position) {
-
-        return ((FileInfo) (mFileInfoList.get(position))).getName().substring(0, 1);
     }
 }

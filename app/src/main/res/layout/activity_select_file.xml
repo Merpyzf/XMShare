@@ -114,58 +114,7 @@
 
         </RelativeLayout>
 
-
-        <LinearLayout
-            android:id="@+id/bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:behavior_hideable="false"
-            app:behavior_peekHeight="50dp"
-            app:layout_behavior="@string/bottom_sheet_behavior">
-            <!--peekHeight 当Bottom Sheets关闭的时候可以看到的高度-->
-
-
-            <LinearLayout
-                android:id="@+id/ll_bottom_sheet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorBackground"
-                android:orientation="vertical">
-
-                <android.support.design.widget.AppBarLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp">
-
-                    <TextView
-                        android:id="@+id/tv_bottom_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/colorPrimary"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:padding="10dp"
-                        android:text="这是一个标题"
-                        android:textColor="#ffffff" />
-
-                </android.support.design.widget.AppBarLayout>
-
-
-                <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-                    android:id="@+id/rv_selected"
-                    android:layout_width="match_parent"
-                    android:layout_height="360dp"
-                    app:fastScrollPopupBgColor="@color/colorAccent"
-                    app:fastScrollPopupTextColor="@color/white"
-                    app:fastScrollThumbColor="@color/colorAccent">
-
-
-                </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
-
-
-            </LinearLayout>
-        </LinearLayout>
-
+        <include layout="@layout/include_bottom_sheet_layout"/>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_send"
             android:layout_width="wrap_content"

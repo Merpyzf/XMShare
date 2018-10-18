@@ -89,6 +89,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private static int sFabState = Const.FAB_STATE_SEND;
 
     private static final String TAG = SelectFilesActivity.class.getSimpleName();
+    private FragmentManager mFragmentManager;
 
     @Override
     public int getContentLayoutId() {
@@ -108,34 +109,16 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         View headerView = mNavigationView.getHeaderView(0);
         mNavCivAvatar = headerView.findViewById(R.id.civ_avatar);
         mNavTvNickname = headerView.findViewById(R.id.tv_nickname);
-        // 更新头像和昵称
+
         updateUserInfo();
         updateBottomTitle();
         // 初始并显示SheetBottom中的Recycler
         initRecyclerView();
         mSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        // 申请权限
-        new RxPermissions(SelectFilesActivity.this)
-                .requestEach(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(permission -> {
-                    // 用户已经同意给与该权限
-                    if (permission.granted) {
-                        // 加载ViewPager
-                        FilesFrgPagerAdapter frgPagerAdapter = new FilesFrgPagerAdapter(fragmentManager, mFragmentList, mTabTitles);
-                        mViewPager.setAdapter(frgPagerAdapter);
-                        // 将顶部tab与ViewPager绑定
-                        mTabs.setupWithViewPager(mViewPager);
-                        mViewPager.setOffscreenPageLimit(4);
-                    } else if (permission.shouldShowRequestPermissionRationale) {
-                        // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                        Log.d(TAG, permission.name + " is denied. More info should be provided.");
-                    } else {
-                        // 用户拒绝了该权限，并且选中『不再询问』
-                        Log.d(TAG, permission.name + " is denied.");
-                    }
-                });
+        mFragmentManager = getSupportFragmentManager();
     }
+
+
 
     @Override
     protected void initData() {
@@ -145,6 +128,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     /**
      * 初始化类别页面，并为文件选择设置监听
      */
+    // TODO: 2018/10/18 此处通过观察者模式完成监听 
     private void initMainPageAndSetListener() {
         OnFileSelectListener<FileInfo> mFileSelectListener = new OnFileSelectListener<FileInfo>() {
             /**
@@ -217,6 +201,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
     @Override
     public void initEvents() {
+        // 申请文件读写权限
+        requestPermission();
         // 注册一个用于检查用户信息变化的观察者对象
         PersonalObservable.getInstance().register(this);
         // BottomSheet的滑动中的回调事件
@@ -242,20 +228,12 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         });
 
         mFileSelectAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-
             List data = adapter.getData();
-            Log.i("WW2k", "position: " + position + "size: " + data.size());
-
             FileInfo fileInfo = (FileInfo) adapter.getData().get(position);
             mFileSelectAdapter.notifyItemRemoved(position);
             App.removeSendFile(fileInfo);
-            // 发送文件选择状态改变的应用内广播
-            Intent intent = new Intent(FileSelectedListChangedReceiver.ACTION);
-            intent.putExtra("unSelectedFile", fileInfo.getPath());
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+            sendFileChangedBroadcast(fileInfo);
             updateBottomTitle();
-
-
         });
 
         mFileSelectAdapter.setOnItemChildLongClickListener((adapter, view, position) -> {
@@ -268,10 +246,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             }
             return false;
         });
-
         mNavCivAvatar.setOnClickListener(v -> PersonalActivity.start(mContext));
         mFabSend.setOnClickListener(v -> {
-
             if (sFabState == Const.FAB_STATE_SEND) {
                 if (App.getSendFileList().size() > 0) {
                     markLastFile();
@@ -279,14 +255,12 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 } else {
                     Toast.makeText(mContext, "请选择文件", Toast.LENGTH_SHORT).show();
                 }
-            }else {
+            } else {
                 App.getSendFileList().clear();
                 // 发送文件选择状态改变的应用内广播
-                Intent intent = new Intent(FileSelectedListChangedReceiver.ACTION);
-                intent.putExtra("unSelectedFile", "");
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                 updateBottomTitle();
                 mFileSelectAdapter.notifyDataSetChanged();
+                sendFileChangedBroadcast(null);
             }
         });
         // 顶部menu按钮
@@ -334,6 +308,17 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         });
     }
 
+    
+    /**
+     * 发送已选文件列表发生改变的广播
+     */
+    // TODO: 2018/10/18 这个方法应该抽取出去管理
+    private void sendFileChangedBroadcast(FileInfo fileInfo) {
+        Intent intent = new Intent(FileSelectedListChangedReceiver.ACTION);
+        intent.putExtra("unSelectedFile", fileInfo == null ? "" : fileInfo.getPath());
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+    }
+
     private void markLastFile() {
         FileInfo fileInfo = App.getSendFileList().get(App.getSendFileList().size() - 1);
         fileInfo.setIsLast(com.merpyzf.transfermanager.common.Const.IS_LAST);
@@ -350,7 +335,31 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 关闭热点，考虑用户没有进行后续的文件传输直接退回到当前界面的情况
         App.closeHotspotOnAndroidO();
     }
-
+    
+    /**
+     * 申请文件读写权限
+     */
+    private void requestPermission() {
+        new RxPermissions(SelectFilesActivity.this)
+                .requestEach(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(permission -> {
+                    // 用户已经同意给与该权限
+                    if (permission.granted) {
+                        // 加载ViewPager
+                        FilesFrgPagerAdapter frgPagerAdapter = new FilesFrgPagerAdapter(mFragmentManager, mFragmentList, mTabTitles);
+                        mViewPager.setAdapter(frgPagerAdapter);
+                        // 将顶部tab与ViewPager绑定
+                        mTabs.setupWithViewPager(mViewPager);
+                        mViewPager.setOffscreenPageLimit(4);
+                    } else if (permission.shouldShowRequestPermissionRationale) {
+                        // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
+                        Log.d(TAG, permission.name + " is denied. More info should be provided.");
+                    } else {
+                        // 用户拒绝了该权限，并且选中『不再询问』
+                        Log.d(TAG, permission.name + " is denied.");
+                    }
+                });
+    }
     /**
      * 当用户信息发生变化时的界面更新
      */
