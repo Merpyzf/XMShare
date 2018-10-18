@@ -10,10 +10,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
-
         <include layout="@layout/include_trasfer_state_layout"/>
-
-
     </FrameLayout>
 
     <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView

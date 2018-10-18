@@ -34,6 +34,7 @@ public class Const {
     // 常用的压缩文件类型
     public static ArrayList<String> FILE_COMPACT_TYPES = null;
     // 文件接收列表中显示的被压缩的缩略图
+    public static final int PING_COUNT = 10;
     public static final String THUMB_RECEIVE = File.separator + "xmshare" + File.separator + "receive_thumb";
     // 接收apk文件的保存路径
     public static final String SAVE_APK_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "apk";

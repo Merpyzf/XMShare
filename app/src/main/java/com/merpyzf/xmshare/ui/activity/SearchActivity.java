@@ -89,7 +89,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
      */
     private void search(String searchContent) {
 
+        mEdtSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
     }
 
     @Override

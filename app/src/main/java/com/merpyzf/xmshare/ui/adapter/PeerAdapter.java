@@ -18,26 +18,29 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by wangke on 2018/1/12.
  */
 
-public class PeerAdapter extends BaseQuickAdapter<Peer, BaseViewHolder>{
+public class PeerAdapter extends BaseQuickAdapter<Peer, BaseViewHolder> {
 
     public PeerAdapter(int layoutResId, @Nullable List<Peer> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, Peer item) {
+    protected void convert(BaseViewHolder helper, Peer peer) {
 
-        helper.setText(R.id.tv_nickname, item.getNickName());
-        helper.setText(R.id.tv_hostaddress, item.getHostAddress());
-
-        CircleImageView mCivPeerHeader =  helper.getView(R.id.civ_peer_header);
+        helper.setText(R.id.tv_nickname, peer.getNickName());
+        helper.setText(R.id.tv_hostaddress, peer.getHostAddress());
+        CircleImageView mCivPeerHeader = helper.getView(R.id.civ_peer_header);
         Glide.with(mContext)
-                .load(Const.AVATAR_LIST.get(item.getAvatarPosition()))
+                .load(Const.AVATAR_LIST.get(peer.getAvatarPosition()))
                 .crossFade()
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mCivPeerHeader);
-
+        if (peer.isHotsPot()) {
+            helper.setImageResource(R.id.iv_peer_type, R.drawable.ic_phone_ap);
+        } else {
+            helper.setImageResource(R.id.iv_peer_type, R.drawable.ic_phone);
+        }
 
     }
 }

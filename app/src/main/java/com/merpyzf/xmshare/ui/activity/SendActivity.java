@@ -96,7 +96,7 @@ public class SendActivity extends BaseActivity implements OnPairActionListener {
     @Override
     protected void initEvents() {
         mScanPeerFragment.setOnPeerActionListener(this);
-        mPeerManager = new PeerManager(mContext, SharedPreUtils.getNickName(mContext), null);
+        mPeerManager = new PeerManager(mContext, SharedPreUtils.getNickName(mContext));
         mPeerManager.setPeerTransferBreakListener(peer -> {
             if (isTransfer) {
                 Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();

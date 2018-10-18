@@ -20,7 +20,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
+import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.WifiMgr;
@@ -77,10 +77,8 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
     private WifiMgr mWifiMgr;
     private String mLocalAddress;
     private ScanPeerHandler mHandler;
-    private int mPingCount = 10;
     private OSTimer mScanWifiTimer;
     private boolean isStopScan;
-
     private static final int TYPE_SCAN_WIFI = 1;
     private static final int TYPE_SEND_FILE = 2;
     private static final int TYPE_GET_IP = 3;
@@ -99,7 +97,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
         mRvPeerList.setLayoutManager(new LinearLayoutManager(mContext));
         mPeerAdapter = new PeerAdapter(R.layout.item_rv_send_peer, mPeerList);
         mRvPeerList.setAdapter(mPeerAdapter);
-        mPeerAdapter.setOnItemClickListener(this);
     }
 
     @Override
@@ -110,10 +107,13 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
     @Override
     protected void initEvent() {
         initWifiState();
+        // 设置RecyclerView的点击事件
+        mPeerAdapter.setOnItemClickListener(this);
         mHandler = new ScanPeerHandler(this);
         // 开启一个udp server 用于和局域网内的设备进行交互
         //todo 这个接口需要重新设计
-        mPeerManager = new PeerManager(mContext, App.getNickname(), new PeerCommCallback() {
+        mPeerManager = new PeerManager(mContext, App.getNickname());
+        mPeerManager.setOnPeerActionListener(new OnPeerActionListener() {
             @Override
             public void onDeviceOnLine(Peer peer) {
                 Log.i("WK", "上线设备-->" + peer.getNickName());
@@ -154,7 +154,14 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
             }
         });
         mPeerManager.startMsgListener();
-        // TODO: 2018/4/18 申请获取位置信息的权限
+        requestPermission();
+
+
+
+    }
+
+    private void requestPermission() {
+        // 扫描附近的热点信号需要获取位置权限
         new RxPermissions(mContext)
                 .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(permission -> {
@@ -425,7 +432,7 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                                 @Override
                                 public void onSubscribe(Disposable d) {
                                     Log.i(TAG, "ping.....");
-                                    if (currentPingCount[0] < scanPeerFragment.mPingCount) {
+                                    if (currentPingCount[0] < Const.PING_COUNT) {
                                         scanPeerFragment.mTvTip.setTextColor(Color.WHITE);
                                         scanPeerFragment.mTvTip.setText("正在检查网络连通性...");
                                         if (com.merpyzf.transfermanager.util.NetworkUtil.pingIpAddress(peer.getHostAddress())) {
