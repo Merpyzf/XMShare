@@ -86,7 +86,6 @@ public class UiUtils {
         return clickable;
     }
 
-    //获取方法
     public static ColorStateList getColorStateListTest(Context context, int colorRes) {
         int[][] states = new int[][]{
                 new int[]{android.R.attr.state_enabled}, // enabled

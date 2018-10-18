@@ -13,12 +13,13 @@
         <include layout="@layout/include_trasfer_state_layout"/>
     </FrameLayout>
 
-    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:fastScrollPopupBgColor="@color/colorAccent"
-        app:fastScrollPopupTextColor="@color/white"
-        app:fastScrollThumbColor="@color/colorAccent"></com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
+        android:scrollbars="vertical"
+        android:scrollIndicators="right"
+        >
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

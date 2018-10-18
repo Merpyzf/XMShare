@@ -68,7 +68,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     @BindView(R.id.rv_selected)
     RecyclerView mRvSelectedFiles;
     @BindView(R.id.fab_send)
-    FloatingActionButton mFabSend;
+    FloatingActionButton mFabBtn;
     @BindView(R.id.linear_menu)
     LinearLayout mLinearMenu;
     @BindView(R.id.drawer_layout)
@@ -128,7 +128,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     /**
      * 初始化类别页面，并为文件选择设置监听
      */
-    // TODO: 2018/10/18 此处通过观察者模式完成监听 
+    // TODO: 2018/10/18 此处通过观察者模式完成监听
     private void initMainPageAndSetListener() {
         OnFileSelectListener<FileInfo> mFileSelectListener = new OnFileSelectListener<FileInfo>() {
             /**
@@ -215,7 +215,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 }
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     if (sFabState == Const.FAB_STATE_CLEAR) {
-                        AnimationUtils.showFabSend(mContext, mFabSend);
+                        AnimationUtils.showFabSend(mContext, mFabBtn);
                         sFabState = Const.FAB_STATE_SEND;
                     }
                 }
@@ -238,16 +238,16 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
         mFileSelectAdapter.setOnItemChildLongClickListener((adapter, view, position) -> {
             if (sFabState == Const.FAB_STATE_SEND) {
-                AnimationUtils.showFabClearAll(mContext, mFabSend, R.color.red_700);
+                AnimationUtils.showFabClearAll(mContext, mFabBtn, R.color.red_700);
                 sFabState = Const.FAB_STATE_CLEAR;
             } else {
-                AnimationUtils.showFabSend(mContext, mFabSend);
+                AnimationUtils.showFabSend(mContext, mFabBtn);
                 sFabState = Const.FAB_STATE_SEND;
             }
             return false;
         });
         mNavCivAvatar.setOnClickListener(v -> PersonalActivity.start(mContext));
-        mFabSend.setOnClickListener(v -> {
+        mFabBtn.setOnClickListener(v -> {
             if (sFabState == Const.FAB_STATE_SEND) {
                 if (App.getSendFileList().size() > 0) {
                     markLastFile();

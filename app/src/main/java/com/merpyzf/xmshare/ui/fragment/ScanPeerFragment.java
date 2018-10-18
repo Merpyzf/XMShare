@@ -122,7 +122,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                     mPeerAdapter.notifyDataSetChanged();
                 }
             }
-
             @Override
             public void onDeviceOffLine(Peer peer) {
                 if (mPeerList.contains(peer)) {
@@ -130,11 +129,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                     mPeerAdapter.notifyDataSetChanged();
                 }
             }
-
-            @Override
-            public void onRequestConnect(Peer peer) {
-            }
-
             @Override
             public void onAnswerRequestConnect(Peer peer) {
                 // 回应对端申请的建立连接的请求
@@ -155,8 +149,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
         });
         mPeerManager.startMsgListener();
         requestPermission();
-
-
 
     }
 

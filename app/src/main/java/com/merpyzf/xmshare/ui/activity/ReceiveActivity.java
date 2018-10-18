@@ -115,11 +115,6 @@ public class ReceiveActivity extends AppCompatActivity {
                     // 开启一个Socket服务
                     ReceiverManager receiverManager = ReceiverManager.getInstance(mContext);
                     receiverManager.register(new TransferObserver() {
-                        @Override
-                        public void onTransferProgress(FileInfo fileInfo) {
-
-                        }
-
                         // TODO: 2018/1/28 增加一个文件全部传输完毕的回调
                         @Override
                         public void onTransferStatus(FileInfo fileInfo) {
@@ -128,7 +123,6 @@ public class ReceiveActivity extends AppCompatActivity {
                                 isTransfering = false;
                             }
                         }
-
                         @Override
                         public void onTransferError(String error) {
                             ToastUtils.showShort(mContext, error);

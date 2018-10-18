@@ -35,7 +35,8 @@ import java.util.List;
  * 文件传输列表
  */
 
-// TODO: 2018/4/26 这个Adapter的代码太乱了，需要花时间规整
+// TODO: 2018/4/26 这个Adapter的代码太乱了，需要花时间规
+// TODO: 2018/10/18 优化方向: 不应该通过回调方法中传来的信息更新item的状态，应该通过刷新的对象中保存的状态信息来更新UI
 public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
 
     private List<FileInfo> mFileLists;
@@ -344,18 +345,9 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                                     .error(R.drawable.ic_header)
                                     .into(ivThumb);
-
                         }
-
                     }
                 }
-
-                @Override
-                public void onTransferError(String error) {
-
-                }
-
-
             });
         } else if (type == TYPE_SEND) {
 
@@ -468,16 +460,8 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                         }
                     }
                 }
-
-                @Override
-                public void onTransferError(String error) {
-
-                }
-
             });
         }
-
-
     }
 
 
@@ -505,9 +489,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                 break;
             default:
                 break;
-
         }
-
         return typeText;
 
     }

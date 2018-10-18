@@ -11,26 +11,31 @@ import java.util.List;
  * date: 2018/8/16.
  * version:
  */
-public interface OnPairActionListener {
+public abstract class OnPairActionListener {
 
     /**
      * 发送建立连接的请求
      */
-    void onSendConnRequest();
+    public void onSendConnRequest() {
+    }
 
     /**
      * 配对成功
      *
      * @param peer
      */
-    void onPairSuccess(Peer peer);
+    public void onPairSuccess(Peer peer) {
+
+    }
 
     /**
      * 配对失败
      *
      * @param peer
      */
-    void onPeerPairFailed(Peer peer);
+    public void onPeerPairFailed(Peer peer) {
+
+    }
 
     /**
      * 向接收端发送文件
@@ -38,7 +43,9 @@ public interface OnPairActionListener {
      * @param peer        对端的主机信息
      * @param fileInfoLis 待发送的文件列表
      */
-    void onStartTransfer(Peer peer, List<FileInfo> fileInfoLis);
+    public void onStartTransfer(Peer peer, List<FileInfo> fileInfoLis) {
+
+    }
 
 
 }

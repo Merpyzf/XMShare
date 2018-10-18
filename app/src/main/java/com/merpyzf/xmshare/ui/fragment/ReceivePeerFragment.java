@@ -188,11 +188,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         mPeerManager = new PeerManager(mContext, nickName);
         mPeerManager.setOnPeerActionListener(new OnPeerActionListener() {
             @Override
-            public void onDeviceOnLine(Peer peer) {
-
-            }
-
-            @Override
             public void onDeviceOffLine(Peer peer) {
                 if (mPeerList.contains(peer)) {
                     mPeerList.remove(peer);
@@ -216,13 +211,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                     mOnReceivePairActionListener.onRequestSendFileAction();
                 }
             }
-
-            @Override
-            public void onAnswerRequestConnect(Peer peer) {
-
-
-            }
-
         });
         mPeerManager.startMsgListener();
         /**
