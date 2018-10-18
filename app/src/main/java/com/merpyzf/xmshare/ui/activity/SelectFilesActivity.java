@@ -2,6 +2,7 @@ package com.merpyzf.xmshare.ui.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -10,6 +11,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -28,6 +30,7 @@ import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
+import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.adapter.FilesFrgPagerAdapter;
 import com.merpyzf.xmshare.ui.fragment.FileListFragment;
@@ -35,6 +38,7 @@ import com.merpyzf.xmshare.ui.fragment.MainFragment;
 import com.merpyzf.xmshare.ui.fragment.PhotoFragment;
 import com.merpyzf.xmshare.ui.interfaces.PersonalObservable;
 import com.merpyzf.xmshare.ui.interfaces.PersonalObserver;
+import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -62,7 +66,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     @BindView(R.id.tv_bottom_title)
     TextView mTvBottomTitle;
     @BindView(R.id.rv_selected)
-    RecyclerView mRvSelectedList;
+    RecyclerView mRvSelectedFiles;
     @BindView(R.id.fab_send)
     FloatingActionButton mFabSend;
     @BindView(R.id.linear_menu)
@@ -82,6 +86,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private String[] mTabTitles;
     private BottomSheetBehavior<View> mSheetBehavior;
     private FileSelectAdapter<FileInfo> mFileSelectAdapter;
+    private static int sFabState = Const.FAB_STATE_SEND;
+
     private static final String TAG = SelectFilesActivity.class.getSimpleName();
 
     @Override
@@ -91,9 +97,9 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
     @Override
     public void initRecyclerView() {
-        mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
+        mRvSelectedFiles.setLayoutManager(new LinearLayoutManager(mContext));
         mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getSendFileList());
-        mRvSelectedList.setAdapter(mFileSelectAdapter);
+        mRvSelectedFiles.setAdapter(mFileSelectAdapter);
     }
 
     @SuppressLint("CheckResult")
@@ -135,6 +141,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     protected void initData() {
         initMainPageAndSetListener();
     }
+
     /**
      * 初始化类别页面，并为文件选择设置监听
      */
@@ -220,18 +227,66 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 if (App.getSendFileList().size() == 0) {
                     mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    if (sFabState == Const.FAB_STATE_CLEAR) {
+                        AnimationUtils.showFabSend(mContext, mFabSend);
+                        sFabState = Const.FAB_STATE_SEND;
+                    }
+                }
             }
+
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
             }
         });
+
+        mFileSelectAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+
+            List data = adapter.getData();
+            Log.i("WW2k", "position: " + position + "size: " + data.size());
+
+            FileInfo fileInfo = (FileInfo) adapter.getData().get(position);
+            mFileSelectAdapter.notifyItemRemoved(position);
+            App.removeSendFile(fileInfo);
+            // 发送文件选择状态改变的应用内广播
+            Intent intent = new Intent(FileSelectedListChangedReceiver.ACTION);
+            intent.putExtra("unSelectedFile", fileInfo.getPath());
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+            updateBottomTitle();
+
+
+        });
+
+        mFileSelectAdapter.setOnItemChildLongClickListener((adapter, view, position) -> {
+            if (sFabState == Const.FAB_STATE_SEND) {
+                AnimationUtils.showFabClearAll(mContext, mFabSend, R.color.red_700);
+                sFabState = Const.FAB_STATE_CLEAR;
+            } else {
+                AnimationUtils.showFabSend(mContext, mFabSend);
+                sFabState = Const.FAB_STATE_SEND;
+            }
+            return false;
+        });
+
         mNavCivAvatar.setOnClickListener(v -> PersonalActivity.start(mContext));
         mFabSend.setOnClickListener(v -> {
-            if (App.getSendFileList().size() > 0) {
-                markLastFile();
-                SendActivity.start(mContext);
-            } else {
-                Toast.makeText(mContext, "请选择文件", Toast.LENGTH_SHORT).show();
+
+            if (sFabState == Const.FAB_STATE_SEND) {
+                if (App.getSendFileList().size() > 0) {
+                    markLastFile();
+                    SendActivity.start(mContext);
+                } else {
+                    Toast.makeText(mContext, "请选择文件", Toast.LENGTH_SHORT).show();
+                }
+            }else {
+                App.getSendFileList().clear();
+                // 发送文件选择状态改变的应用内广播
+                Intent intent = new Intent(FileSelectedListChangedReceiver.ACTION);
+                intent.putExtra("unSelectedFile", "");
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                updateBottomTitle();
+                mFileSelectAdapter.notifyDataSetChanged();
             }
         });
         // 顶部menu按钮
@@ -395,5 +450,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         App.getSendFileList().clear();
         super.onDestroy();
     }
+
 
 }

@@ -3,6 +3,9 @@ package com.merpyzf.xmshare.util;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.merpyzf.transfermanager.util.timer.OSTimer;
@@ -83,4 +86,20 @@ public class UiUtils {
         return clickable;
     }
 
+    //获取方法
+    public static ColorStateList getColorStateListTest(Context context, int colorRes) {
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_enabled}, // enabled
+                new int[]{-android.R.attr.state_enabled}, // disabled
+                new int[]{-android.R.attr.state_checked}, // unchecked
+                new int[]{android.R.attr.state_pressed}  // pressed
+        };
+        int color = ContextCompat.getColor(context, colorRes);
+        int[] colors = new int[]{color, color, color, color};
+        return new ColorStateList(states, colors);
+    }
+
+
 }
+
+

@@ -57,6 +57,9 @@ public class Const {
     public static final String PAGE_MUSIC_TITLE = "音乐";
     public static final String PAGE_VIDEO_TITLE = "视频";
 
+    public static final int FAB_STATE_SEND = 0x01;
+    public static final int FAB_STATE_CLEAR = 0x02;
+
 
     // 初始化数据
     static {

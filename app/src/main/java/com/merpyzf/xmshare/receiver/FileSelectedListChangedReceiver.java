@@ -15,7 +15,6 @@ public abstract class FileSelectedListChangedReceiver extends BroadcastReceiver 
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         String action = intent.getAction();
         if (action.equals(ACTION)) {
             // 未保证文件不重复的问题，使用文件的全路径来表示
@@ -23,9 +22,7 @@ public abstract class FileSelectedListChangedReceiver extends BroadcastReceiver 
             Log.i("w2k", "接收到文件发生改变的广播 -->" + action);
             onFileListChanged(unSelectedFile);
         }
-
     }
-
     /**
      * 文件列表发生改变时的回调
      */

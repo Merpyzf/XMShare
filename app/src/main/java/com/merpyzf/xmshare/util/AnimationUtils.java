@@ -1,17 +1,30 @@
 package com.merpyzf.xmshare.util;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.support.design.widget.FloatingActionButton;
+
+
+import com.merpyzf.xmshare.R;
+
+import net.qiujuer.genius.ui.widget.FloatActionButton;
+
 
 /**
  * 动画工具类
@@ -146,7 +159,6 @@ public class AnimationUtils {
         animatorSet.start();
     }
 
-
     /**
      * 缩小封面图
      *
@@ -160,6 +172,78 @@ public class AnimationUtils {
         animatorSet.playTogether(scanX, scanY);
         animatorSet.setDuration(duration);
         animatorSet.start();
+    }
+
+
+    public static void showFabClearAll(Context context, FloatingActionButton fab, int color) {
+        // 隐藏发送按钮，显示清除全部的按钮
+        // 当动画未执行结束，按钮不可点击
+        fab.setClickable(false);
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(fab, "scaleX", 1f, 0f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(fab, "scaleY", 1f, 0f);
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorSet.setDuration(150);
+        animatorSet.start();
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                fab.setBackgroundTintList(UiUtils.getColorStateListTest(context, color));
+                fab.setImageResource(R.drawable.ic_clear_all);
+                AnimatorSet animatorSet = new AnimatorSet();
+                ObjectAnimator scaleX = ObjectAnimator.ofFloat(fab, "scaleX", 0f, 1f);
+                ObjectAnimator scaleY = ObjectAnimator.ofFloat(fab, "scaleY", 0f, 1f);
+                animatorSet.play(scaleX).with(scaleY);
+                animatorSet.setInterpolator(new OvershootInterpolator());
+                animatorSet.setDuration(150);
+                animatorSet.start();
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        fab.setClickable(true);
+                    }
+                });
+            }
+        });
+    }
+
+    public static void showFabSend(Context context, FloatingActionButton fab) {
+        // 隐藏发送按钮，显示清除全部的按钮
+        // 当动画未执行结束，按钮不可点击
+        fab.setClickable(false);
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(fab, "scaleX", 1f, 0f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(fab, "scaleY", 1f, 0f);
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorSet.setDuration(150);
+        animatorSet.start();
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                fab.setBackgroundTintList(UiUtils.getColorStateListTest(context, R.color.colorAccent));
+                fab.setImageResource(R.drawable.ic_send);
+                AnimatorSet animatorSet = new AnimatorSet();
+                ObjectAnimator scaleX = ObjectAnimator.ofFloat(fab, "scaleX", 0f, 1f);
+                ObjectAnimator scaleY = ObjectAnimator.ofFloat(fab, "scaleY", 0f, 1f);
+                animatorSet.play(scaleX).with(scaleY);
+                animatorSet.setInterpolator(new OvershootInterpolator());
+                animatorSet.setDuration(150);
+                animatorSet.start();
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        fab.setClickable(true);
+                    }
+                });
+            }
+        });
+
     }
 
 

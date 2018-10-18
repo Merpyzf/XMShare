@@ -48,7 +48,8 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
     @Override
     protected void convert(BaseViewHolder helper, final T item) {
-
+        helper.addOnLongClickListener(R.id.ll_selected_files);
+        helper.addOnClickListener(R.id.iv_remove);
         FileInfo fileInfo = (FileInfo) item;
         float size = fileInfo.getLength() / (1024 * 1024 * 1f);
         DecimalFormat decimalFormat = new DecimalFormat("#.0");
@@ -127,17 +128,6 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
         ImageView ivRemove = helper.getView(R.id.iv_remove);
 
-        ivRemove.setOnClickListener(v -> {
-
-            App.removeSendFile(fileInfo);
-            // 发送文件选择状态改变的应用内广播
-            Intent intent = new Intent(FileSelectedListChangedReceiver.ACTION);
-            intent.putExtra("unSelectedFile", fileInfo.getPath());
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
-            notifyDataSetChanged();
-            //更新底部标题
-            ((SelectFilesActivity) mContext).updateBottomTitle();
-        });
 
     }
 

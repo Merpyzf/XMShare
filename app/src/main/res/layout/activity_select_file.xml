@@ -174,6 +174,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:src="@drawable/ic_send"
+            android:tint="@color/white"
             app:layout_anchor="@+id/bottom_sheet"
             app:layout_anchorGravity="right|top"
           >
