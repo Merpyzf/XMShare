@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -48,11 +49,19 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
         this.mContext = activity;
         this.mLoadFileType = loadFileType;
         initLoadManager();
+        if (mLoadFileType == FILE_TYPE_APP) {
+            loadApp();
+        }
     }
 
     private void initLoadManager() {
         mLoaderManager = Objects.requireNonNull(mContext).getLoaderManager();
         mLoaderManager.initLoader(mLoadFileType, null, this);
+    }
+
+    private void loadApp() {
+        Observable observable = ApkUtils.asyncLoadApp(mContext);
+        onLoadFinished(observable);
     }
 
     @Override
@@ -100,9 +109,6 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
                             MediaStore.Video.Media.DATE_ADDED
                     };
             return new CursorLoader(mContext, uri, projections, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC");
-        } else if (mLoadFileType == FILE_TYPE_APP) {
-            Observable observable = ApkUtils.asyncLoadApp(mContext);
-            onLoadFinished(observable);
         }
         return null;
 
@@ -110,7 +116,7 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        Log.i("WW1k", "onLoadFinished 被调用后了");
         if (mLoadFileType == FILE_TYPE_MUSIC) {
             Observable<List<FileInfo>> observable = MusicUtils.asyncLoadingMusic(data);
             onLoadFinished(observable);

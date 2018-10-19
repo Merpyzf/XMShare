@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.ui.fragment;
 import android.annotation.SuppressLint;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -97,7 +98,6 @@ public class FileListFragment extends BaseFragment {
     @Override
     protected void initEvent() {
 
-
         mFileListAdapter.setOnItemClickListener((adapter, view, position) -> {
             ImageView ivSelect = view.findViewById(R.id.iv_select);
             FileInfo fileInfo = mFileLists.get(position);
@@ -176,6 +176,10 @@ public class FileListFragment extends BaseFragment {
                 observable = observable.compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW));
                 if (mLoadFileType == FILE_TYPE_APP) {
                     observable.subscribe((Consumer<List<ApkFile>>) apkFiles -> {
+                        for (ApkFile apkFile : apkFiles) {
+                            Log.i("WW2k", apkFile.getPath());
+                        }
+
                         mFileLists.addAll(apkFiles);
                         CollectionUtils.shortingByFirstCase(mFileLists);
                         updateTitle(Const.PAGE_APP_TITLE);
