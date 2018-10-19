@@ -30,7 +30,8 @@ import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
-import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
+import com.merpyzf.xmshare.observer.FilesStatusObservable;
+import com.merpyzf.xmshare.observer.FilesStatusObserver;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.adapter.FilesFrgPagerAdapter;
 import com.merpyzf.xmshare.ui.fragment.FileListFragment;
@@ -47,6 +48,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.merpyzf.xmshare.common.Const.HOME_OBSERVER_NAME;
 
 /**
  * 应用首页界面
@@ -87,7 +90,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private BottomSheetBehavior<View> mSheetBehavior;
     private FileSelectAdapter<FileInfo> mFileSelectAdapter;
     private static int sFabState = Const.FAB_STATE_SEND;
-
     private static final String TAG = SelectFilesActivity.class.getSimpleName();
     private FragmentManager mFragmentManager;
 
@@ -119,7 +121,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     }
 
 
-
     @Override
     protected void initData() {
         initMainPageAndSetListener();
@@ -130,11 +131,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
      */
     // TODO: 2018/10/18 此处通过观察者模式完成监听
     private void initMainPageAndSetListener() {
-        OnFileSelectListener<FileInfo> mFileSelectListener = new OnFileSelectListener<FileInfo>() {
-            /**
-             * 文件选择时的回调
-             * @param fileInfo 选择的文件
-             */
+
+        FilesStatusObservable.getInstance().register(HOME_OBSERVER_NAME, new FilesStatusObserver() {
             @Override
             public void onSelected(FileInfo fileInfo) {
                 App.addSendFile(fileInfo);
@@ -142,10 +140,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 updateBottomTitle();
             }
 
-            /**
-             * 文件取消选择的回调
-             * @param fileInfo 被取消的文件
-             */
             @Override
             public void onCancelSelected(FileInfo fileInfo) {
                 App.removeSendFile(fileInfo);
@@ -153,9 +147,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 updateBottomTitle();
             }
 
-            /**
-             * 全选/取消全选的回调
-             */
             @Override
             public void onSelectedAll(List<FileInfo> fileInfoList) {
                 App.addSendFiles(fileInfoList);
@@ -163,18 +154,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 updateBottomTitle();
             }
 
-            /**
-             * 取消文件全选
-             * @param fileInfoList 取消选择的文件列表
-             */
             @Override
             public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
                 App.removeSendFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
-        };
-
+        });
         mFragmentList = new ArrayList<>();
         mTabTitles = new String[5];
         mTabTitles[0] = Const.PAGE_MAIN_TITLE;
@@ -185,18 +171,17 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 文件
         mFragmentList.add(new MainFragment());
         // 应用
-        FileListFragment appFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_APP, mFileSelectListener);
+        FileListFragment appFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_APP);
         mFragmentList.add(appFragment);
         // 图片
-        Fragment picFragment = new PhotoFragment(mFileSelectListener);
+        Fragment picFragment = new PhotoFragment();
         mFragmentList.add(picFragment);
         // 音乐
-        FileListFragment musicFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_MUSIC, mFileSelectListener);
+        FileListFragment musicFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_MUSIC);
         mFragmentList.add(musicFragment);
         // 视频
-        FileListFragment videoFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_VIDEO, mFileSelectListener);
+        FileListFragment videoFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_VIDEO);
         mFragmentList.add(videoFragment);
-
     }
 
     @Override
@@ -232,7 +217,10 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             FileInfo fileInfo = (FileInfo) adapter.getData().get(position);
             mFileSelectAdapter.notifyItemRemoved(position);
             App.removeSendFile(fileInfo);
-            sendFileChangedBroadcast(fileInfo);
+
+            FilesStatusObservable.getInstance().notifyObservers(fileInfo, HOME_OBSERVER_NAME,
+                    FilesStatusObservable.FILE_CANCEL_SELECTED);
+
             updateBottomTitle();
         });
 
@@ -260,7 +248,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 // 发送文件选择状态改变的应用内广播
                 updateBottomTitle();
                 mFileSelectAdapter.notifyDataSetChanged();
-                sendFileChangedBroadcast(null);
+                FilesStatusObservable.getInstance().notifyObservers(App.getSendFileList(), HOME_OBSERVER_NAME,
+                        FilesStatusObservable.FILE_CANCEL_SELECTED_ALL);
             }
         });
         // 顶部menu按钮
@@ -308,16 +297,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         });
     }
 
-    
-    /**
-     * 发送已选文件列表发生改变的广播
-     */
-    // TODO: 2018/10/18 这个方法应该抽取出去管理
-    private void sendFileChangedBroadcast(FileInfo fileInfo) {
-        Intent intent = new Intent(FileSelectedListChangedReceiver.ACTION);
-        intent.putExtra("unSelectedFile", fileInfo == null ? "" : fileInfo.getPath());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
-    }
+
+
 
     private void markLastFile() {
         FileInfo fileInfo = App.getSendFileList().get(App.getSendFileList().size() - 1);
@@ -335,7 +316,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 关闭热点，考虑用户没有进行后续的文件传输直接退回到当前界面的情况
         App.closeHotspotOnAndroidO();
     }
-    
+
     /**
      * 申请文件读写权限
      */
@@ -360,6 +341,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                     }
                 });
     }
+
     /**
      * 当用户信息发生变化时的界面更新
      */

@@ -12,7 +12,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
-import com.merpyzf.xmshare.ui.activity.OnFileSelectListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,12 +25,10 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHolder> {
 
-    private OnFileSelectListener mFileSelectListener;
     private CheckBox mCheckBoxAll;
 
-    public PhotoDirsAdapter(int layoutResId, CheckBox checkBoxAll, @Nullable List<PhotoDirBean> data, OnFileSelectListener fileSelectListener) {
+    public PhotoDirsAdapter(int layoutResId, CheckBox checkBoxAll, @Nullable List<PhotoDirBean> data) {
         super(layoutResId, data);
-        this.mFileSelectListener = fileSelectListener;
         this.mCheckBoxAll = checkBoxAll;
     }
 
@@ -40,6 +37,7 @@ public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHol
 
         helper.setText(R.id.tv_photo_dir_name, item.getName());
         helper.setText(R.id.tv_photo_num, item.getImageNumber() + "张照片");
+        helper.addOnClickListener(R.id.iv_select);
 
         ImageView ivCover = helper.getView(R.id.iv_photo_dir_cover);
         GifImageView gifIv = helper.getView(R.id.gif_photo_dir_cover);
@@ -72,31 +70,6 @@ public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHol
                     .centerCrop()
                     .into(ivCover);
         }
-
-        ivSelect.setOnClickListener(v -> {
-            if (item.isChecked()) {
-                mFileSelectListener.onCancelSelectedAll(item.getImageList());
-                ivSelect.setImageResource(R.drawable.ic_cb_unchecked);
-            } else {
-                mFileSelectListener.onSelectedAll(item.getImageList());
-                ivSelect.setImageResource(R.drawable.ic_cb_checked);
-            }
-
-            item.setChecked(!item.isChecked());
-            mCheckBoxAll.setChecked(isCheckAllDirs());
-        });
-
-    }
-
-    private boolean isCheckAllDirs() {
-
-        for (PhotoDirBean photoDirBean : mData) {
-
-            if (!photoDirBean.isChecked()) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

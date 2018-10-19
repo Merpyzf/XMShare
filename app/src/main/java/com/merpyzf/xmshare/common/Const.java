@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class Const {
     public static final int TRANSFER_MODE_LAN = -1;
     // 通过建立热点组件局域网的方式传输模式
     public static final int TRANSFER_MODE_AP = 1;
+
+    public static final String HOME_OBSERVER_NAME = SelectFilesActivity.class.getSimpleName();
+
     // 存储图片缓存
     public static final File PIC_CACHES_DIR = App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
     // 头像信息

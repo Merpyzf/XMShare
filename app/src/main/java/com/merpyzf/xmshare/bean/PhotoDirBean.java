@@ -5,6 +5,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.xmshare.App;
 
 import java.io.File;
 import java.io.Serializable;
@@ -55,6 +56,14 @@ public class PhotoDirBean implements Serializable {
     }
 
     public boolean isChecked() {
+        for (FileInfo fileInfo : imageList) {
+            if (!App.getSendFileList().contains(fileInfo)) {
+                isChecked = false;
+                return isChecked;
+            }
+            Log.i("WW2K", "执行了");
+        }
+        isChecked = true;
         return isChecked;
     }
 
@@ -82,7 +91,7 @@ public class PhotoDirBean implements Serializable {
             picFile.setLength((int) image.length());
             picFile.setSuffix(FileUtils.getFileSuffix(image));
             picFile.setType(FileInfo.FILE_TYPE_IMAGE);
-            Log.i("WK", "图片: "+picFile.getName()+" 后缀: "+picFile.getSuffix());
+            Log.i("WK", "图片: " + picFile.getName() + " 后缀: " + picFile.getSuffix());
             imageList.add(picFile);
 
         }
@@ -120,7 +129,6 @@ public class PhotoDirBean implements Serializable {
         return imageList.size();
 
     }
-
 
 
 }

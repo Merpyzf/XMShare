@@ -64,11 +64,6 @@
         <activity android:name=".ui.test.TestRadarViewActivity" />
         <activity android:name=".ui.test.ScanVideoActivity" />
 
-        <receiver
-            android:name=".receiver.FileSelectedListChangedReceiver"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity android:name=".ui.activity.SettingActivity" />
         <activity android:name=".ui.test.APActivity" />
         <activity android:name=".ui.test.HostActivity" />

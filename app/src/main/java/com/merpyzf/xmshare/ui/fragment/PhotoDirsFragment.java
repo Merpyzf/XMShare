@@ -4,10 +4,8 @@ package com.merpyzf.xmshare.ui.fragment;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.app.LoaderManager;
-import android.arch.lifecycle.LifecycleOwner;
 import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -15,7 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,15 +29,14 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
 import com.merpyzf.xmshare.common.base.BaseFragment;
-import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
+import com.merpyzf.xmshare.observer.FilesStatusObservable;
+import com.merpyzf.xmshare.observer.FilesStatusObserver;
 import com.merpyzf.xmshare.ui.adapter.PhotoDirsAdapter;
-import com.merpyzf.xmshare.ui.activity.OnFileSelectListener;
 import com.merpyzf.xmshare.ui.activity.SearchActivity;
 import com.merpyzf.xmshare.ui.widget.bean.Label;
 import com.merpyzf.xmshare.util.PhotoUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +59,6 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
     private LoaderManager mLoadManager;
     private CheckBox mCheckBoxAll;
     private List<PhotoDirBean> mPhotoDirs = new ArrayList<>();
-    private OnFileSelectListener mFileSelectListener;
     private PhotoDirsAdapter mAdapter;
     private PhotoFragment mPhotoFragment;
     private int mPhotoNum;
@@ -73,16 +68,9 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
     private View mEmptyView;
     private TextView mTvTip;
     private ImageView mIvSearch;
-    private FileSelectedListChangedReceiver mFslcReceiver;
 
     public PhotoDirsFragment() {
     }
-
-    @SuppressLint("ValidFragment")
-    public PhotoDirsFragment(OnFileSelectListener fileSelectListener) {
-        this.mFileSelectListener = fileSelectListener;
-    }
-
     @Override
     protected int getContentLayoutId() {
         return R.layout.fragment_img_dirs;
@@ -91,20 +79,65 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
     @Override
     protected void initEvent() {
         mAdapter.setOnItemClickListener(this);
-        mCheckBoxAll.setOnCheckedChangeListener(this);
-        // 当选择的文件列表发生改变时的回调
-        mFslcReceiver = new FileSelectedListChangedReceiver() {
+        mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
-            public void onFileListChanged(String unSelectedFile) {
-                // 当选择的文件列表发生改变时的回调
-                updatePhotoDirStatus(unSelectedFile);
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                PhotoDirBean item = (PhotoDirBean) adapter.getItem(position);
+                if (item.isChecked()) {
+                    //mFileSelectListener.onCancelSelectedAll(item.getImageList());
+                    FilesStatusObservable.getInstance().notifyObservers(item.getImageList(),
+                            TAG, FilesStatusObservable.FILE_CANCEL_SELECTED_ALL);
+                } else {
+                    //mFileSelectListener.onSelectedAll(item.getImageList());
+                    FilesStatusObservable.getInstance().notifyObservers(item.getImageList(),
+                            TAG, FilesStatusObservable.FILE_SELECTED_ALL);
+                }
+                item.setChecked(!item.isChecked());
+                mCheckBoxAll.setChecked(isCheckAllDirs());
+                mAdapter.notifyItemChanged(position);
+
+            }
+        });
+        mCheckBoxAll.setOnCheckedChangeListener(this);
+        FilesStatusObservable.getInstance().register(TAG, new FilesStatusObserver() {
+            @Override
+            public void onSelected(FileInfo fileInfo) {
+
+            }
+
+            @Override
+            public void onCancelSelected(FileInfo fileInfo) {
+                updatePhotoDirStatus(fileInfo.getPath());
                 mAdapter.notifyDataSetChanged();
                 mCheckBoxAll.setChecked(isCheckedAllDirs());
             }
-        };
 
-        Log.i("WKK", "initEvent方法执行了");
+            @Override
+            public void onSelectedAll(List<FileInfo> fileInfoList) {
+
+            }
+
+            @Override
+            public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
+                Log.i("WW2K", "photoDirs");
+                mCheckBoxAll.setChecked(isCheckAllDirs());
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+
     }
+
+
+    private boolean isCheckAllDirs() {
+        for (PhotoDirBean photoDirBean : mPhotoDirs) {
+            if (!photoDirBean.isChecked()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     @Override
     protected void initWidget(View rootView) {
@@ -124,7 +157,7 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
         // 添加分割线前先移除之前添加的
         removeItemDecoration();
         mRvDirsList.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
-        mAdapter = new PhotoDirsAdapter(R.layout.item_rv_photo_dir, mCheckBoxAll, mPhotoDirs, mFileSelectListener);
+        mAdapter = new PhotoDirsAdapter(R.layout.item_rv_photo_dir, mCheckBoxAll, mPhotoDirs);
         mAdapter.setEmptyView(mEmptyView);
         mRvDirsList.setAdapter(mAdapter);
     }
@@ -153,14 +186,6 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
         mLoadManager.initLoader(FileInfo.FILE_TYPE_IMAGE, null, PhotoDirsFragment.this);
     }
 
-    /**
-     * 动态注册监听选择文件列表发生改变的广播
-     */
-    private void registerFileListChangedReceiver() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(FileSelectedListChangedReceiver.ACTION);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mFslcReceiver, intentFilter);
-    }
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
@@ -219,7 +244,6 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
     @Override
     public void onResume() {
         super.onResume();
-        registerFileListChangedReceiver();
         mCheckBoxAll.setTag(TAG);
         mAdapter.notifyDataSetChanged();
         // 设置当前所有相册选中状态
@@ -254,7 +278,7 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
         }
         for (PhotoDirBean photoDir : mPhotoDirs) {
             for (FileInfo fileInfo : photoDir.getImageList()) {
-                Log.i("WK", "s-path==> "+fileInfo.getPath());
+                Log.i("WK", "s-path==> " + fileInfo.getPath());
                 if (filePath.equals(fileInfo.getPath())) {
                     photoDir.setChecked(false);
                     break;
@@ -302,7 +326,10 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
             if (isChecked) {
                 for (PhotoDirBean photoDir : mPhotoDirs) {
                     photoDir.setChecked(true);
-                    mFileSelectListener.onSelectedAll(photoDir.getImageList());
+                    //mFileSelectListener.onSelectedAll(photoDir.getImageList());
+                    FilesStatusObservable.getInstance().notifyObservers(photoDir.getImageList(), TAG,
+                            FilesStatusObservable.FILE_SELECTED_ALL
+                    );
                 }
                 mAdapter.notifyDataSetChanged();
                 mPhotoFragment.getTvChecked().setText("取消全选");
@@ -310,7 +337,10 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
                 if (isCheckedAllDirs()) {
                     for (PhotoDirBean photoDir : mPhotoDirs) {
                         photoDir.setChecked(false);
-                        mFileSelectListener.onCancelSelectedAll(photoDir.getImageList());
+                        //mFileSelectListener.onCancelSelectedAll(photoDir.getImageList());
+                        FilesStatusObservable.getInstance().notifyObservers(photoDir.getImageList(), TAG,
+                                FilesStatusObservable.FILE_CANCEL_SELECTED_ALL
+                        );
                     }
                 }
                 mAdapter.notifyDataSetChanged();
@@ -341,12 +371,6 @@ public class PhotoDirsFragment extends BaseFragment implements LoaderManager.Loa
                 getActivity().startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
             });
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mFslcReceiver);
     }
 
     @Override

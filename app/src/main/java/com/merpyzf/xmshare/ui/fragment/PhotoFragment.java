@@ -1,7 +1,6 @@
 package com.merpyzf.xmshare.ui.fragment;
 
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,13 +13,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.ui.activity.OnFileSelectListener;
 import com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,16 +35,9 @@ public class PhotoFragment extends Fragment {
     @BindView(R.id.fileSelectIndicator)
     FileSelectIndicatorImp mFileSelectIndicator;
     private Unbinder mUnbinder;
-    private OnFileSelectListener mFileSelectListener;
 
     public PhotoFragment() {
     }
-    @SuppressLint("ValidFragment")
-    public PhotoFragment(OnFileSelectListener<FileInfo> fileSelectListener) {
-        mFileSelectListener = fileSelectListener;
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -73,7 +60,7 @@ public class PhotoFragment extends Fragment {
 
     private void initUI() {
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_container, new PhotoDirsFragment(mFileSelectListener));
+        fragmentTransaction.replace(R.id.fl_container, new PhotoDirsFragment());
         fragmentTransaction.commit();
         mCheckbox.setChecked(false);
     }
@@ -97,61 +84,6 @@ public class PhotoFragment extends Fragment {
 
 
     }
-
-
-    /**
-     * 选择所有的图片
-     */
-    public void checkAllPhoto(List<FileInfo> fileInfoList) {
-
-
-        if (mFileSelectListener == null) {
-            return;
-        }
-
-        mFileSelectListener.onSelectedAll(fileInfoList);
-    }
-
-    /**
-     * 选择所有的图片
-     */
-    public void cancelCheckAllPhoto(List<FileInfo> fileInfoList) {
-
-
-        if (mFileSelectListener == null) {
-            return;
-        }
-        mFileSelectListener.onCancelSelectedAll(fileInfoList);
-    }
-
-    /**
-     * 选择一个图片
-     *
-     * @param picFile
-     */
-    public void selectPhoto(PicFile picFile) {
-
-        if (mFileSelectListener == null) {
-            return;
-        }
-
-        mFileSelectListener.onSelected(picFile);
-    }
-
-
-    /**
-     * 取消选择
-     *
-     * @param picFile
-     */
-    public void unSelectPhoto(PicFile picFile) {
-
-        if (mFileSelectListener == null) {
-            return;
-        }
-        mFileSelectListener.onCancelSelected(picFile);
-    }
-
     public TextView getTvChecked() {
         return mTvChecked;
     }

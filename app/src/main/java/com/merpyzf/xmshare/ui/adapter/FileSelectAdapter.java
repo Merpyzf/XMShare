@@ -1,10 +1,7 @@
 package com.merpyzf.xmshare.ui.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -18,12 +15,8 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.Md5Utils;
-import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
-import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
-import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.io.IOException;
