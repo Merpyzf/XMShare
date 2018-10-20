@@ -137,6 +137,7 @@ public class AnimationUtils {
         imageView.startAnimation(set);
     }
 
+
     public interface AddTaskAnimationListener {
 
         void onAnimationStart(Animation animation);

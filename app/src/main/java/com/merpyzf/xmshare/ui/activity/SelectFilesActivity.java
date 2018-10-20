@@ -92,6 +92,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private static int sFabState = Const.FAB_STATE_SEND;
     private static final String TAG = SelectFilesActivity.class.getSimpleName();
     private FragmentManager mFragmentManager;
+    private FilesStatusObserver mFilesStatusObserver;
 
     @Override
     public int getContentLayoutId() {
@@ -129,10 +130,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     /**
      * 初始化类别页面，并为文件选择设置监听
      */
-    // TODO: 2018/10/18 此处通过观察者模式完成监听
     private void initMainPageAndSetListener() {
-
-        FilesStatusObservable.getInstance().register(HOME_OBSERVER_NAME, new FilesStatusObserver() {
+        mFilesStatusObserver = new FilesStatusObserver() {
             @Override
             public void onSelected(FileInfo fileInfo) {
                 App.addSendFile(fileInfo);
@@ -160,7 +159,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
-        });
+        };
+        FilesStatusObservable.getInstance().register(HOME_OBSERVER_NAME, mFilesStatusObserver);
         mFragmentList = new ArrayList<>();
         mTabTitles = new String[5];
         mTabTitles[0] = Const.PAGE_MAIN_TITLE;
@@ -168,18 +168,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mTabTitles[2] = Const.PAGE_IMAGE_TITLE;
         mTabTitles[3] = Const.PAGE_MUSIC_TITLE;
         mTabTitles[4] = Const.PAGE_VIDEO_TITLE;
-        // 文件
         mFragmentList.add(new MainFragment());
-        // 应用
         FileListFragment appFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_APP);
         mFragmentList.add(appFragment);
-        // 图片
         Fragment picFragment = new PhotoFragment();
         mFragmentList.add(picFragment);
-        // 音乐
         FileListFragment musicFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_MUSIC);
         mFragmentList.add(musicFragment);
-        // 视频
         FileListFragment videoFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_VIDEO);
         mFragmentList.add(videoFragment);
     }
@@ -211,7 +206,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
             }
         });
-
         mFileSelectAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             List data = adapter.getData();
             FileInfo fileInfo = (FileInfo) adapter.getData().get(position);
@@ -223,7 +217,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
             updateBottomTitle();
         });
-
         mFileSelectAdapter.setOnItemChildLongClickListener((adapter, view, position) -> {
             if (sFabState == Const.FAB_STATE_SEND) {
                 AnimationUtils.showFabClearAll(mContext, mFabBtn, R.color.red_700);
@@ -296,9 +289,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             return true;
         });
     }
-
-
-
 
     private void markLastFile() {
         FileInfo fileInfo = App.getSendFileList().get(App.getSendFileList().size() - 1);

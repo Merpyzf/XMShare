@@ -59,11 +59,6 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
         mLoaderManager.initLoader(mLoadFileType, null, this);
     }
 
-    private void loadApp() {
-        Observable observable = ApkUtils.asyncLoadApp(mContext);
-        onLoadFinished(observable);
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri;
@@ -133,6 +128,11 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private void loadApp() {
+        Observable observable = ApkUtils.asyncLoadApp(mContext);
+        onLoadFinished(observable);
     }
 
     public abstract void onLoadFinished(Observable observable);
