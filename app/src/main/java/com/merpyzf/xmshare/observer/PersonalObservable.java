@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.ui.interfaces;
+package com.merpyzf.xmshare.observer;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -28,13 +28,11 @@ import java.net.UnknownHostException;
 
 public class PeerCommunicate extends Thread {
 
-
     private DatagramSocket mUdpSocket;
     private boolean isLoop = true;
     private Context mContext = null;
     private Handler mHandler = null;
     private static final String TAG = PeerCommunicate.class.getName();
-
 
     public PeerCommunicate(Context context, Handler handler, int port) {
 

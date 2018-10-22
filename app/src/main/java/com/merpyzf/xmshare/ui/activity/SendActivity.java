@@ -19,7 +19,7 @@ import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
-import com.merpyzf.transfermanager.interfaces.TransferObserver;
+import com.merpyzf.transfermanager.observer.AbsTransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
@@ -115,7 +115,7 @@ public class SendActivity extends BaseActivity {
             public void onPairSuccess(Peer peer) {
                 super.onPairSuccess(peer);
                 // 注册一个文件发送状态的监听
-                SenderManager.getInstance(mContext).register(new TransferObserver() {
+                SenderManager.getInstance(mContext).register(new AbsTransferObserver() {
                     // 传输中的文件的状态
                     @Override
                     public void onTransferStatus(FileInfo fileInfo) {

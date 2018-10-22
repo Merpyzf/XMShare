@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
+import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.SharedPreUtils;
@@ -15,7 +15,6 @@ import com.merpyzf.transfermanager.util.timer.Timeout;
 
 import java.net.InetAddress;
 import java.util.Timer;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Created by wangke on 2017/12/17.
@@ -25,21 +24,18 @@ public class PeerManager {
 
     private Context mContext = null;
     private PeerHandler mPeerHandler;
-    private PeerCommCallback mPeerCallback = null;
-    private OSTimer mOsTimer;
     private PeerCommunicate mPeerCommunicate;
     private PeerTransferBreakCallBack mTransferBreakCallback = null;
-    private String nickName;
+    private String mNickName;
     private OSTimer mOnLineTimer;
     private Timer mTimer;
     private boolean isStop = false;
 
 
-    public PeerManager(Context context, String nickName, PeerCommCallback peerCallback) {
+    public PeerManager(Context context, String nickName) {
         this.mContext = context;
-        this.nickName = nickName;
-        // 创建Handler用于接收的UDP消息处理
-        this.mPeerHandler = new PeerHandler(mContext, peerCallback);
+        this.mNickName = nickName;
+        this.mPeerHandler = new PeerHandler(mContext);
         this.mPeerCommunicate = new PeerCommunicate(mContext, mPeerHandler, Const.UDP_PORT);
     }
 
@@ -261,6 +257,16 @@ public class PeerManager {
 
     public void setPeerTransferBreakListener(PeerTransferBreakCallBack transferBreakListener) {
         mPeerHandler.setTransferBreakListener(transferBreakListener);
+    }
+
+    /**
+     * 设置局域网内用户动作的监听
+     * @param onPeerActionListener
+     */
+    public void setOnPeerActionListener(OnPeerActionListener onPeerActionListener){
+        if(mPeerHandler!=null){
+            mPeerHandler.setOnPeerActionListener(onPeerActionListener);
+        }
     }
 }
 

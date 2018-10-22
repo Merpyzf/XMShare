@@ -7,7 +7,7 @@ import android.os.Message;
 
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
+import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 
 /**
@@ -16,13 +16,16 @@ import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
  */
 public class PeerHandler extends Handler {
     private Context mContext = null;
-    private PeerCommunicate mPeerCommunicate;
-    private PeerCommCallback mPeerCommCallback = null;
+    private OnPeerActionListener mOnPeerActionListener = null;
     private PeerTransferBreakCallBack mPeerTransferBreakCallback = null;
 
-    public PeerHandler(Context mContext, PeerCommCallback peerCommCallback) {
+    public PeerHandler(Context context, OnPeerActionListener onPeerActionListener) {
         this.mContext = mContext;
-        this.mPeerCommCallback = peerCommCallback;
+        this.mOnPeerActionListener = onPeerActionListener;
+    }
+
+    public PeerHandler(Context mContext) {
+        this.mContext = mContext;
     }
 
     public PeerHandler(Looper looper) {
@@ -56,64 +59,43 @@ public class PeerHandler extends Handler {
         // 3. receiveManager处理文件的接收
 
         switch (cmd) {
-
-
             // 设备上线
             case SignMessage.cmd.ON_LINE:
-
-                if (mPeerCommCallback != null) {
-
-                    mPeerCommCallback.onDeviceOnLine(peer);
+                if (mOnPeerActionListener != null) {
+                    mOnPeerActionListener.onDeviceOnLine(peer);
                 }
-
                 break;
-
             // 设备下线
             case SignMessage.cmd.OFF_LINE:
-
-                if (mPeerCommCallback != null) {
-
-                    mPeerCommCallback.onDeviceOffLine(peer);
+                if (mOnPeerActionListener != null) {
+                    mOnPeerActionListener.onDeviceOffLine(peer);
                 }
-
-
                 break;
-
-
             case SignMessage.cmd.REQUEST_CONN:
-
-                if (mPeerCommCallback != null) {
-
-                    mPeerCommCallback.onRequestConnect(peer);
+                if (mOnPeerActionListener != null) {
+                    mOnPeerActionListener.onRequestConnect(peer);
                 }
-
                 break;
-
             case SignMessage.cmd.ANSWER_REQUEST_CONN:
-
-                if (mPeerCommCallback != null) {
-
-                    mPeerCommCallback.onAnswerRequestConnect(peer);
+                if (mOnPeerActionListener != null) {
+                    mOnPeerActionListener.onAnswerRequestConnect(peer);
                 }
-
                 break;
             case SignMessage.cmd.TRANSFER_BREAK:
-
                 if (mPeerTransferBreakCallback != null) {
                     mPeerTransferBreakCallback.onTransferBreak(peer);
                 }
-
             default:
                 break;
-
         }
-
-
     }
-
 
     public void setTransferBreakListener(PeerTransferBreakCallBack transferBreakListener) {
         this.mPeerTransferBreakCallback = transferBreakListener;
+    }
+
+    public void setOnPeerActionListener(OnPeerActionListener onPeerActionListener) {
+        this.mOnPeerActionListener = onPeerActionListener;
     }
 }
 

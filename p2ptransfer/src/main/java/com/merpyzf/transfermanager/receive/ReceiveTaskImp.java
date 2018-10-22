@@ -80,6 +80,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             receiveFileList();
         } catch (Exception e) {
             e.printStackTrace();
+            Log.i("WW2K", "ReceiveTaskImp expection: " + e.getMessage());
             sendError(e);
             release();
         } finally {
@@ -115,19 +116,23 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
 
     }
 
+    /**
+     * 解析文件头信息
+     *
+     * @param inputStream
+     * @return
+     * @throws Exception
+     */
     private FileInfo decodeFileHeader(InputStream inputStream) throws Exception {
         byte[] buffer = new byte[Const.FILE_HEADER_LENGTH];
         int available = inputStream.available();
         if (available >= Const.FILE_HEADER_LENGTH) {
-            Log.i("WW2K", "available--> " + available);
-            int readLength = inputStream.read(buffer, 0, Const.FILE_HEADER_LENGTH);
-            Log.i("WW2k", "readLength--> " + readLength);
-            if (readLength != Const.FILE_HEADER_LENGTH) {
+            int readLen = inputStream.read(buffer, 0, Const.FILE_HEADER_LENGTH);
+            if (readLen != Const.FILE_HEADER_LENGTH) {
                 throw new Exception("读取到文件的头信息出错");
             }
             String strHeader = new String(buffer, Const.S_CHARSET);
-            Log.i("WW2K", "strHeader--> " + strHeader);
-            strHeader = trimLastSpaces(strHeader);
+            strHeader = trimLastFillChars(strHeader);
             FileInfo fileInfo = new FileInfo();
             fileInfo.decodeHeader(strHeader);
             return fileInfo;
@@ -136,12 +141,12 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     }
 
     /**
-     * 移除文件头信息末尾为凑齐字长而添加的空格字符
+     * 去除文件头信息中有用的字符序列
      *
      * @param strHeader
      * @return
      */
-    private String trimLastSpaces(String strHeader) {
+    private String trimLastFillChars(String strHeader) {
         return strHeader.substring(0, strHeader.indexOf(Const.S_END));
     }
 
@@ -181,14 +186,12 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                 perSecondReadLength += readLength;
                 end = System.currentTimeMillis();
                 endTime = System.currentTimeMillis();
-                // 计算每秒传输字节长度
                 if (endTime - startTime >= 1000) {
                     String[] transferSpeed = FileUtils.getFileSizeArrayStr(perSecondReadLength);
                     fileInfo.setTransferSpeed(transferSpeed);
                     perSecondReadLength = 0;
                     startTime = endTime;
                 }
-                // 控制界面刷新的频率
                 if (end - start >= Const.PROGRESS_REFRESH_INTERVAL) {
                     progress = currentLength / (totalLength * 1.0f);
                     fileInfo.setProgress(progress);
@@ -197,7 +200,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                 }
             }
             bos.flush();
-            //文件全部传输完成
+            fileInfo.setFileTransferStatus(Const.TransferStatus.TRANSFER_SUCCESS);
             sendMessage(fileInfo, Const.TransferStatus.TRANSFER_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

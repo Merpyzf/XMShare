@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.ui.adapter.AvatarAdapter;
-import com.merpyzf.xmshare.ui.interfaces.PersonalObservable;
+import com.merpyzf.xmshare.observer.PersonalObservable;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import butterknife.BindView;

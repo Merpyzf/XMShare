@@ -4,7 +4,7 @@
         <img class="cover" src="{cover}">
         <div class="file_info">
             <h3>{file_name}</h3>
-            <h4>{type}&nbsp&nbsp{file_path} &nbsp&nbsp{file_size}</h4>
+            <h4>{mType}&nbsp&nbsp{file_path} &nbsp&nbsp{file_size}</h4>
         </div>
 
     </div>

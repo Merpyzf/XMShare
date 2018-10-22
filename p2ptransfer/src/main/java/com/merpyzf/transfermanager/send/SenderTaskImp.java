@@ -50,6 +50,10 @@ public class SenderTaskImp implements SendTask, Runnable {
     public void init() throws Exception {
         mSocket = new Socket();
         mSocket.connect(new InetSocketAddress(mtargetAddress, Const.SOCKET_PORT), 3000);
+        // 设置字节流读取的阻塞时间为3秒
+        mSocket.setSoTimeout(3*1000);
+        mSocket.setSendBufferSize(64*1024*1024);
+        mSocket.setPerformancePreferences(2, 1,2);
         mOutputStream = mSocket.getOutputStream();
     }
 
@@ -71,7 +75,6 @@ public class SenderTaskImp implements SendTask, Runnable {
     @Override
     public void sendHeader(FileInfo fileInfo) throws Exception {
         String header = fileInfo.getHeader(mContext);
-        Log.i("WW2K", "header--> " + header);
         mOutputStream.write(header.getBytes());
         if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE) {
             mOutputStream.write(fileInfo.getFileThumbArray());
@@ -113,23 +116,20 @@ public class SenderTaskImp implements SendTask, Runnable {
                 perSecondReadLength += currentLength;
                 // 统计每秒的传输速度
                 if (endTime - startTime >= 1000) {
-                    // TODO: 2018/10/15 考虑传输速度的信息放置在FileInfo对象中是否合适
                     String[] perSecondSpeed = FileUtils.getFileSizeArrayStr(perSecondReadLength);
                     fileInfo.setTransferSpeed(perSecondSpeed);
                     perSecondReadLength = 0;
                     startTime = endTime;
                 }
                 long end = System.currentTimeMillis();
-                // 控制界面传输进度的刷新间隔为50毫秒
                 if (end - start > Const.PROGRESS_REFRESH_INTERVAL) {
                     fileInfo.setProgress((readLength / (fileLength * 1.0f)));
-                    // 发送文件正在传输的消息，通知界面更新传输进度
                     sendMessage(fileInfo, Const.TransferStatus.TRANSFING);
                     start = end;
                 }
             }
             mOutputStream.flush();
-            // 发送文件传输成功的消息
+            fileInfo.setFileTransferStatus(Const.TransferStatus.TRANSFER_SUCCESS);
             sendMessage(fileInfo, Const.TransferStatus.TRANSFER_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,8 +143,6 @@ public class SenderTaskImp implements SendTask, Runnable {
                 sendError(e);
             }
         }
-
-
     }
 
     @Override

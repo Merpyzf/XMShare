@@ -304,19 +304,14 @@ public class FileInfo extends DataSupport implements Serializable {
      * @return
      */
     public void decodeHeader(String strHeader) throws Exception {
-        try {
-            String[] split = strHeader.split(Const.S_SEPARATOR);
-            this.setType(Integer.valueOf(split[0]));
-            this.setName(split[1]);
-            this.setSuffix(split[2]);
-            this.setLength(Integer.valueOf(split[3]));
-            this.setThumbLength(Integer.valueOf(split[4]));
-            this.setMd5(split[5]);
-            this.setIsLast(Integer.valueOf(split[6]));
-        }catch (NumberFormatException e){
-            throw e;
-        }finally {
-        }
+        String[] split = strHeader.split(Const.S_SEPARATOR);
+        this.setType(Integer.valueOf(split[0]));
+        this.setName(split[1]);
+        this.setSuffix(split[2]);
+        this.setLength(Integer.valueOf(split[3]));
+        this.setThumbLength(Integer.valueOf(split[4]));
+        this.setMd5(split[5]);
+        this.setIsLast(Integer.valueOf(split[6]));
     }
 
 

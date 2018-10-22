@@ -1,4 +1,4 @@
-package com.merpyzf.transfermanager.interfaces;
+package com.merpyzf.transfermanager.observer;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 
@@ -12,17 +12,18 @@ public interface TransferObserver {
     /**
      * 文件接收进度的回调
      */
-    void onTransferProgress(FileInfo fileInfo);
+    public void onTransferProgress(FileInfo fileInfo);
 
     /**
      * 文件正常接收状态的回调
      */
-    void onTransferStatus(FileInfo fileInfo);
+    public void onTransferStatus(FileInfo fileInfo);
 
     /**
      * 传输出错
+     *
      * @param error
      */
-    void onTransferError(String error);
+    public void onTransferError(String error);
 
 }

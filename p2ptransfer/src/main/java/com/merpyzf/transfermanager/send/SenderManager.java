@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.interfaces.TransferObserver;
+import com.merpyzf.transfermanager.observer.TransferObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,25 +22,36 @@ public class SenderManager {
     private static SenderManager mSenderManager;
     private SenderTaskImp mSenderTaskImp;
     private P2pTransferHandler mP2pTransferHandler;
-    private List<TransferObserver> mTransferObservers;
-    private static final String TAG = SenderManager.class.getSimpleName();
+    // 观察者集合
+    private List<TransferObserver> mTransferObserverLists;
+    private String TAG = SenderManager.class.getSimpleName();
+
 
     public static SenderManager getInstance(Context context) {
+
         if (mSenderManager == null) {
+
             synchronized (Object.class) {
+
                 if (mSenderManager == null) {
+
                     mSenderManager = new SenderManager(context);
+
+
                 }
+
             }
+
         }
         return mSenderManager;
     }
 
+
     private SenderManager(Context context) {
-        mTransferObservers = new ArrayList<>();
-        mP2pTransferHandler = new P2pTransferHandler(mTransferObservers);
+        mTransferObserverLists = new ArrayList<>();
+        mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
         mSingleThreadPool = Executors.newSingleThreadExecutor();
-        this.mContext = context;
+        this.mContext = context.getApplicationContext();
     }
 
     /**
@@ -49,18 +60,22 @@ public class SenderManager {
      * @param transferObserver
      */
     public void register(TransferObserver transferObserver) {
-        mTransferObservers.add(transferObserver);
+
+        mTransferObserverLists.add(transferObserver);
+
     }
 
     /**
-     * 移除指定的观察者
+     * 移除一个观察者
      *
      * @param transferObserver
      */
     public void unRegister(TransferObserver transferObserver) {
-        if (mTransferObservers.contains(transferObserver)) {
-            mTransferObservers.remove(transferObserver);
+
+        if (mTransferObserverLists.contains(transferObserver)) {
+            mTransferObserverLists.remove(transferObserver);
         }
+
     }
 
     /**
@@ -70,6 +85,7 @@ public class SenderManager {
      * @param fileInfoList
      */
     public void send(String destAddress, List<FileInfo> fileInfoList) {
+
         mSenderTaskImp = new SenderTaskImp(mContext, destAddress, fileInfoList, mP2pTransferHandler);
         mSingleThreadPool.execute(mSenderTaskImp);
 
@@ -80,7 +96,6 @@ public class SenderManager {
      */
     public void release() {
         if (mSenderTaskImp != null) {
-            // TODO: 2018/10/15 考虑要将下面资源释放的代码移除，传输完成后直接由SenderTaskImp对象内部释放
             mSenderTaskImp.release();
         }
     }

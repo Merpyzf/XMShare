@@ -47,7 +47,7 @@ public class Const {
     // 消息中包含信息的个数
     public static final int MSG_PROPERTIES_LENGTH = 6;
     // 传输进度和
-    public static final int PROGRESS_REFRESH_INTERVAL = 50;
+    public static final int PROGRESS_REFRESH_INTERVAL = 200;
     // 文件在传输过程中的几个状态
     public class TransferStatus {
         //等待状态

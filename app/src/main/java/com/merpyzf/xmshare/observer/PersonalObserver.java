@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.ui.interfaces;
+package com.merpyzf.xmshare.observer;
 
 /**
  * Created by wangke on 2018/1/31.

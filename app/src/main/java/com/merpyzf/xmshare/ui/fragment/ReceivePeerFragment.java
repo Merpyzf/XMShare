@@ -1,6 +1,7 @@
 package com.merpyzf.xmshare.ui.fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -277,6 +278,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     /**
      * 初始化热点
      */
+    @SuppressLint("CheckResult")
     private void initAp() {
         // 如果热点处于开启状态就将其关闭
         if (ApManager.isApOn(mContext)) {

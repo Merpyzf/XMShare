@@ -19,11 +19,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.interfaces.TransferObserver;
+import com.merpyzf.transfermanager.observer.AbsTransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
 import com.merpyzf.xmshare.util.SingleThreadPool;
 
@@ -137,7 +136,7 @@ public class APActivity extends AppCompatActivity {
                 Toast.makeText(mContext, "Ap初始化成功", Toast.LENGTH_SHORT).show();
                 ReceiverManager receiverManager = ReceiverManager.getInstance(mContext);
 
-                receiverManager.register(new TransferObserver() {
+                receiverManager.register(new AbsTransferObserver() {
                     @Override
                     public void onTransferProgress(FileInfo fileInfo) {
                         Log.i("w2k", "传输进度: " + (int) (fileInfo.getProgress() * 100));

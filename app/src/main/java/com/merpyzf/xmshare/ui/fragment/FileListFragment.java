@@ -97,7 +97,9 @@ public class FileListFragment extends BaseFragment {
 
     @Override
     protected void initEvent() {
-
+        if(mFileListAdapter==null){
+            return;
+        }
         mFileListAdapter.setOnItemClickListener((adapter, view, position) -> {
             ImageView ivSelect = view.findViewById(R.id.iv_select);
             FileInfo fileInfo = mFileLists.get(position);
@@ -244,10 +246,16 @@ public class FileListFragment extends BaseFragment {
             default:
                 break;
         }
-        // 设置空布局， 需要将布局文件转换成View后才能设置，否则会报错
-        mFileListAdapter.setEmptyView(View.inflate(mContext, R.layout.view_rv_file_empty, null));
-        // 设置适配器
-        mRvFileList.setAdapter(mFileListAdapter);
+        View emptyView = View.inflate(mContext, R.layout.view_rv_file_empty, null);
+        if (emptyView != null) {
+            if(mFileListAdapter == null){
+                return;
+            }
+            // 设置空布局， 需要将布局文件转换成View后才能设置，否则会报错
+            mFileListAdapter.setEmptyView(emptyView);
+            // 设置适配器
+            mRvFileList.setAdapter(mFileListAdapter);
+        }
     }
 
     private void updateCbxTitle() {

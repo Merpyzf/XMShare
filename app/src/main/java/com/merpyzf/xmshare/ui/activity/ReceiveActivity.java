@@ -13,11 +13,10 @@ import android.widget.Toast;
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.interfaces.TransferObserver;
+import com.merpyzf.transfermanager.observer.AbsTransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.ui.fragment.ReceivePeerFragment;
 import com.merpyzf.xmshare.ui.fragment.transfer.TransferReceiveFragment;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -114,7 +113,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     // 收到对端请求发送文件的请求
                     // 开启一个Socket服务
                     ReceiverManager receiverManager = ReceiverManager.getInstance(mContext);
-                    receiverManager.register(new TransferObserver() {
+                    receiverManager.register( new AbsTransferObserver() {
                         // TODO: 2018/1/28 增加一个文件全部传输完毕的回调
                         @Override
                         public void onTransferStatus(FileInfo fileInfo) {

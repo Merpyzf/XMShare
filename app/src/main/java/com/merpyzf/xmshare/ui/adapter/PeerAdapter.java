@@ -36,10 +36,13 @@ public class PeerAdapter extends BaseQuickAdapter<Peer, BaseViewHolder> {
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mCivPeerHeader);
-        if (peer.isHotsPot()) {
-            helper.setImageResource(R.id.iv_peer_type, R.drawable.ic_phone_ap);
-        } else {
-            helper.setImageResource(R.id.iv_peer_type, R.drawable.ic_phone);
+
+        if (mLayoutResId == R.layout.item_rv_send_peer) {
+            if (peer.isHotsPot()) {
+                helper.setImageResource(R.id.iv_peer_type, R.drawable.ic_phone_ap);
+            } else {
+                helper.setImageResource(R.id.iv_peer_type, R.drawable.ic_phone);
+            }
         }
 
     }

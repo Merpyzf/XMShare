@@ -7,9 +7,10 @@ import android.util.Log;
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.interfaces.TransferObserver;
+import com.merpyzf.transfermanager.observer.TransferObserver;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -71,65 +72,49 @@ public class ReceiverManager implements Runnable {
      *
      * @param transferObserver
      */
-
     public void register(TransferObserver transferObserver) {
 
-        if (!mTransferObserverLists.contains(transferObserver)) {
+        if (transferObserver != null && !mTransferObserverLists.contains(transferObserver)) {
             mTransferObserverLists.add(transferObserver);
         }
 
     }
-
-
     /**
      * 接触注册一个观察者
      *
      * @param transferObserver
      */
     public void unRegister(TransferObserver transferObserver) {
-        if (mTransferObserverLists.contains(transferObserver)) {
+        if (transferObserver != null && mTransferObserverLists.contains(transferObserver)) {
             mTransferObserverLists.remove(transferObserver);
         }
     }
 
     public void setOnTransferFileListListener(TransferFileListListener transferFileListListener) {
-        mP2pTransferHandler.setTransferFileListListener(transferFileListListener);
+        if (transferFileListListener != null) {
+            mP2pTransferHandler.setTransferFileListListener(transferFileListListener);
+        }
     }
 
     @Override
     public void run() {
-
         try {
-
-            mServerSocket = new ServerSocket(Const.SOCKET_PORT);
-
+            mServerSocket = new ServerSocket();
+            //是否复用未完全关闭的地址端口
+            mServerSocket.setReuseAddress(true);
+            mServerSocket.setReceiveBufferSize(64 * 1024 * 1024);
+            mServerSocket.setPerformancePreferences(2, 1, 2);
+            mServerSocket.bind(new InetSocketAddress(Const.SOCKET_PORT));
             while (!isStop) {
-
                 Log.i(TAG, "SocketServer 阻塞中,等待设备连接....");
-                // TODO: 2018/1/26 将mServerSocket.accept()移动到ReceiveTask中避免主线程出错
                 mSocketClient = mServerSocket.accept();
-                Log.i(TAG, "有设备连接:" + mSocketClient.getInetAddress().getHostAddress());
-
-                if (mSocketClient == null) {
-                    Log.i("w22k", "mScoketClient为空");
-                }
-
-
                 mReceiveTaskImp = new ReceiveTaskImp(mContext, mSocketClient, mP2pTransferHandler);
-
-                if (mReceiveTaskImp == null) {
-                    Log.i("w22k", "mReceiveTaskImp为空");
-                }
                 mSingleThreadPool.execute(mReceiveTaskImp);
-
-
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
     /**
      * 传输文件列表监听接口
      */
@@ -142,7 +127,6 @@ public class ReceiverManager implements Runnable {
          */
         void onReceiveCompleted(List<FileInfo> transferFileList);
 
-
     }
 
     /**
@@ -151,7 +135,6 @@ public class ReceiverManager implements Runnable {
     private static void reset() {
         isStop = false;
     }
-
 
     /**
      * 释放资源

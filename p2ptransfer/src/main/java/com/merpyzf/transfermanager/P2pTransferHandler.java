@@ -6,7 +6,7 @@ import android.os.Message;
 
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.interfaces.TransferObserver;
+import com.merpyzf.transfermanager.observer.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 
 import java.util.List;
