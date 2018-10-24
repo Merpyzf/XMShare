@@ -22,8 +22,10 @@ import com.merpyzf.xmshare.observer.AbsFileStatusObserver;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.ui.adapter.PhotoSectionAdapter;
+import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.DateUtils;
+import com.merpyzf.xmshare.util.DisplayUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -111,7 +113,8 @@ public class ShowPhotosFragment extends BaseFragment {
     protected void initWidget(View rootView) {
         mPhotoFrg = getMyParentFragment();
         mBottomSheetView = Objects.requireNonNull(getActivity()).findViewById(R.id.bottom_sheet);
-        mRvPhotoList.setLayoutManager(new GridLayoutManager(mContext, 4));
+        mRvPhotoList.setLayoutManager(new GridLayoutManager(mContext, 3));
+        mRvPhotoList.addItemDecoration(new RecyclerViewItemDecoration(DisplayUtils.dip2px(getContext(), 5)));
         mRvPhotoList.getItemAnimator().setChangeDuration(0);
         mAdapter = new PhotoSectionAdapter(R.layout.item_rv_pic, R.layout.item_selction_head, mDatas);
         mRvPhotoList.setAdapter(mAdapter);
@@ -232,7 +235,6 @@ public class ShowPhotosFragment extends BaseFragment {
         });
         FilesStatusObservable.getInstance().register(TAG, mFileStatusObserver);
     }
-
     /**
      * 根据所选照片的变化更新相册是否全选的状态
      */
@@ -250,11 +252,17 @@ public class ShowPhotosFragment extends BaseFragment {
         View startView;
         View targetView = null;
         startView = view.findViewById(R.id.iv_cover);
+        // 动画开始后再将View还原为原始尺寸，此处先缓存下来
+        int tempHeight = startView.getLayoutParams().height;
+        int tempWidth = startView.getLayoutParams().width;
+        startView.getLayoutParams().height = DisplayUtils.dip2px(getContext(), 100);
+        startView.getLayoutParams().width = DisplayUtils.dip2px(getContext(), 100);
         if (getActivity() != null && (getActivity() instanceof SelectFilesActivity)) {
             targetView = mBottomSheetView;
         }
         AnimationUtils.setAddTaskAnimation(getActivity(), startView, targetView, null);
-
+        startView.getLayoutParams().height = tempHeight;
+        startView.getLayoutParams().width = tempWidth;
     }
 
     /**

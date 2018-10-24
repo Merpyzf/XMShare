@@ -239,7 +239,7 @@ public class FileListFragment extends BaseFragment {
                 updateTitle("音乐");
                 mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 3));
                 mRvFileList.addItemDecoration(new RecyclerViewItemDecoration(DisplayUtils.
-                        px2dip(getContext(), 20)));
+                        dip2px(getContext(), 5)));
                 mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_music, mFileLists);
                 break;
 

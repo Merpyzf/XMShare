@@ -2,7 +2,6 @@
 <com.merpyzf.xmshare.ui.widget.SquareView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="2dp"
     android:foreground="@drawable/card_foreground"
     android:orientation="vertical">
 
@@ -11,21 +10,21 @@
         android:layout_height="match_parent">
 
         <FrameLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center">
 
             <ImageView
                 android:id="@+id/iv_cover"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/gif_iv"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
 
