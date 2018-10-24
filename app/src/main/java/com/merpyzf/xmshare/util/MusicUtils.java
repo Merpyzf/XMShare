@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
@@ -40,8 +41,6 @@ import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_MUSIC;
  */
 
 public class MusicUtils {
-
-
     /**
      * 从媒体库加载封面
      */
@@ -70,7 +69,6 @@ public class MusicUtils {
         Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
         return ContentUris.withAppendedId(artworkUri, albumId);
     }
-
     /**
      * 将专辑封面图缓存到本地
      *
@@ -109,82 +107,7 @@ public class MusicUtils {
                         }
                     }
                 });
-
-
     }
-
-    /**
-     * 将专辑封面图缓存到本地
-     *
-     * @param context
-     * @param musicFile
-     */
-    public static synchronized void writeAlbumImg2local(final Context context, FileInfo musicFile) {
-
-
-        Observable.just(musicFile)
-                .filter(musicFile1 -> {
-
-                    if (musicFile instanceof MusicFile) {
-
-                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, (MusicFile) musicFile1)) {
-                            return true;
-                        }
-                    }
-                    return false;
-
-                }).flatMap(musicFile1 -> Observable.just(((MusicFile) musicFile1))).subscribeOn(Schedulers.io())
-                .subscribe(new Observer<MusicFile>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(MusicFile musicFile) {
-
-                        Bitmap bitmap = loadCoverFromMediaStore(context, musicFile.getAlbumId());
-                        BufferedOutputStream bos = null;
-                        try {
-
-                            File extPicCacheDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-                            bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(musicFile.getAlbumId() + ""))));
-                            if (bitmap == null) {
-
-                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
-                            }
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-
-                            //Log.i("wk", musicFile.getName() + "--> 向缓存中写入图片");
-
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } finally {
-                            try {
-                                bos.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-
-
-    }
-
 
     /**
      * 判断要获取到音乐封面是否在本地已经存在
@@ -203,21 +126,15 @@ public class MusicUtils {
         // TODO: 2017/12/24 考虑增加清理音乐文件不存在的album_id
         return false;
     }
-
-
     /**
      * 更新封面图片
      */
     public static synchronized void updateAlbumImg(Context context, List<FileInfo> fileInfoList) {
-
         // copy一份List<FileInfo>到一个新的集合避免在使用iterator遍历集合的同时又对集合修改，就会产生ConcurrentModificationException
         List<FileInfo> copyFileInfoList = new ArrayList<>();
         copyFileInfoList.addAll(fileInfoList);
         writeAlbumImg2local(context, copyFileInfoList);
-
     }
-
-
     public static Observable<List<FileInfo>> asyncLoadingMusic(Cursor data) {
         return Observable.just(data)
                 .flatMap(cursor -> {
@@ -232,7 +149,8 @@ public class MusicUtils {
                         // 注意这边的音乐文件的大小是否正确
                         long extraMaxBytes = data.getLong(4);
                         long duration = data.getLong(5);
-                        MusicFile fileInfo = new MusicFile(title, path, FILE_TYPE_MUSIC, (int) extraMaxBytes, albumId, artist, duration);
+                        MusicFile fileInfo = new MusicFile(title, path, FILE_TYPE_MUSIC,
+                                (int) extraMaxBytes, albumId, artist, duration);
                         // 添加文件的后缀名
                         fileInfo.setSuffix(FileUtils.getFileSuffix(path));
                         if (extraMaxBytes > 1024 * 1024) {

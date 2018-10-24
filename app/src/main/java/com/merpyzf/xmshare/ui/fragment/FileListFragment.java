@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.ui.fragment;
 import android.annotation.SuppressLint;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.ViewUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -22,11 +23,14 @@ import com.merpyzf.xmshare.observer.AbsFileStatusObserver;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
+import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.ApkUtils;
 import com.merpyzf.xmshare.util.CollectionUtils;
+import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.merpyzf.xmshare.util.MusicUtils;
+import com.merpyzf.xmshare.util.UiUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
@@ -97,7 +101,7 @@ public class FileListFragment extends BaseFragment {
 
     @Override
     protected void initEvent() {
-        if(mFileListAdapter==null){
+        if (mFileListAdapter == null) {
             return;
         }
         mFileListAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -233,7 +237,9 @@ public class FileListFragment extends BaseFragment {
 
             case FILE_TYPE_MUSIC:
                 updateTitle("音乐");
-                mRvFileList.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 3));
+                mRvFileList.addItemDecoration(new RecyclerViewItemDecoration(DisplayUtils.
+                        px2dip(getContext(), 20)));
                 mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_music, mFileLists);
                 break;
 
@@ -248,7 +254,7 @@ public class FileListFragment extends BaseFragment {
         }
         View emptyView = View.inflate(mContext, R.layout.view_rv_file_empty, null);
         if (emptyView != null) {
-            if(mFileListAdapter == null){
+            if (mFileListAdapter == null) {
                 return;
             }
             // 设置空布局， 需要将布局文件转换成View后才能设置，否则会报错
