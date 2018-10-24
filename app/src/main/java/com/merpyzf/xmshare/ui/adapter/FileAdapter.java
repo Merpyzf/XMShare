@@ -167,10 +167,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
         }
 
-        FileInfo fileInfo = (FileInfo) item;
         ImageView ivSelect = helper.getView(R.id.iv_select);
 
-        if (App.getSendFileList().contains(fileInfo)) {
+        if (App.getSendFileList().contains(item)) {
             ivSelect.setVisibility(View.VISIBLE);
 
         } else {

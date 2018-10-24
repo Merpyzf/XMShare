@@ -5,7 +5,9 @@ import android.support.v7.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.ui.test.entity.PinnedEntity;
+import com.merpyzf.xmshare.ui.test.entity.PinnedHeaderEntity;
 import com.oushangfeng.pinnedsectionitemdecoration.utils.FullSpanUtil;
 
 import java.util.List;
@@ -14,14 +16,15 @@ import java.util.List;
  * Created by merpyzf on 2018/4/19.
  */
 
-public class TestPinnedAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
+public class TestPinnedAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<PicFile>> {
 
-    public TestPinnedAdapter(int layoutResId, @Nullable List<String> data) {
-        super(layoutResId, data);
+
+    public TestPinnedAdapter(List<PinnedHeaderEntity<PicFile>> data) {
+        super(data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, String item) {
+    protected void addItemTypes() {
 
     }
 
@@ -29,6 +32,11 @@ public class TestPinnedAdapter extends BaseQuickAdapter<String, BaseViewHolder> 
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         FullSpanUtil.onAttachedToRecyclerView(recyclerView, this, PinnedEntity.TYPE_HEADER);
+    }
+
+    @Override
+    protected void convert(BaseViewHolder helper, PinnedHeaderEntity<PicFile> item) {
+
     }
 
 

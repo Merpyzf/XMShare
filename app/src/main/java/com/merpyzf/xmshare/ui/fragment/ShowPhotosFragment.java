@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -15,33 +16,44 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
+import com.merpyzf.xmshare.bean.Section;
 import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.observer.AbsFileStatusObserver;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
-import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
+import com.merpyzf.xmshare.ui.adapter.PhotoSectionAdapter;
 import com.merpyzf.xmshare.util.AnimationUtils;
+import com.merpyzf.xmshare.util.DateUtils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Observable;
 
 import butterknife.BindView;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Function;
 
 /**
  * 展示相册中的照片
+ *
  * @author wangke
  */
 
-public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener {
+public class ShowPhotosFragment extends BaseFragment {
 
     @BindView(R.id.rv_photo_list)
     RecyclerView mRvPhotoList;
     private View mBottomSheetView;
     private PhotoFragment mPhotoFrg;
-    private FileAdapter<FileInfo> mAdapter;
+    private PhotoSectionAdapter mAdapter;
     private CheckBox mCheckBoxAll;
     private PhotoDirBean mPhotoDirBean;
     private AbsFileStatusObserver mFileStatusObserver;
+    private List<Section> mDatas;
     private final String TAG = ShowPhotosFragment.class.getSimpleName();
 
     public static ShowPhotosFragment getInstance(Bundle args) {
@@ -54,6 +66,40 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
     protected void initArgs(Bundle bundle) {
         super.initArgs(bundle);
         mPhotoDirBean = (PhotoDirBean) bundle.getSerializable("photos");
+        mDatas = getSelectionData(mPhotoDirBean);
+        updateSelectionHead();
+    }
+
+    // TODO: 2018/10/24 此方法中的业务逻辑后期使用RxJava改写
+    private List<Section> getSelectionData(PhotoDirBean dirBean) {
+
+        LinkedHashMap<String, List<FileInfo>> tempMap = new LinkedHashMap<>();
+        List<Section> datas = new ArrayList<>();
+        for (FileInfo fileInfo : dirBean.getImageList()) {
+            File file = new File(fileInfo.getPath());
+            long lastModified = file.lastModified();
+            String date = DateUtils.getDate(lastModified);
+            if (tempMap.keySet().contains(date)) {
+                tempMap.get(date).add(fileInfo);
+            } else {
+                ArrayList<FileInfo> fileInfos = new ArrayList<>();
+                fileInfos.add(fileInfo);
+                tempMap.put(date, fileInfos);
+            }
+        }
+        for (Map.Entry<String, List<FileInfo>> entry : tempMap.entrySet()) {
+            String key = entry.getKey();
+            List<FileInfo> photos = entry.getValue();
+            Section headSection = new Section(true, key, photos.size());
+            headSection.setChildNum(photos.size());
+            datas.add(headSection);
+            for (FileInfo photo : photos) {
+                photo.setLastModified(key);
+                datas.add(new Section(photo));
+            }
+        }
+        return datas;
+
     }
 
     @Override
@@ -66,7 +112,8 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
         mPhotoFrg = getMyParentFragment();
         mBottomSheetView = Objects.requireNonNull(getActivity()).findViewById(R.id.bottom_sheet);
         mRvPhotoList.setLayoutManager(new GridLayoutManager(mContext, 4));
-        mAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_pic, mPhotoDirBean.getImageList());
+        mRvPhotoList.getItemAnimator().setChangeDuration(0);
+        mAdapter = new PhotoSectionAdapter(R.layout.item_rv_pic, R.layout.item_selction_head, mDatas);
         mRvPhotoList.setAdapter(mAdapter);
         mCheckBoxAll = getCheckBoxFromParentFrg();
         mCheckBoxAll.setChecked(mPhotoDirBean.isChecked());
@@ -82,7 +129,31 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
 
     @Override
     protected void initEvent() {
-        mAdapter.setOnItemClickListener(this);
+        mAdapter.setOnItemClickListener((adapter, view, position) -> {
+            Section section = (Section) adapter.getData().get(position);
+            if (!section.isHeader) {
+                ImageView ivSelect = view.findViewById(R.id.iv_select);
+                PicFile picFile = (PicFile) section.t;
+                // 选中一个item
+                if (!App.getSendFileList().contains(picFile)) {
+                    ivSelect.setVisibility(View.VISIBLE);
+                    App.addSendFile(picFile);
+                    FilesStatusObservable.getInstance().notifyObservers(picFile,
+                            TAG, FilesStatusObservable.FILE_SELECTED);
+                    startFileSelectedAnimation(view);
+                    updatePhotoAlbumCheckedStatus();
+                    // 取消选中一个item
+                } else {
+                    ivSelect.setVisibility(View.INVISIBLE);
+                    App.removeSendFile(picFile);
+                    FilesStatusObservable.getInstance().notifyObservers(picFile, TAG,
+                            FilesStatusObservable.FILE_CANCEL_SELECTED);
+                    updatePhotoAlbumCheckedStatus();
+                }
+                updateSelectionHead();
+                updateSelectionHeadWhenItemClick(section);
+            }
+        });
         mCheckBoxAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonView.getTag().equals(TAG)) {
                 if (isChecked) {
@@ -90,6 +161,7 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
                     FilesStatusObservable.getInstance()
                             .notifyObservers(mPhotoDirBean.getImageList(), TAG,
                                     FilesStatusObservable.FILE_SELECTED_ALL);
+
                     mPhotoFrg.getTvChecked().setText("取消全选");
                 } else {
                     if (isSelectedAllPhotos()) {
@@ -100,45 +172,65 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
                     }
                     mPhotoFrg.getTvChecked().setText("全选");
                 }
+                // 检查head的选中状态
+                updateSelectionHead();
                 mAdapter.notifyDataSetChanged();
             }
         });
         mFileStatusObserver = new AbsFileStatusObserver() {
             @Override
             public void onCancelSelected(FileInfo fileInfo) {
-                mAdapter.notifyDataSetChanged();
                 mCheckBoxAll.setChecked(isSelectedAllPhotos());
+                updateSelectionHead();
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
-                mAdapter.notifyDataSetChanged();
                 mCheckBoxAll.setChecked(isSelectedAllPhotos());
+                updateSelectionHead();
+                mAdapter.notifyDataSetChanged();
             }
         };
-        FilesStatusObservable.getInstance().register(TAG, mFileStatusObserver);
-    }
+        mAdapter.setOnItemChildClickListener((adapter, view, position) -> {
 
-    @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        ImageView ivSelect = view.findViewById(R.id.iv_select);
-        FileInfo fileInfo = mPhotoDirBean.getImageList().get(position);
-        if (!App.getSendFileList().contains(fileInfo)) {
-            ivSelect.setVisibility(View.VISIBLE);
-            App.addSendFile(fileInfo);
-            // TODO: 2018/10/20 选择文件的时候是否需要从数据库中读取文件MD5值并设置进去？
-            FilesStatusObservable.getInstance().notifyObservers((PicFile) fileInfo,
-                    TAG, FilesStatusObservable.FILE_SELECTED);
-            startFileSelectedAnimation(view);
+            Section section = (Section) adapter.getItem(position);
+            if (section.isHeader) {
+                section.setCheckedAllChild(!section.isCheckedAllChild());
+                String lastChanged = section.header;
+                if (section.isCheckedAllChild()) {
+                    for (Section mData : mDatas) {
+                        if (!mData.isHeader) {
+                            if (mData.t.getLastModified().equals(lastChanged)) {
+                                App.addSendFile(mData.t);
+                                FilesStatusObservable.getInstance()
+                                        .notifyObservers(mData.t, TAG,
+                                                FilesStatusObservable.FILE_SELECTED);
+                            }
+                        }
+                    }
+                } else {
+                    for (Section mData : mDatas) {
+                        if (!mData.isHeader) {
+                            if (mData.t.getLastModified().equals(lastChanged)) {
+                                App.removeSendFile(mData.t);
+                                FilesStatusObservable.getInstance()
+                                        .notifyObservers(mData.t, TAG,
+                                                FilesStatusObservable.FILE_CANCEL_SELECTED);
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
             updatePhotoAlbumCheckedStatus();
-        } else {
-            AnimationUtils.zoomInCover(view.findViewById(R.id.iv_cover), 200);
-            ivSelect.setVisibility(View.INVISIBLE);
-            App.removeSendFile(fileInfo);
-            FilesStatusObservable.getInstance().notifyObservers((PicFile) fileInfo, TAG,
-                    FilesStatusObservable.FILE_CANCEL_SELECTED);
-            updatePhotoAlbumCheckedStatus();
-        }
+            mAdapter.notifyDataSetChanged();
+
+
+        });
+        FilesStatusObservable.getInstance().register(TAG, mFileStatusObserver);
     }
 
     /**
@@ -158,7 +250,6 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
         View startView;
         View targetView = null;
         startView = view.findViewById(R.id.iv_cover);
-        AnimationUtils.zoomOutCover(startView, 200);
         if (getActivity() != null && (getActivity() instanceof SelectFilesActivity)) {
             targetView = mBottomSheetView;
         }
@@ -172,9 +263,11 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
      * @return
      */
     private boolean isSelectedAllPhotos() {
-        for (FileInfo fileInfo : mPhotoDirBean.getImageList()) {
-            if (!App.getSendFileList().contains(fileInfo)) {
-                return false;
+        for (Section section : mDatas) {
+            if (!section.isHeader) {
+                if (!App.getSendFileList().contains(section.t)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -203,6 +296,72 @@ public class ShowPhotosFragment extends BaseFragment implements BaseQuickAdapter
             checkBox.setTag(TAG);
         }
         return checkBox;
+    }
+
+    public void updateSelectionHead() {
+        if (mDatas == null) {
+            return;
+        }
+        for (Section section : mDatas) {
+            if (section.isHeader) {
+                String headName = section.header;
+                int unCheckedChildCount = 0;
+                // 查找child
+                for (Section s : mDatas) {
+                    if (!s.isHeader) {
+                        // 循环遍历每一组的子孩子，如果存在一个child和组名相同时并且没有被选中则将head的状态设置为未选中
+                        if (s.t.getLastModified().equals(headName)) {
+                            if (!App.getSendFileList().contains(s.t)) {
+                                unCheckedChildCount++;
+                            }
+                        }
+                    }
+                }
+                Log.i("WW2K", "head: " + section.header + " - 未被选中的child的数量: " + unCheckedChildCount);
+                // 这一组当中所有的child都处在一个选中的状态
+                if (unCheckedChildCount == 0) {
+                    section.setCheckedAllChild(true);
+                } else {
+                    section.setCheckedAllChild(false);
+                }
+            }
+        }
+    }
+
+    private void updateSelectionHeadWhenItemClick(Section section) {
+
+        String headName = "";
+        if (section.t != null) {
+            // 检查并更新head的选中状态
+            headName = section.t.getLastModified();
+            for (Section mData : mDatas) {
+                if (!mData.isHeader) {
+                    if (headName.equals(mData.t.getLastModified()) && !App.getSendFileList()
+                            .contains(mData.t)) {
+                        for (Section data : mDatas) {
+                            if (data.isHeader && data.header.equals(headName)) {
+                                data.setCheckedAllChild(false);
+                                int pos = mDatas.indexOf(data);
+                                mAdapter.notifyItemChanged(pos);
+                                return;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        for (Section mData : mDatas) {
+            if (mData.isHeader && mData.header.equals(headName)) {
+                mData.setCheckedAllChild(true);
+                int pos = mDatas.indexOf(mData);
+                mAdapter.notifyItemChanged(pos);
+                return;
+            }
+        }
+
+
     }
 
 }

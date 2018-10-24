@@ -8,10 +8,13 @@ import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -31,7 +34,7 @@ public class PhotoUtils {
 
     public static io.reactivex.Observable<List<PhotoDirBean>> AsyncLoadingFromCourse(Cursor data) {
 
-        io.reactivex.Observable<List<PhotoDirBean>> observable = io.reactivex.Observable.just(data)
+        io.reactivex.Observable<List<PhotoDirBean>> observable = Observable.just(data)
                 .map(cursor -> {
                     List<PhotoDirBean> mDirList = new ArrayList<>();
                     Set<String> dirSet;

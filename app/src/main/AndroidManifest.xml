@@ -55,8 +55,11 @@
             android:name=".ui.activity.SendActivity"
             android:label="发送文件" />
         <activity android:name=".ui.activity.SelectFilesActivity">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -81,20 +84,27 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity android:name=".ui.test.TestBluetoothActivity" />
         <activity android:name=".ui.activity.InviteActivity" />
-        <activity android:name=".ui.test.TestSearchActivity"></activity>
+        <activity android:name=".ui.test.TestSearchActivity" />
         <activity android:name=".ui.test.TestFileIndicatorActivity" />
         <activity android:name=".ui.test.TestChangeSkinActivity" />
         <activity android:name=".ui.test.TestApActivity" />
         <activity android:name=".ui.test.QRTestActivity" />
         <activity android:name=".ui.activity.InputHotspotPwdActivity" />
-        <activity android:name=".ui.test.PinnedActivity" />
+        <activity android:name=".ui.test.PinnedActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            >
+
+
+        </activity>
         <activity android:name=".ui.activity.ReceivedFileActivity" />
         <activity android:name=".ui.activity.TestFileServerActivity" />
         <activity
             android:name=".ui.activity.SearchActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".ui.activity.HelloWordActivity" />
-        <activity android:name=".ui.test.TestRecyclerViewActivity">
+        <activity android:name=".ui.test.TestRecyclerViewActivity"></activity>
+        <activity android:name=".ui.test.TestSelctionRvActivity">
+
 
 
         </activity>

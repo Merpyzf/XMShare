@@ -72,6 +72,7 @@ public class ReceiverManager implements Runnable {
      *
      * @param transferObserver
      */
+
     public void register(TransferObserver transferObserver) {
 
         if (transferObserver != null && !mTransferObserverLists.contains(transferObserver)) {
@@ -79,6 +80,8 @@ public class ReceiverManager implements Runnable {
         }
 
     }
+
+
     /**
      * 接触注册一个观察者
      *
@@ -95,6 +98,24 @@ public class ReceiverManager implements Runnable {
             mP2pTransferHandler.setTransferFileListListener(transferFileListListener);
         }
     }
+
+    /**
+     * 开始接收
+     */
+    public void startReceive(){
+
+
+
+    }
+
+    /**
+     * 停止接收
+     */
+    public void stopReceive(){
+
+    }
+
+
 
     @Override
     public void run() {
@@ -115,6 +136,7 @@ public class ReceiverManager implements Runnable {
             e.printStackTrace();
         }
     }
+
     /**
      * 传输文件列表监听接口
      */

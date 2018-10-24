@@ -110,6 +110,7 @@ public class ReceivedFileActivity extends BaseActivity {
                     public void onHeaderDoubleClick(View view, int id, int position) {
 
                     }
+
                 }).create());
 
         if (mFileType == FileInfo.FILE_TYPE_IMAGE) {

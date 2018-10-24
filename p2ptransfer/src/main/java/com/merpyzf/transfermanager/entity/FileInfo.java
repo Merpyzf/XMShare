@@ -91,6 +91,8 @@ public class FileInfo extends DataSupport implements Serializable {
      */
     private float progress;
 
+    private String lastModified;
+
     /**
      * 文件传输速度
      */
@@ -324,6 +326,13 @@ public class FileInfo extends DataSupport implements Serializable {
         setFileTransferStatus(Const.TransferStatus.TRANSFER_WAITING);
     }
 
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
+    }
 }
 
 
