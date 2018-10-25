@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
 import com.merpyzf.xmshare.ui.fragment.FileListFragment;
 import com.merpyzf.xmshare.util.ApkUtils;

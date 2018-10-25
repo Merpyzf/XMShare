@@ -28,7 +28,6 @@ public class PeerManager {
     private PeerTransferBreakCallBack mTransferBreakCallback = null;
     private String mNickName;
     private OSTimer mOnLineTimer;
-    private Timer mTimer;
     private boolean isStop = false;
 
 
@@ -210,20 +209,6 @@ public class PeerManager {
     public void stopMsgListener() {
         mPeerCommunicate.release();
     }
-
-
-    /**
-     * 停止发送上线广播，终止循环发送
-     */
-    public void stopSendOnlineBroadcast() {
-
-        isStop = true;
-        if (mTimer != null) {
-            Log.i("w2k", "停止继续发送上线广播");
-            mTimer.cancel();
-        }
-    }
-
 
     /**
      * 给局域网内的其他设备发送UDP

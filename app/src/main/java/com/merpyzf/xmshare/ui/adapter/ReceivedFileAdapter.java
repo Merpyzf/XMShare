@@ -9,11 +9,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
-import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
 
 import java.io.File;
@@ -63,7 +63,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
                     helper.setText(R.id.tv_name, item.getData().getName() + "");
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
-                    loadImgPath = Const.PIC_CACHES_DIR + File.separator + Md5Utils.getMd5(item.getData().getName());
+                    loadImgPath = FilePathManager.getAppThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = R.drawable.ic_main_app;
                     placeHolderImgRes = R.drawable.ic_main_app;
                 } else if (fileType == FileInfo.FILE_TYPE_MUSIC) {
@@ -71,7 +71,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
                     helper.setText(R.id.tv_name, item.getData().getName() + "");
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
-                    loadImgPath = Const.PIC_CACHES_DIR + File.separator + Md5Utils.getMd5(item.getData().getName());
+                    loadImgPath = FilePathManager.getMusicAlbumCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = R.drawable.ic_holder_music;
                     placeHolderImgRes = R.drawable.ic_holder_music;
                 } else if (fileType == FileInfo.FILE_TYPE_VIDEO) {
@@ -79,7 +79,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
                     helper.setText(R.id.tv_name, item.getData().getName() + "");
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
-                    loadImgPath = Const.PIC_CACHES_DIR + File.separator + Md5Utils.getMd5(item.getData().getName());
+                    loadImgPath = FilePathManager.getVideoThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = R.drawable.ic_holder_video;
                     placeHolderImgRes = R.drawable.ic_holder_video;
                 }

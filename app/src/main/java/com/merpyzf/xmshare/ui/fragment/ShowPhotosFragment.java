@@ -255,8 +255,8 @@ public class ShowPhotosFragment extends BaseFragment {
         // 动画开始后再将View还原为原始尺寸，此处先缓存下来
         int tempHeight = startView.getLayoutParams().height;
         int tempWidth = startView.getLayoutParams().width;
-        startView.getLayoutParams().height = DisplayUtils.dip2px(getContext(), 100);
-        startView.getLayoutParams().width = DisplayUtils.dip2px(getContext(), 100);
+        startView.getLayoutParams().height = DisplayUtils.dip2px(getContext(), 130);
+        startView.getLayoutParams().width = DisplayUtils.dip2px(getContext(), 130);
         if (getActivity() != null && (getActivity() instanceof SelectFilesActivity)) {
             targetView = mBottomSheetView;
         }

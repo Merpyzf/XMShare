@@ -12,6 +12,7 @@ public abstract class AbsTransferObserver implements TransferObserver {
     /**
      * 文件接收进度的回调
      */
+    @Override
     public void onTransferProgress(FileInfo fileInfo) {
 
     }
@@ -19,6 +20,7 @@ public abstract class AbsTransferObserver implements TransferObserver {
     /**
      * 文件正常接收状态的回调
      */
+    @Override
     public void onTransferStatus(FileInfo fileInfo) {
 
     }
@@ -28,6 +30,7 @@ public abstract class AbsTransferObserver implements TransferObserver {
      *
      * @param error
      */
+    @Override
     public void onTransferError(String error) {
 
     }

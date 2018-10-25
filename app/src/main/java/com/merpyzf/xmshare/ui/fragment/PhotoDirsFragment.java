@@ -160,7 +160,7 @@ public class PhotoDirsFragment extends BaseFragment implements
         // 添加分割线前先移除之前添加的
         removeItemDecoration();
         mRvDirsList.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
-        mAdapter = new PhotoDirsAdapter(R.layout.item_rv_photo_dir, mCheckBoxAll, mPhotoDirs);
+        mAdapter = new PhotoDirsAdapter(R.layout.item_rv_photo_dir, mPhotoDirs);
         mAdapter.setEmptyView(mEmptyView);
         mRvDirsList.setAdapter(mAdapter);
     }

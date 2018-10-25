@@ -16,6 +16,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.R;
@@ -104,28 +105,25 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             tvProgress.setText("传输失败");
         }
     }
+
     private File getThumbFile(FileInfo fileInfo) {
         File thumbFile = null;
-        if (FileTransferAdapter.TYPE_SEND == mType) {
-            if (fileInfo instanceof ApkFile) {
-                ApkFile apkFile = (ApkFile) fileInfo;
-                thumbFile = new File(com.merpyzf.xmshare.common.Const.PIC_CACHES_DIR, Md5Utils.getMd5(apkFile.getName()));
-            } else if (fileInfo instanceof MusicFile) {
-                MusicFile musicFile = (MusicFile) fileInfo;
-                thumbFile = new File(com.merpyzf.xmshare.common.Const.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
-            } else if (fileInfo instanceof PicFile) {
+
+        if (fileInfo instanceof ApkFile) {
+            ApkFile apkFile = (ApkFile) fileInfo;
+            thumbFile = new File(FilePathManager.getAppThumbCacheDir(), Md5Utils.getMd5(apkFile.getName()));
+        } else if (fileInfo instanceof MusicFile) {
+            MusicFile musicFile = (MusicFile) fileInfo;
+            thumbFile = new File(FilePathManager.getMusicAlbumCacheDir(), musicFile.getAlbumId() + ".png");
+        } else if (fileInfo instanceof PicFile) {
+            if (FileTransferAdapter.TYPE_SEND == mType) {
                 PicFile picFile = (PicFile) fileInfo;
                 thumbFile = new File(picFile.getPath());
-            } else if (fileInfo instanceof VideoFile) {
-                VideoFile videoFile = (VideoFile) fileInfo;
-                thumbFile = new File(com.merpyzf.xmshare.common.Const.PIC_CACHES_DIR, Md5Utils.getMd5(videoFile.getPath()));
             }
-        } else {
-            if (!(fileInfo instanceof PicFile)) {
-                thumbFile = new File(com.merpyzf.xmshare.common.Const.PIC_CACHES_DIR, Md5Utils.getMd5(fileInfo.getName()));
-            }
+        } else if (fileInfo instanceof VideoFile) {
+            VideoFile videoFile = (VideoFile) fileInfo;
+            thumbFile = new File(FilePathManager.getVideoThumbCacheDir(), Md5Utils.getMd5(videoFile.getPath()));
         }
-
         return thumbFile;
     }
 

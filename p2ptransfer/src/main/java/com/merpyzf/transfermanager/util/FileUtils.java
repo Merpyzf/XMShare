@@ -17,7 +17,6 @@ import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
-import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 
 import java.io.BufferedOutputStream;
@@ -256,44 +255,30 @@ public class FileUtils {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             switch (fileInfo.getType()) {
                 case FileInfo.FILE_TYPE_APP:
-                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_APK_PATH);
-                    if (!parent.exists()) {
-                        boolean isCreated = parent.mkdirs();
-                    }
+                    parent = FilePathManager.getSaveAppDir();
                     file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     break;
                 case FileInfo.FILE_TYPE_IMAGE:
-                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_IMAGE_PATH);
-                    if (!parent.exists()) {
-                        parent.mkdirs();
-                    }
+                    parent = FilePathManager.getSavePhotoDir();
                     file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
                 case FileInfo.FILE_TYPE_MUSIC:
-                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_MUSIC_PATH);
-                    if (!parent.exists()) {
-                        parent.mkdirs();
-                    }
+                    parent = FilePathManager.getSaveMusicDir();
                     file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
                 case FileInfo.FILE_TYPE_VIDEO:
-                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_VIDEO_PATH);
-                    if (!parent.exists()) {
-                        parent.mkdirs();
-                    }
+                    parent = FilePathManager.getSaveVideoDir();
                     file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
                 default:
                     break;
             }
-
         } else {
             return null;
         }
         // 更改文件的上次修改时间为当前创建时间
         file.setLastModified(System.currentTimeMillis());
         return file;
-
     }
 
 

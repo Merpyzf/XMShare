@@ -1,5 +1,7 @@
 package com.merpyzf.transfermanager.entity;
 
+import android.graphics.Color;
+
 /**
  * Created by wangke on 2017/12/23.
  * 音乐文件

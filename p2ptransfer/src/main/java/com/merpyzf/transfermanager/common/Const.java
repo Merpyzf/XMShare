@@ -8,16 +8,6 @@ import java.io.File;
  */
 
 public class Const {
-    // 文件接收列表中显示的被压缩的缩略图
-    public static final String THUMB_RECEIVE = File.separator + "xmshare" + File.separator + "receive_thumb";
-    // 接收apk文件的保存路径
-    public static final String SAVE_APK_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "apk";
-    // 接收音乐类型文件的保存路径
-    public static final String SAVE_MUSIC_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "music";
-    // 接收图片类型文件的保存路径
-    public static final String SAVE_IMAGE_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "image";
-    // 接收视频类型文件的保存路径
-    public static final String SAVE_VIDEO_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "video";
     // sp文件, 存储用户信息
     public static final String SP_USER = "sp_user_info";
     // 字符读取时结束的标记位
@@ -48,6 +38,7 @@ public class Const {
     public static final int MSG_PROPERTIES_LENGTH = 6;
     // 传输进度和
     public static final int PROGRESS_REFRESH_INTERVAL = 200;
+
     // 文件在传输过程中的几个状态
     public class TransferStatus {
         //等待状态

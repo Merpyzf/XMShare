@@ -25,23 +25,20 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHolder> {
 
-    private CheckBox mCheckBoxAll;
-
-    public PhotoDirsAdapter(int layoutResId, CheckBox checkBoxAll, @Nullable List<PhotoDirBean> data) {
+    public PhotoDirsAdapter(int layoutResId, @Nullable List<PhotoDirBean> data) {
         super(layoutResId, data);
-        this.mCheckBoxAll = checkBoxAll;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, PhotoDirBean item) {
 
-        helper.setText(R.id.tv_photo_dir_name, item.getName());
-        helper.setText(R.id.tv_photo_num, item.getImageNumber() + "张照片");
-        helper.addOnClickListener(R.id.iv_select);
 
         ImageView ivCover = helper.getView(R.id.iv_photo_dir_cover);
         GifImageView gifIv = helper.getView(R.id.gif_photo_dir_cover);
         ImageView ivSelect = helper.getView(R.id.iv_select);
+        helper.setText(R.id.tv_photo_dir_name, item.getName());
+        helper.setText(R.id.tv_photo_num, item.getImageNumber() + "张照片");
+        helper.addOnClickListener(R.id.iv_select);
         String suffix = FileUtils.getFileSuffix(item.getCoverImg());
 
         if (item.isChecked()) {
@@ -51,19 +48,17 @@ public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHol
         }
 
         if ("gif".equals(suffix.toLowerCase())) {
-
-            ivCover.setVisibility(View.INVISIBLE);
+            ivCover.setVisibility(View.GONE);
             gifIv.setVisibility(View.VISIBLE);
             try {
                 GifDrawable gifDrawable = new GifDrawable(item.getCoverImg());
                 gifIv.setImageDrawable(gifDrawable);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             ivCover.setVisibility(View.VISIBLE);
-            gifIv.setVisibility(View.INVISIBLE);
+            gifIv.setVisibility(View.GONE);
             Glide.with(mContext)
                     .load(item.getCoverImg())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

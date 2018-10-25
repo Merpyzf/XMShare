@@ -8,15 +8,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Const;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,10 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_MUSIC;
@@ -51,7 +45,7 @@ public class MusicUtils {
         InputStream is;
         try {
             is = resolver.openInputStream(uri);
-        } catch (FileNotFoundException ignored) {
+        } catch (Exception ignored) {
             return null;
         }
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -69,6 +63,7 @@ public class MusicUtils {
         Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
         return ContentUris.withAppendedId(artworkUri, albumId);
     }
+
     /**
      * 将专辑封面图缓存到本地
      *
@@ -76,37 +71,39 @@ public class MusicUtils {
      * @param musicList
      */
     @SuppressLint("CheckResult")
-    public static synchronized void writeAlbumImg2local(final Context context, List<FileInfo> musicList) {
+    public static synchronized void writeAlbumImgList2local(final Context context, List<FileInfo> musicList) {
 
         Observable.fromIterable(musicList)
-                .filter(musicFile -> {
-                    if (musicFile instanceof MusicFile) {
-                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, (MusicFile) musicFile)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }).flatMap(musicFile -> Observable.just(((MusicFile) musicFile))).subscribeOn(Schedulers.io())
-                .subscribe(musicFile -> {
-                    Bitmap bitmap = loadCoverFromMediaStore(context, musicFile.getAlbumId());
-                    BufferedOutputStream bos = null;
-                    try {
-                        File extPicCacheDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                        bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(musicFile.getAlbumId() + ""))));
-                        if (bitmap == null) {
-                            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
-                        }
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            bos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                .flatMap(musicFile -> Observable.just(((MusicFile) musicFile))).subscribeOn(Schedulers.io())
+                .subscribe(musicFile -> writeAlbumImg2local(context, musicFile));
+    }
+
+    @SuppressLint("CheckResult")
+    public static synchronized void writeAlbumImg2local(final Context context, MusicFile musicFile) {
+        Bitmap bitmap = loadCoverFromMediaStore(context, musicFile.getAlbumId());
+        BufferedOutputStream bos = null;
+        try {
+            if (bitmap == null) {
+                musicFile.setAlbumId(-1);
+                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_default_album_art);
+            }
+            File albumFile = new File(FilePathManager.getMusicAlbumCacheDir(), musicFile.getAlbumId() + ".png");
+            if (FilePathManager.getMusicAlbumCacheDir().canWrite() && !isContain(FilePathManager.getMusicAlbumCacheDir(), musicFile)) {
+                bos = new BufferedOutputStream(new FileOutputStream(albumFile));
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bos != null) {
+                    bos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -119,22 +116,22 @@ public class MusicUtils {
     private static synchronized boolean isContain(File parent, MusicFile musicFile) {
         String[] albums = parent.list();
         for (int i = 0; i < albums.length; i++) {
-            if (Md5Utils.getMd5(musicFile.getAlbumId() + "").equals(albums[i])) {
+            if ((musicFile.getAlbumId() + ".png").equals(albums[i])) {
+                Log.i("WW2K", "专辑封面已经存在了");
                 return true;
             }
         }
         // TODO: 2017/12/24 考虑增加清理音乐文件不存在的album_id
         return false;
     }
+
     /**
      * 更新封面图片
      */
     public static synchronized void updateAlbumImg(Context context, List<FileInfo> fileInfoList) {
-        // copy一份List<FileInfo>到一个新的集合避免在使用iterator遍历集合的同时又对集合修改，就会产生ConcurrentModificationException
-        List<FileInfo> copyFileInfoList = new ArrayList<>();
-        copyFileInfoList.addAll(fileInfoList);
-        writeAlbumImg2local(context, copyFileInfoList);
+        writeAlbumImgList2local(context, fileInfoList);
     }
+
     public static Observable<List<FileInfo>> asyncLoadingMusic(Cursor data) {
         return Observable.just(data)
                 .flatMap(cursor -> {

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
@@ -31,6 +32,7 @@ import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.merpyzf.xmshare.util.MusicUtils;
 import com.merpyzf.xmshare.util.UiUtils;
+import com.merpyzf.xmshare.util.VideoUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
@@ -120,8 +122,15 @@ public class FileListFragment extends BaseFragment {
                 if (getActivity() != null && (getActivity() instanceof SelectFilesActivity)) {
                     targetView = mBottomSheetView;
                 }
-                AnimationUtils.setAddTaskAnimation(getActivity(), startView, targetView, null);
 
+                // 动画开始后再将View还原为原始尺寸，此处先缓存下来
+                int tempHeight = startView.getLayoutParams().height;
+                int tempWidth = startView.getLayoutParams().width;
+                startView.getLayoutParams().height = DisplayUtils.dip2px(getContext(), 130);
+                startView.getLayoutParams().width = DisplayUtils.dip2px(getContext(), 130);
+                AnimationUtils.setAddTaskAnimation(getActivity(), startView, targetView, null);
+                startView.getLayoutParams().height = tempHeight;
+                startView.getLayoutParams().width = tempWidth;
             } else {
                 // 将选择文件的事件回调给外部
                 ivSelect.setVisibility(View.INVISIBLE);
@@ -194,11 +203,11 @@ public class FileListFragment extends BaseFragment {
                     });
 
 
-                } else {
+                } else if (mLoadFileType == FILE_TYPE_MUSIC) {
                     observable.subscribe((Consumer<List<FileInfo>>) fileInfoList -> {
                         if (fileInfoList.size() == 0) {
                             mProgressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(getContext(), "没有扫描到文件", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "没有扫描到音乐文件", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         mFileLists.addAll(fileInfoList);
@@ -207,6 +216,20 @@ public class FileListFragment extends BaseFragment {
                         notifyRvDataChanged();
                         MusicUtils.updateAlbumImg(getContext(), mFileLists);
                     });
+                } else if (mLoadFileType == FILE_TYPE_VIDEO) {
+                    observable.subscribe((Consumer<List<FileInfo>>) fileInfoList -> {
+                        if (fileInfoList.size() == 0) {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(getContext(), "没有扫描到视频文件", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        mFileLists.addAll(fileInfoList);
+                        CollectionUtils.shortingByFirstCase(mFileLists);
+                        updateTitle(Const.PAGE_VIDEO_TITLE);
+                        notifyRvDataChanged();
+                        VideoUtils.updateThumbImg(getContext(), fileInfoList);
+                    });
+
                 }
 
 

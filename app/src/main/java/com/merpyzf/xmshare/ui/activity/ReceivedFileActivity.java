@@ -9,16 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.FileInfoFactory;
 import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
-import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
 import com.merpyzf.xmshare.ui.adapter.ReceivedFileAdapter;
+import com.merpyzf.xmshare.util.FilePathManager;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.oushangfeng.pinnedsectionitemdecoration.callback.OnHeaderClickListener;
 
@@ -142,16 +141,16 @@ public class ReceivedFileActivity extends BaseActivity {
         switch (mFileType) {
             // 应用
             case FileInfo.FILE_TYPE_APP:
-                receiveDir = new File(Const.getSaveApkPath());
+                receiveDir = FilePathManager.getSaveAppDir();
                 break;
             case FileInfo.FILE_TYPE_IMAGE:
-                receiveDir = new File(Const.getSaveImagePath());
+                receiveDir = FilePathManager.getSavePhotoDir();
                 break;
             case FileInfo.FILE_TYPE_MUSIC:
-                receiveDir = new File(Const.getSaveMusicPath());
+                receiveDir = FilePathManager.getSaveMusicDir();
                 break;
             case FileInfo.FILE_TYPE_VIDEO:
-                receiveDir = new File(Const.getSaveVideoPath());
+                receiveDir = FilePathManager.getSaveVideoDir();
                 break;
             case FileInfo.FILE_TYPE_OTHER:
                 break;

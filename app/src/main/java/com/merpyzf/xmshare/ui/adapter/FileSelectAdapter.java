@@ -13,10 +13,10 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Const;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             imageView.setImageDrawable(apkFile.getApkDrawable());
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;
-            File albumFile = new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
+            File albumFile = new File(FilePathManager.getMusicAlbumCacheDir(), musicFile.getAlbumId()+".png");
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
@@ -89,9 +89,9 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             }
         } else if (item instanceof VideoFile) {
             VideoFile videoFile = (VideoFile) item;
-            String videoThumbPath = Const.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
+            File videoThumb = new File(FilePathManager.getVideoThumbCacheDir(), Md5Utils.getMd5(videoFile.getPath()));
             Glide.with(mContext)
-                    .load(new File(videoThumbPath))
+                    .load(videoThumb)
                     .crossFade()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

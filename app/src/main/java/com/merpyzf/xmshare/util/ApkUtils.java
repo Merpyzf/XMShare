@@ -1,5 +1,6 @@
 package com.merpyzf.xmshare.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -17,7 +18,6 @@ import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Const;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -160,10 +160,11 @@ public class ApkUtils {
     /**
      * 缓存apk的ico
      */
+    @SuppressLint("CheckResult")
     public static void asyncCacheApkIco(Context context, List<ApkFile> apkList) {
         Observable.fromIterable(apkList)
                 .filter(fileInfo -> {
-                    if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, fileInfo)) {
+                    if (FilePathManager.getAppThumbCacheDir().canWrite() && !isContain(FilePathManager.getAppThumbCacheDir(), fileInfo)) {
                         Log.i("wk", "缓存文件中不包含");
                         return true;
                     }

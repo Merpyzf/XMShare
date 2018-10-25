@@ -1,12 +1,8 @@
 package com.merpyzf.xmshare.common;
 
-import android.os.Environment;
-
-import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -14,41 +10,44 @@ import java.util.ArrayList;
  */
 
 public class Const {
-    // sp文件, 存储用户信息和用户设置的信息
+    /**
+     * sp文件名, 存储用户信息和用户设置的信息
+     */
     public static final String SP_USER = "sp_user_info";
-    // 数据库名
+    /**
+     * 数据库名
+     */
     public static final String DB_NAME = "xmshare.db";
-    // 热点模式下用于匹配可连接热点名的前缀规则
+    /**
+     * 热点模式下用于匹配可连接热点名的前缀规则
+     */
     public static final String SSID_PREFIX = "XM";
-    // 传输模式
+    /**
+     * 传输模式
+     */
     public static final String KEY_TRANSFER_MODE = "transfer_mode";
-    // 使用已连接的局域网传输模式
+    /**
+     * 使用已连接的局域网传输模式
+     */
     public static final int TRANSFER_MODE_LAN = -1;
-    // 通过建立热点组件局域网的方式传输模式
+    /**
+     * 通过建立热点组件局域网的方式传输模式
+     */
     public static final int TRANSFER_MODE_AP = 1;
-
     public static final String HOME_OBSERVER_NAME = SelectFilesActivity.class.getSimpleName();
-
-    // 存储图片缓存
-    public static final File PIC_CACHES_DIR = App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-    // 头像信息
-    public static ArrayList<Integer> AVATAR_LIST = null;
-    // 常用的文稿类型
-    public static ArrayList<String> FILE_DOCUMENT_TYPES = null;
-    // 常用的压缩文件类型
-    public static ArrayList<String> FILE_COMPACT_TYPES = null;
-    // 文件接收列表中显示的被压缩的缩略图
+    /**
+     * 头像信息
+     */
+    public static ArrayList<Integer> AVATAR_LIST;
+    /**
+     * 常用的文稿类型
+     */
+    public static ArrayList<String> FILE_DOCUMENT_TYPES;
+    /**
+     * 常用的压缩文件类型
+     */
+    public static ArrayList<String> FILE_COMPACT_TYPES;
     public static final int PING_COUNT = 10;
-    public static final String THUMB_RECEIVE = File.separator + "xmshare" + File.separator + "receive_thumb";
-    // 接收apk文件的保存路径
-    public static final String SAVE_APK_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "apk";
-    // 接收音乐类型文件的保存路径
-    public static final String SAVE_MUSIC_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "music";
-    // 接收图片类型文件的保存路径
-    public static final String SAVE_IMAGE_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "image";
-    // 接收视频类型文件的保存路径
-    public static final String SAVE_VIDEO_PATH = File.separator + "xmshare" + File.separator + "receive" + File.separator + "video";
-
     public static final int PAGE_MAIN = 0;
     public static final int PAGE_APP = 1;
     public static final int PAGE_IMAGE = 2;
@@ -65,7 +64,9 @@ public class Const {
     public static final int FAB_STATE_CLEAR = 0x02;
 
 
-    // 初始化数据
+    /**
+     * 初始化数据
+     */
     static {
 
         AVATAR_LIST = new ArrayList<>();
@@ -121,49 +122,5 @@ public class Const {
 
     }
 
-
-    public static String getSaveApkPath() {
-
-        File file = new File(Environment.getExternalStorageDirectory(), SAVE_APK_PATH);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String path = file.getPath();
-        file = null;
-        return path;
-    }
-
-    public static String getSaveMusicPath() {
-
-        File file = new File(Environment.getExternalStorageDirectory(), SAVE_MUSIC_PATH);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String path = file.getPath();
-        file = null;
-        return path;
-    }
-
-    public static String getSaveImagePath() {
-
-        File file = new File(Environment.getExternalStorageDirectory(), SAVE_IMAGE_PATH);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String path = file.getPath();
-        file = null;
-        return path;
-    }
-
-    public static String getSaveVideoPath() {
-
-        File file = new File(Environment.getExternalStorageDirectory(), SAVE_VIDEO_PATH);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String path = file.getPath();
-        file = null;
-        return path;
-    }
 
 }

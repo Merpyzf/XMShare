@@ -1,6 +1,6 @@
 package com.merpyzf.transfermanager.entity;
 
-import com.merpyzf.transfermanager.common.Const;
+import com.merpyzf.transfermanager.util.FilePathManager;
 
 import java.io.File;
 
@@ -19,7 +19,8 @@ public class FileInfoFactory {
                 apkFile.setLength(fileInfo.getLength());
                 apkFile.setThumbLength(fileInfo.getThumbLength());
                 apkFile.setSuffix(fileInfo.getSuffix());
-                apkFile.setPath(Const.SAVE_APK_PATH + File.separator + fileInfo.getName() + "." + fileInfo.getSuffix());
+                apkFile.setPath(FilePathManager.getSaveAppDir().getPath() + File.separator +
+                        fileInfo.getName() + "." + fileInfo.getSuffix());
                 apkFile.setMd5(fileInfo.getMd5());
                 apkFile.setIsLast(fileInfo.getIsLast());
 
@@ -31,7 +32,8 @@ public class FileInfoFactory {
                 picFile.setType(FileInfo.FILE_TYPE_IMAGE);
                 picFile.setLength(fileInfo.getLength());
                 picFile.setSuffix(fileInfo.getSuffix());
-                picFile.setPath(Const.SAVE_APK_PATH + File.separator + fileInfo.getName() + "." + fileInfo.getSuffix());
+                picFile.setPath(FilePathManager.getSavePhotoDir().getPath() + File.separator +
+                        fileInfo.getName() + "." + fileInfo.getSuffix());
                 picFile.setMd5(fileInfo.getMd5());
                 picFile.setIsLast(fileInfo.getIsLast());
 
@@ -44,7 +46,8 @@ public class FileInfoFactory {
                 musicFile.setLength(fileInfo.getLength());
                 musicFile.setThumbLength(fileInfo.getThumbLength());
                 musicFile.setSuffix(fileInfo.getSuffix());
-                musicFile.setPath(Const.SAVE_APK_PATH + File.separator + fileInfo.getName() + "." + fileInfo.getSuffix());
+                musicFile.setPath(FilePathManager.getSaveMusicDir().getPath() + File.separator +
+                        fileInfo.getName() + "." + fileInfo.getSuffix());
                 musicFile.setMd5(fileInfo.getMd5());
                 musicFile.setIsLast(fileInfo.getIsLast());
                 return musicFile;
@@ -56,7 +59,8 @@ public class FileInfoFactory {
                 videoFile.setLength(fileInfo.getLength());
                 videoFile.setThumbLength(fileInfo.getThumbLength());
                 videoFile.setSuffix(fileInfo.getSuffix());
-                videoFile.setPath(Const.SAVE_APK_PATH + File.separator + fileInfo.getName() + "." + fileInfo.getSuffix());
+                videoFile.setPath(FilePathManager.getSaveVideoDir().getPath() + File.separator +
+                        fileInfo.getName() + "." + fileInfo.getSuffix());
                 videoFile.setMd5(fileInfo.getMd5());
                 videoFile.setIsLast(fileInfo.getIsLast());
                 return videoFile;

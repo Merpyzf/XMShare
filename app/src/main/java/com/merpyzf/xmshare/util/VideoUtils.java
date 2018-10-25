@@ -1,5 +1,6 @@
 package com.merpyzf.xmshare.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,7 +13,6 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Const;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -68,20 +68,18 @@ public class VideoUtils {
     }
 
 
+    @SuppressLint("CheckResult")
     public static void writeThumbImg2local(Context context, List<FileInfo> videoList) {
 
 
         Observable.fromIterable(videoList)
                 .filter(videoFile -> {
-
                     if (videoFile instanceof VideoFile) {
-
-                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, (VideoFile) videoFile)) {
+                        if (FilePathManager.getVideoThumbCacheDir().canWrite() && !isContain(FilePathManager.getVideoThumbCacheDir(), (VideoFile) videoFile)) {
                             return true;
                         }
                     }
                     return false;
-
                 }).flatMap(videoFile -> Observable.just(videoFile.getPath()))
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
@@ -101,9 +99,8 @@ public class VideoUtils {
                     Log.i("w2k", "写入本地存储的视频封面截图:" + fileName);
 
                     try {
-                        bos = new BufferedOutputStream(new FileOutputStream(new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(videoPath))));
+                        bos = new BufferedOutputStream(new FileOutputStream(new File(FilePathManager.getVideoThumbCacheDir(), Md5Utils.getMd5(videoPath))));
                         if (bitmap == null) {
-
                             bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
                         }
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);

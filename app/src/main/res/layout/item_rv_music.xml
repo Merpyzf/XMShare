@@ -15,8 +15,7 @@
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_header" />
+            android:scaleType="centerInside" />
 
         <ImageView
             android:id="@+id/iv_select"
@@ -46,10 +45,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:singleLine="true"
-                android:text="春末南方的城市"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
+                android:singleLine="true"
+                android:text="春末南方的城市"
                 android:textColor="@color/colorPrimaryText" />
 
             <LinearLayout
@@ -73,9 +72,9 @@
                     android:id="@+id/tv_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:padding="2dp"
                     android:text="3.5m"
-                    android:layout_marginLeft="5dp"
                     android:textColor="@color/colorSecondaryText"
                     android:textSize="13sp" />
             </LinearLayout>

@@ -2,6 +2,7 @@ package com.merpyzf.transfermanager.receive;
 
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
@@ -63,7 +64,6 @@ public class ReceiverManager implements Runnable {
         mTransferObserverLists = new ArrayList<>();
         mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
         mSingleThreadPool = Executors.newSingleThreadExecutor();
-
 
     }
 
