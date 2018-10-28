@@ -33,8 +33,6 @@ public class FileUtils {
      * @param path 根目录
      */
     public static List<FileInfo> traverseFolder(String path) {
-
-
         File file = new File(path);
         if (file.exists()) {
             File[] files = file.listFiles();
@@ -45,14 +43,9 @@ public class FileUtils {
                     if (file2.isDirectory()) {
                         traverseFolder(file2.getAbsolutePath());
                     } else {
-
-
                         // 获取文件的后缀
                         String suffix = getFileSuffix(file2.getPath());
-
-
                         if (isDocumentType(suffix)) {
-
                             // TODO: 2018/4/16 扫描完成后，对于md5值进行异步获取
                             DocFile docFile = new DocFile();
                             docFile.setName(file2.getName());
@@ -60,26 +53,20 @@ public class FileUtils {
                             docFile.setLength((int) file2.length());
                             docFile.setSuffix(suffix);
                             docFile.setType(FileInfo.FILE_TYPE_DOCUMENT);
-
                             mFileList.add(docFile);
 
                         } else if (isApkType(suffix)) {
-
-
                             ApkFile apkFile = new ApkFile();
                             apkFile.setName(file2.getName());
                             apkFile.setPath(file2.getPath());
                             apkFile.setLength((int) file2.length());
                             apkFile.setSuffix(suffix);
                             apkFile.setType(FileInfo.FILE_TYPE_APP);
-
                             // todo: 扫描完成后需要对apk的ico进行缓存
                             apkFile.setApkDrawable(null);
-
+                            Log.i("WW3K", "扫描到的未安装的apk文件-> "+apkFile.getName());
                             mFileList.add(apkFile);
-
                         } else if (isCompactType(suffix)) {
-
                             CompactFile compactFile = new CompactFile();
                             compactFile.setName(file2.getName());
                             compactFile.setPath(file2.getPath());
@@ -94,8 +81,6 @@ public class FileUtils {
         } else {
             Log.i("wk", "文件不存在!");
         }
-
-
         return mFileList;
     }
 
@@ -204,5 +189,14 @@ public class FileUtils {
 
     }
 
+    public static boolean isContain(File parent, String fileName) {
+        String[] fileNames = parent.list();
+        for (String childFileName : fileNames) {
+            if (fileName.equals(childFileName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

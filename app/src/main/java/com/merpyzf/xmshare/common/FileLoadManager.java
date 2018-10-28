@@ -112,7 +112,6 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.i("WW1k", "onLoadFinished 被调用后了");
         if (mLoadFileType == FILE_TYPE_MUSIC) {
             Observable<List<FileInfo>> observable = MusicUtils.asyncLoadingMusic(data);
             onLoadFinished(observable);

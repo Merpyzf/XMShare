@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.ui.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -38,6 +39,7 @@ import com.merpyzf.xmshare.ui.fragment.PhotoFragment;
 import com.merpyzf.xmshare.observer.PersonalObservable;
 import com.merpyzf.xmshare.observer.PersonalObserver;
 import com.merpyzf.xmshare.util.AnimationUtils;
+import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -344,7 +346,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
      * 更新底部BottomSheet的标题
      */
     public void updateBottomTitle() {
+        if (mTvBottomTitle == null) {
+            return;
+        }
         if (App.getSendFileList().size() == 0) {
+            if (mTvBottomTitle == null) {
+                return;
+            }
             mTvBottomTitle.setText("请选择要传输的文件");
             return;
         }

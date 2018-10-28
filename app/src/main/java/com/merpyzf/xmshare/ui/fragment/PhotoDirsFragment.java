@@ -187,7 +187,9 @@ public class PhotoDirsFragment extends BaseFragment implements
                                     mTvTip.setText("未扫描到任何文件");
                                 }
                                 mPhotoDirs.clear();
-                                mPhotoDirs.addAll(photoDirBeans);
+                                if (!mPhotoDirs.containsAll(photoDirBeans)) {
+                                    mPhotoDirs.addAll(photoDirBeans);
+                                }
                                 mPbLoading.setVisibility(View.GONE);
                                 mAdapter.notifyDataSetChanged();
                                 PhotoUtils.getNumberOfPhotos(mPhotoDirs)

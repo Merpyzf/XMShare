@@ -15,6 +15,7 @@
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:src="@drawable/ic_default_album_art"
             android:scaleType="centerInside" />
 
         <ImageView
@@ -36,7 +37,6 @@
             android:layout_height="60dp"
             android:layout_below="@id/iv_cover"
             android:layout_centerVertical="true"
-            android:background="@color/red_500"
             android:gravity="center"
             android:orientation="vertical">
 

@@ -11,11 +11,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.util.CloseUtils;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 
@@ -24,14 +25,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -90,28 +92,16 @@ public class ApkUtils {
      * @return
      */
     public static int getDrawableSize(Drawable drawable) {
-
-        // 取 drawable 的长宽
         int w = drawable.getIntrinsicWidth();
         int h = drawable.getIntrinsicHeight();
-
-        // 取 drawable 的颜色格式
         Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
                 : Bitmap.Config.RGB_565;
-        // 建立对应 bitmap
         Bitmap bitmap = Bitmap.createBitmap(w, h, config);
-        // 建立对应 bitmap 的画布
         Canvas canvas = new Canvas(bitmap);
-//        drawable.setBounds(0, 0, w, h);
-        // 把 drawable 内容画到画布中
         drawable.draw(canvas);
-
-//        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.fav_jpg);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         int len = baos.toByteArray().length;
-
-
         return len;
     }
 
@@ -162,33 +152,42 @@ public class ApkUtils {
      */
     @SuppressLint("CheckResult")
     public static void asyncCacheApkIco(Context context, List<ApkFile> apkList) {
+
+
+
         Observable.fromIterable(apkList)
                 .filter(fileInfo -> {
-                    if (FilePathManager.getAppThumbCacheDir().canWrite() && !isContain(FilePathManager.getAppThumbCacheDir(), fileInfo)) {
+
+                    if (FilePathManager.getLocalAppThumbCacheDir().canWrite() && !isContain(FilePathManager.getLocalAppThumbCacheDir(), fileInfo)) {
                         Log.i("wk", "缓存文件中不包含");
                         return true;
                     }
                     return false;
-                }).flatMap(fileInfo -> Observable.just(fileInfo))
+                }).flatMap(new Function<ApkFile, ObservableSource<ApkFile>>() {
+            @Override
+            public Observable<ApkFile> apply(ApkFile apkFile) throws Exception {
+                //Drawable apkDrawable = apkFile.getApkDrawable();
+                //if(apkDrawable == null){
+                //    Log.i("WW2k", apkFile.getName()+"drawable 为null");
+                //}
+                return Observable.just(apkFile);
+            }
+        })
                 .subscribeOn(Schedulers.io())
                 .subscribe(apkFile -> {
                     Bitmap bitmap = FileUtils.drawableToBitmap(apkFile.getApkDrawable());
                     BufferedOutputStream bos = null;
                     try {
-                        File extPicCacheDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                        bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(apkFile.getName()))));
+                        File appThumb = FilePathManager.getLocalAppThumbCacheFile(apkFile.getName());
+                        bos = new BufferedOutputStream(new FileOutputStream(appThumb));
                         if (bitmap == null) {
-                            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
+                            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_default_app);
                         }
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } finally {
-                        try {
-                            Objects.requireNonNull(bos).close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        CloseUtils.close(bos);
                     }
                 });
     }

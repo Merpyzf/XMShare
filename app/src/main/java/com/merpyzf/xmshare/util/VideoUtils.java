@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.transfermanager.util.CloseUtils;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 
@@ -18,7 +20,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class VideoUtils {
         Observable.fromIterable(videoList)
                 .filter(videoFile -> {
                     if (videoFile instanceof VideoFile) {
-                        if (FilePathManager.getVideoThumbCacheDir().canWrite() && !isContain(FilePathManager.getVideoThumbCacheDir(), (VideoFile) videoFile)) {
+                        if (FilePathManager.getLocalVideoThumbCacheDir().canWrite() && !isContain(FilePathManager.getLocalVideoThumbCacheDir(), (VideoFile) videoFile)) {
                             return true;
                         }
                     }
@@ -84,34 +85,25 @@ public class VideoUtils {
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe(videoPath -> {
-
-                    // TODO: 2018/1/15 解决视频第一帧图片过慢的问题
                     Bitmap bitmap = getVideoThumbnail(videoPath);
                     BufferedOutputStream bos = null;
-
                     String fileName = new File(videoPath).getName();
-
                     int dotIndex = fileName.lastIndexOf('.');
-
                     fileName = fileName.substring(0, dotIndex);
-
-
-                    Log.i("w2k", "写入本地存储的视频封面截图:" + fileName);
-
                     try {
-                        bos = new BufferedOutputStream(new FileOutputStream(new File(FilePathManager.getVideoThumbCacheDir(), Md5Utils.getMd5(videoPath))));
-                        if (bitmap == null) {
-                            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
+                        File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(fileName);
+                        boolean isContain = FileUtils.isContain(videoThumb.getParentFile(), videoThumb.getName());
+                        if(!isContain) {
+                            bos = new BufferedOutputStream(new FileOutputStream(videoThumb));
+                            if (bitmap == null) {
+                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_video_default);
+                            }
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                         }
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } finally {
-                        try {
-                            bos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        CloseUtils.close(bos);
                     }
                 });
     }
@@ -148,7 +140,7 @@ public class VideoUtils {
                         videoFile.setDuration(data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION)));
                         // 设置文件后缀
                         videoFile.setSuffix(FileUtils.getFileSuffix(path));
-                        Log.i("WK", "视频文件: "+videoFile.getName()+" 后缀: "+videoFile.getSuffix());
+                        Log.i("WK", "视频文件: " + videoFile.getName() + " 后缀: " + videoFile.getSuffix());
 
                         // 设置文件类型
                         videoFile.setType(FILE_TYPE_VIDEO);

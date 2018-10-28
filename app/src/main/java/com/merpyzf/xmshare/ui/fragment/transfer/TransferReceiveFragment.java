@@ -79,7 +79,6 @@ public class TransferReceiveFragment extends BaseFragment {
 
             @Override
             public void onTransferStatus(FileInfo fileInfo) {
-
                 notifyItemChanged(fileInfo);
                 FileUtils.addFileToMediaStore(getActivity(), new File(fileInfo.getPath()));
                 mLastFileSize = fileInfo.getLength();

@@ -28,7 +28,7 @@ public class Const {
     // 头信息的长度
     public static final int FILE_HEADER_LENGTH = 200;
     // 发送缩略图的尺寸
-    public static final int SEND_FILE_THUMB_SIZE = 100;
+    public static final int SEND_FILE_THUMB_SIZE = 200;
     // Android O以下版本所建立热点的前缀标识
     public static final String HOTSPOT_PREFIX_IDENT = "XM";
     public static final String HOTSPOT_PREFIX_IDENT_O = "AndroidShare_";
@@ -48,7 +48,7 @@ public class Const {
         // 传输成功
         public static final int TRANSFER_SUCCESS = 2;
         // 传输失败
-        public static final int TRANSFER_FAILED = 3;
+        public static final int TRANSFER_EXPECTION = 3;
         // 待传输文件列表传输成功
         public static final int TRANSFER_FILE_LIST_SUCCESS = 4;
     }

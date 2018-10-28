@@ -1,6 +1,7 @@
 package com.merpyzf.xmshare.ui.adapter;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -98,7 +99,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             } else {
                 tvProgress.setText("传输完毕");
             }
-        } else if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_FAILED) {
+        } else if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_EXPECTION) {
             progressBar.setProgress((int) fileInfo.getProgress());
             progressBar.setVisibility(View.VISIBLE);
             ivDone.setVisibility(View.INVISIBLE);
@@ -111,10 +112,19 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
         if (fileInfo instanceof ApkFile) {
             ApkFile apkFile = (ApkFile) fileInfo;
-            thumbFile = new File(FilePathManager.getAppThumbCacheDir(), Md5Utils.getMd5(apkFile.getName()));
+            if (mType == TYPE_SEND) {
+                thumbFile = FilePathManager.getLocalAppThumbCacheFile(apkFile.getName());
+            } else {
+                thumbFile = FilePathManager.getPeerAppThumbCacheFile(apkFile.getName());
+            }
         } else if (fileInfo instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) fileInfo;
-            thumbFile = new File(FilePathManager.getMusicAlbumCacheDir(), musicFile.getAlbumId() + ".png");
+            if (mType == TYPE_SEND) {
+                thumbFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
+            } else {
+                thumbFile = FilePathManager.getPeerMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
+            }
+
         } else if (fileInfo instanceof PicFile) {
             if (FileTransferAdapter.TYPE_SEND == mType) {
                 PicFile picFile = (PicFile) fileInfo;
@@ -122,7 +132,11 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             }
         } else if (fileInfo instanceof VideoFile) {
             VideoFile videoFile = (VideoFile) fileInfo;
-            thumbFile = new File(FilePathManager.getVideoThumbCacheDir(), Md5Utils.getMd5(videoFile.getPath()));
+            if (mType == TYPE_SEND) {
+                thumbFile = FilePathManager.getLocalVideoThumbCacheFile(videoFile.getName());
+            } else {
+                thumbFile = FilePathManager.getPeerVideoThumbCacheFile(videoFile.getName());
+            }
         }
         return thumbFile;
     }

@@ -28,20 +28,12 @@ public class SenderManager {
 
 
     public static SenderManager getInstance(Context context) {
-
         if (mSenderManager == null) {
-
             synchronized (Object.class) {
-
                 if (mSenderManager == null) {
-
                     mSenderManager = new SenderManager(context);
-
-
                 }
-
             }
-
         }
         return mSenderManager;
     }
@@ -60,9 +52,7 @@ public class SenderManager {
      * @param transferObserver
      */
     public void register(TransferObserver transferObserver) {
-
         mTransferObserverLists.add(transferObserver);
-
     }
 
     /**
@@ -71,7 +61,6 @@ public class SenderManager {
      * @param transferObserver
      */
     public void unRegister(TransferObserver transferObserver) {
-
         if (mTransferObserverLists.contains(transferObserver)) {
             mTransferObserverLists.remove(transferObserver);
         }
@@ -85,10 +74,8 @@ public class SenderManager {
      * @param fileInfoList
      */
     public void send(String destAddress, List<FileInfo> fileInfoList) {
-
         mSenderTaskImp = new SenderTaskImp(mContext, destAddress, fileInfoList, mP2pTransferHandler);
         mSingleThreadPool.execute(mSenderTaskImp);
-
     }
 
     /**
@@ -99,5 +86,4 @@ public class SenderManager {
             mSenderTaskImp.release();
         }
     }
-
 }

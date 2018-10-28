@@ -32,6 +32,7 @@ public abstract class BaseFragment extends RxFragment {
         super.onAttach(context);
         Bundle arguments = getArguments();
         initArgs(arguments);
+
     }
 
     @Nullable

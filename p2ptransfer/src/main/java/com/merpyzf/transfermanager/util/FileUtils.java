@@ -163,13 +163,13 @@ public class FileUtils {
 
         } else if (file instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) file;
-            File thumbFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), Md5Utils.getMd5(musicFile.getAlbumId() + ""));
+            File thumbFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
             // 获取图片原始的bitmap
             Bitmap appThumbBmp = BitmapFactory.decodeFile(thumbFile.getPath());
             FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(context, appThumbBmp));
         } else if (file instanceof VideoFile) {
             VideoFile videoFile = (VideoFile) file;
-            File thumbFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), Md5Utils.getMd5(videoFile.getPath()));
+            File thumbFile = FilePathManager.getLocalVideoThumbCacheFile(videoFile.getName());
             Bitmap appThumbBmp = BitmapFactory.decodeFile(thumbFile.getPath());
             FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(context, appThumbBmp));
         }
@@ -229,20 +229,16 @@ public class FileUtils {
                 totalSize += readLength;
                 length -= readLength;
             }
+            bos.flush();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {
-                bos.flush();
-                bos.close();
-                bos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            CloseUtils.close(bos);
         }
     }
+
     /**
      * 获取待写入的File对象，根据要保存的文件类型在不同的目录下创建
      *
@@ -349,7 +345,6 @@ public class FileUtils {
      * @param file 要添加的文件
      */
     public static void addFileToMediaStore(Context context, File file) {
-
         Uri contentUri = Uri.fromFile(file);
         // 发送广播，通知系统将此文件添加到数据库中
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
@@ -357,14 +352,15 @@ public class FileUtils {
             return;
         }
         context.sendBroadcast(intent);
-
     }
-
-
-    public static void main(String[] args) {
-
-
+    public static boolean isContain(File parent, String fileName) {
+        String[] fileNames = parent.list();
+        for (String childFileName : fileNames) {
+            if (fileName.equals(childFileName)) {
+                return true;
+            }
+        }
+        return false;
     }
-
 
 }

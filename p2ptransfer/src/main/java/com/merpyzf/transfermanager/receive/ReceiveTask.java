@@ -41,7 +41,7 @@ public interface ReceiveTask {
     /**
      * 释放资源
      */
-    void release();
+    void exit();
 
 
 }

@@ -1,6 +1,7 @@
 package com.merpyzf.xmshare.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ViewUtils;
@@ -190,49 +191,47 @@ public class FileListFragment extends BaseFragment {
             public void onLoadFinished(Observable observable) {
                 observable = observable.compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW));
                 if (mLoadFileType == FILE_TYPE_APP) {
-                    observable.subscribe((Consumer<List<ApkFile>>) apkFiles -> {
-                        for (ApkFile apkFile : apkFiles) {
-                            Log.i("WW2k", apkFile.getPath());
-                        }
-
-                        mFileLists.addAll(apkFiles);
+                    observable.subscribe((Consumer<List<ApkFile>>) appFiles -> {
+                        mFileLists.addAll(appFiles);
                         CollectionUtils.shortingByFirstCase(mFileLists);
                         updateTitle(Const.PAGE_APP_TITLE);
                         notifyRvDataChanged();
-                        ApkUtils.asyncCacheApkIco(mContext, apkFiles);
+                        ApkUtils.asyncCacheApkIco(mContext, appFiles);
                     });
 
 
                 } else if (mLoadFileType == FILE_TYPE_MUSIC) {
-                    observable.subscribe((Consumer<List<FileInfo>>) fileInfoList -> {
-                        if (fileInfoList.size() == 0) {
+                    observable.subscribe((Consumer<List<FileInfo>>) musicFiles -> {
+                        if (musicFiles.size() == 0) {
                             mProgressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "没有扫描到音乐文件", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        mFileLists.addAll(fileInfoList);
+                        if (mFileLists.size() == 0) {
+                            mFileLists.addAll(musicFiles);
+                        }
                         CollectionUtils.shortingByFirstCase(mFileLists);
                         updateTitle(Const.PAGE_MUSIC_TITLE);
                         notifyRvDataChanged();
                         MusicUtils.updateAlbumImg(getContext(), mFileLists);
                     });
                 } else if (mLoadFileType == FILE_TYPE_VIDEO) {
-                    observable.subscribe((Consumer<List<FileInfo>>) fileInfoList -> {
-                        if (fileInfoList.size() == 0) {
+                    observable.subscribe((Consumer<List<FileInfo>>) videoFiles -> {
+                        if (videoFiles.size() == 0) {
                             mProgressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "没有扫描到视频文件", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        mFileLists.addAll(fileInfoList);
+                        if (mFileLists.size() == 0) {
+                            mFileLists.addAll(videoFiles);
+                        }
                         CollectionUtils.shortingByFirstCase(mFileLists);
                         updateTitle(Const.PAGE_VIDEO_TITLE);
                         notifyRvDataChanged();
-                        VideoUtils.updateThumbImg(getContext(), fileInfoList);
+                        VideoUtils.updateThumbImg(getContext(), videoFiles);
                     });
 
                 }
-
-
             }
         };
 
@@ -268,7 +267,9 @@ public class FileListFragment extends BaseFragment {
 
             case FILE_TYPE_VIDEO:
                 updateTitle("视频");
-                mRvFileList.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 3));
+                mRvFileList.addItemDecoration(new RecyclerViewItemDecoration(DisplayUtils.
+                        dip2px(getContext(), 5)));
                 mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_video, mFileLists);
                 break;
 

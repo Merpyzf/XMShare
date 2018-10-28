@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:orientation="vertical">
 
-
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
         android:foreground="@drawable/card_foreground">
 
@@ -21,10 +19,10 @@
 
             <ImageView
                 android:id="@+id/iv_file_thumb"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:padding="20dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:layout_centerVertical="true"
+                android:padding="5dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_header" />
 
@@ -32,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/iv_file_thumb"
                 android:orientation="vertical">
 
@@ -40,76 +39,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:singleLine="true"
                     android:padding="2dp"
+                    android:singleLine="true"
                     android:text="春末南方的城市"
                     android:textColor="#000000" />
-
 
                 <TextView
                     android:id="@+id/tv_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:singleLine="true"
                     android:padding="2dp"
+                    android:singleLine="true"
                     android:text="3.2mb"
-                    android:textSize="12sp"
                     android:textColor="@color/colorSecondaryText"
-                     />
-
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/tv_progress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="2dp"
-                        android:textSize="12sp"
+                        android:text="传输进度"
                         android:textColor="@color/colorSecondaryText"
-                        android:text="传输进度" />
-
-
-
-
+                        android:textSize="12sp" />
 
                 </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progress"
+                    style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="5dp"
+                    android:max="100"
+                    android:padding="2dp"
+                    android:visibility="invisible" />
             </LinearLayout>
-
-
-            <ProgressBar
-                android:id="@+id/progress"
-                style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="80dp"
-                android:layout_marginRight="5dp"
-                android:padding="2dp"
-                android:visibility="invisible"
-                android:layout_alignParentBottom="true"
-                android:max="100"
-
-                />
 
             <ImageView
                 android:id="@+id/iv_done"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_done"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
                 android:padding="10dp"
-                android:visibility="invisible"
+                android:src="@drawable/ic_done"
                 android:tint="@color/colorAccent"
-                />
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
-
     </android.support.v7.widget.CardView>
-
 
 </LinearLayout>

@@ -49,6 +49,7 @@ public class FileInfoFactory {
                 musicFile.setPath(FilePathManager.getSaveMusicDir().getPath() + File.separator +
                         fileInfo.getName() + "." + fileInfo.getSuffix());
                 musicFile.setMd5(fileInfo.getMd5());
+                musicFile.setAlbumId(((MusicFile)fileInfo).getAlbumId());
                 musicFile.setIsLast(fileInfo.getIsLast());
                 return musicFile;
 

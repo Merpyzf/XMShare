@@ -11,13 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.FileInfoFactory;
 import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
 import com.merpyzf.xmshare.ui.adapter.ReceivedFileAdapter;
-import com.merpyzf.xmshare.util.FilePathManager;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.oushangfeng.pinnedsectionitemdecoration.callback.OnHeaderClickListener;
 

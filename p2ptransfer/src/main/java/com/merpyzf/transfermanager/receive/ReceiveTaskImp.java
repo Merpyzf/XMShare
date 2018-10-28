@@ -1,7 +1,6 @@
 package com.merpyzf.transfermanager.receive;
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
 
@@ -9,8 +8,9 @@ import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.FileInfoFactory;
+import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.util.CacheUtils;
 import com.merpyzf.transfermanager.util.FileUtils;
-import com.merpyzf.transfermanager.util.Md5Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -69,6 +69,15 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             }
 
         }
+        //
+        for (FileInfo fileInfo : mReceiveFileList) {
+            if(fileInfo instanceof MusicFile){
+
+                long albumId = ((MusicFile) fileInfo).getAlbumId();
+                Log.i("WW2k", "albumId-->"+albumId);
+            }
+        }
+
         sendMessage(mReceiveFileList, Const.TransferStatus.TRANSFER_FILE_LIST_SUCCESS);
     }
 
@@ -82,9 +91,9 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             e.printStackTrace();
             Log.i("WW2K", "ReceiveTaskImp expection: " + e.getMessage());
             sendError(e);
-            release();
+            exit();
         } finally {
-            release();
+            exit();
         }
     }
 
@@ -105,15 +114,11 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
      *
      * @param fileInfo
      */
-    private void receiveThumbToLocal(FileInfo fileInfo) {
-
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File destFile = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES), Md5Utils.getMd5(fileInfo.getName()));
-            if (fileInfo.getThumbLength() != 0) {
-                FileUtils.writeStream2SdCard(destFile, mInputStream, fileInfo.getThumbLength());
-            }
+    private void receiveThumbToLocal(FileInfo fileInfo) throws IOException {
+        // 照片不用缓存缩略图
+        if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE) {
+            CacheUtils.cacheReceiveThumb(fileInfo, mInputStream);
         }
-
     }
 
     /**
@@ -133,7 +138,13 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             }
             String strHeader = new String(buffer, Const.S_CHARSET);
             strHeader = trimLastFillChars(strHeader);
-            FileInfo fileInfo = new FileInfo();
+            int fileType = Integer.valueOf(strHeader.split(Const.S_SEPARATOR)[0]);
+            FileInfo fileInfo;
+            if (fileType == FileInfo.FILE_TYPE_MUSIC) {
+                fileInfo = new MusicFile();
+            } else {
+                fileInfo = new FileInfo();
+            }
             fileInfo.decodeHeader(strHeader);
             return fileInfo;
         }
@@ -204,7 +215,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             sendMessage(fileInfo, Const.TransferStatus.TRANSFER_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
-            release();
+            exit();
             sendError(e);
         } finally {
             try {
@@ -234,13 +245,13 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     @Override
     public void sendError(Exception e) {
         Message message = mP2pTransferHandler.obtainMessage();
-        message.what = Const.TransferStatus.TRANSFER_FAILED;
+        message.what = Const.TransferStatus.TRANSFER_EXPECTION;
         message.obj = e;
         mP2pTransferHandler.sendMessage(message);
     }
 
     @Override
-    public void release() {
+    public void exit() {
         isStop = true;
         if (mInputStream != null) {
             try {

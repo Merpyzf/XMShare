@@ -7,6 +7,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.util.CloseUtils;
 import com.merpyzf.transfermanager.util.FileUtils;
 
 import java.io.BufferedInputStream;
@@ -46,14 +47,37 @@ public class SenderTaskImp implements SendTask, Runnable {
     }
 
 
+    /**
+     * 开始发送
+     */
+    public void start() {
+
+    }
+
+    /**
+     * 停止发送
+     */
+    public void stop() {
+
+    }
+
+
+    /**
+     * 停止退出
+     */
+    public void exit() {
+
+    }
+
+
     @Override
-    public void init() throws Exception {
+    public void connect() throws Exception {
         mSocket = new Socket();
-        mSocket.connect(new InetSocketAddress(mtargetAddress, Const.SOCKET_PORT), 3000);
         // 设置字节流读取的阻塞时间为3秒
-        mSocket.setSoTimeout(3*1000);
-        mSocket.setSendBufferSize(64*1024*1024);
-        mSocket.setPerformancePreferences(2, 1,2);
+        mSocket.setSoTimeout(3 * 1000);
+        mSocket.setSendBufferSize(64 * 1024 * 1024);
+        mSocket.setPerformancePreferences(2, 1, 2);
+        mSocket.connect(new InetSocketAddress(mtargetAddress, Const.SOCKET_PORT), 3000);
         mOutputStream = mSocket.getOutputStream();
     }
 
@@ -69,24 +93,28 @@ public class SenderTaskImp implements SendTask, Runnable {
 
     /**
      * 发送文件头信息包含缩略图
+     *
      * @param fileInfo
      * @throws Exception
      */
     @Override
     public void sendHeader(FileInfo fileInfo) throws Exception {
-        String header = fileInfo.getHeader(mContext);
+        String header = fileInfo.generateHeader(mContext);
+        Log.i("WW4k", "header->"+header);
         mOutputStream.write(header.getBytes());
         if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE) {
             mOutputStream.write(fileInfo.getFileThumbArray());
         }
         mOutputStream.flush();
     }
+
     @Override
     public void sendFileList() {
         for (FileInfo fileInfo : mFileList) {
             sendFileBody(fileInfo);
         }
     }
+
     /**
      * 发送文件的内容
      *
@@ -136,19 +164,14 @@ public class SenderTaskImp implements SendTask, Runnable {
             sendError(e);
             release();
         } finally {
-            try {
-                bis.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendError(e);
-            }
+            CloseUtils.close(bis);
         }
     }
 
     @Override
     public void run() {
         try {
-            init();
+            connect();
             sendTransferList();
             sendFileList();
         } catch (Exception e) {
@@ -160,6 +183,7 @@ public class SenderTaskImp implements SendTask, Runnable {
         }
 
     }
+
     @Override
     public void sendMessage(FileInfo fileInfo, int transferStatus) {
         fileInfo.setFileTransferStatus(transferStatus);
@@ -177,7 +201,7 @@ public class SenderTaskImp implements SendTask, Runnable {
     @Override
     public void sendError(Exception e) {
         Message message = mP2pTransferHandler.obtainMessage();
-        message.what = Const.TransferStatus.TRANSFER_FAILED;
+        message.what = Const.TransferStatus.TRANSFER_EXPECTION;
         message.obj = e;
         mP2pTransferHandler.sendMessage(message);
     }
@@ -198,5 +222,6 @@ public class SenderTaskImp implements SendTask, Runnable {
             e.printStackTrace();
         }
     }
+
 
 }

@@ -63,7 +63,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
                     helper.setText(R.id.tv_name, item.getData().getName() + "");
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
-                    loadImgPath = FilePathManager.getAppThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
+                    loadImgPath = FilePathManager.getLocalAppThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = R.drawable.ic_main_app;
                     placeHolderImgRes = R.drawable.ic_main_app;
                 } else if (fileType == FileInfo.FILE_TYPE_MUSIC) {
@@ -71,7 +71,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
                     helper.setText(R.id.tv_name, item.getData().getName() + "");
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
-                    loadImgPath = FilePathManager.getMusicAlbumCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
+                    loadImgPath = FilePathManager.getLocalMusicAlbumCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = R.drawable.ic_holder_music;
                     placeHolderImgRes = R.drawable.ic_holder_music;
                 } else if (fileType == FileInfo.FILE_TYPE_VIDEO) {
@@ -79,7 +79,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
                     helper.setText(R.id.tv_name, item.getData().getName() + "");
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
-                    loadImgPath = FilePathManager.getVideoThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
+                    loadImgPath = FilePathManager.getLocalVideoThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = R.drawable.ic_holder_video;
                     placeHolderImgRes = R.drawable.ic_holder_video;
                 }

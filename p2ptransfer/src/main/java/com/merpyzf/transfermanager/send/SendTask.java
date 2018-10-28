@@ -13,7 +13,7 @@ public interface SendTask {
     /**
      * 初始化
      */
-    void init() throws Exception;
+    void connect() throws Exception;
 
     /**
      * 预先发送待传输的文件列表的信息

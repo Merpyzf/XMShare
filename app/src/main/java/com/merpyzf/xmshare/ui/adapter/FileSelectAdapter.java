@@ -59,7 +59,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             imageView.setImageDrawable(apkFile.getApkDrawable());
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;
-            File albumFile = new File(FilePathManager.getMusicAlbumCacheDir(), musicFile.getAlbumId()+".png");
+            File albumFile = new File(FilePathManager.getLocalMusicAlbumCacheDir(), musicFile.getAlbumId()+".png");
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
@@ -89,7 +89,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             }
         } else if (item instanceof VideoFile) {
             VideoFile videoFile = (VideoFile) item;
-            File videoThumb = new File(FilePathManager.getVideoThumbCacheDir(), Md5Utils.getMd5(videoFile.getPath()));
+            File videoThumb = new File(FilePathManager.getLocalVideoThumbCacheDir(), Md5Utils.getMd5(videoFile.getPath()));
             Glide.with(mContext)
                     .load(videoThumb)
                     .crossFade()

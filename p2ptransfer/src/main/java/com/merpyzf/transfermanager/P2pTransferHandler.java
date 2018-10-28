@@ -60,7 +60,7 @@ public class P2pTransferHandler extends Handler {
             /**
              * 传输失败
              */
-            case Const.TransferStatus.TRANSFER_FAILED:
+            case Const.TransferStatus.TRANSFER_EXPECTION:
                 // 错误信息
                 Exception exception = (Exception) msg.obj;
                 exception.printStackTrace();

@@ -8,10 +8,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 
@@ -87,8 +87,9 @@ public class MusicUtils {
                 musicFile.setAlbumId(-1);
                 bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_default_album_art);
             }
-            File albumFile = new File(FilePathManager.getMusicAlbumCacheDir(), musicFile.getAlbumId() + ".png");
-            if (FilePathManager.getMusicAlbumCacheDir().canWrite() && !isContain(FilePathManager.getMusicAlbumCacheDir(), musicFile)) {
+            File albumFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
+            if (FilePathManager.getLocalMusicAlbumCacheDir().canWrite() &&
+                    !FileUtils.isContain(albumFile.getParentFile(), albumFile.getName())) {
                 bos = new BufferedOutputStream(new FileOutputStream(albumFile));
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
             }
@@ -104,25 +105,6 @@ public class MusicUtils {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * 判断要获取到音乐封面是否在本地已经存在
-     *
-     * @param musicFile
-     * @return true
-     * false 不包含
-     */
-    private static synchronized boolean isContain(File parent, MusicFile musicFile) {
-        String[] albums = parent.list();
-        for (int i = 0; i < albums.length; i++) {
-            if ((musicFile.getAlbumId() + ".png").equals(albums[i])) {
-                Log.i("WW2K", "专辑封面已经存在了");
-                return true;
-            }
-        }
-        // TODO: 2017/12/24 考虑增加清理音乐文件不存在的album_id
-        return false;
     }
 
     /**

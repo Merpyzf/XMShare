@@ -10,22 +10,22 @@ import android.graphics.drawable.Drawable;
 public class ApkFile extends FileInfo {
 
     // 避免对Drawable序列化
-    private transient Drawable aplDrawable;
+    private transient Drawable appIcoDrawable;
 
     public ApkFile(String name, String path, int type, int size, Drawable aplDrawable) {
         super(name, path, type, size, "apk");
-        this.aplDrawable = aplDrawable;
+        this.appIcoDrawable = aplDrawable;
     }
 
     public ApkFile() {
     }
 
     public Drawable getApkDrawable() {
-        return aplDrawable;
+        return appIcoDrawable;
     }
 
     public void setApkDrawable(Drawable aplDrawable) {
-        this.aplDrawable = aplDrawable;
+        this.appIcoDrawable = aplDrawable;
     }
 
 

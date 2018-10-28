@@ -1,6 +1,7 @@
 package com.merpyzf.transfermanager.entity;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.github.promeg.pinyinhelper.Pinyin;
 import com.merpyzf.transfermanager.common.Const;
@@ -249,11 +250,24 @@ public class FileInfo extends DataSupport implements Serializable {
     }
 
     /**
-     * 获取传输中的文件头信息
-     *
-     * @return
+     * 重置当前对象的状态
      */
-    public String getHeader(Context context) {
+    public void reset() {
+        progress = 0;
+        isLast = 0;
+        setFileTransferStatus(Const.TransferStatus.TRANSFER_WAITING);
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
+    }
+
+
+    public String generateHeader(Context context) {
 
         StringBuilder Header = new StringBuilder();
         //文件类型
@@ -299,12 +313,6 @@ public class FileInfo extends DataSupport implements Serializable {
         return Header.toString();
     }
 
-    /**
-     * 解析文件头信息
-     *
-     * @param strHeader
-     * @return
-     */
     public void decodeHeader(String strHeader) throws Exception {
         String[] split = strHeader.split(Const.S_SEPARATOR);
         this.setType(Integer.valueOf(split[0]));
@@ -314,24 +322,26 @@ public class FileInfo extends DataSupport implements Serializable {
         this.setThumbLength(Integer.valueOf(split[4]));
         this.setMd5(split[5]);
         this.setIsLast(Integer.valueOf(split[6]));
+
+
     }
 
-
-    /**
-     * 重置当前对象的状态
-     */
-    public void reset() {
-        progress = 0;
-        isLast = 0;
-        setFileTransferStatus(Const.TransferStatus.TRANSFER_WAITING);
-    }
-
-    public String getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(String lastModified) {
-        this.lastModified = lastModified;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null){
+            return false;
+        }else {
+            if(this.getClass() == obj.getClass()){
+                FileInfo f = (FileInfo) obj;
+                if(this.name.equals(f.getName()) && this.path.equals(f.getPath())){
+                    return true;
+                }else {
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        }
     }
 }
 
