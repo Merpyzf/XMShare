@@ -165,8 +165,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(videoName);
             Glide.with(mContext)
                     .load(videoThumb)
-                    .placeholder(R.drawable.ic_video_default)
-                    .error(R.drawable.ic_video_default)
+                    .placeholder(R.drawable.ic_default_video)
+                    .error(R.drawable.ic_default_video)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .dontAnimate()
                     .centerCrop()

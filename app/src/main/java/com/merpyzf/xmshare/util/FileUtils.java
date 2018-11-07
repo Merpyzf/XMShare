@@ -13,6 +13,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.common.Const;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class FileUtils {
 
     private static List<FileInfo> mFileList = new ArrayList<>();
 
-    // TODO: 2018/4/16 等待编辑 
+    // TODO: 2018/4/16 等待编辑
 
     /**
      * 遍历文件夹下面的文件
@@ -64,7 +65,7 @@ public class FileUtils {
                             apkFile.setType(FileInfo.FILE_TYPE_APP);
                             // todo: 扫描完成后需要对apk的ico进行缓存
                             apkFile.setApkDrawable(null);
-                            Log.i("WW3K", "扫描到的未安装的apk文件-> "+apkFile.getName());
+                            Log.i("WW3K", "扫描到的未安装的apk文件-> " + apkFile.getName());
                             mFileList.add(apkFile);
                         } else if (isCompactType(suffix)) {
                             CompactFile compactFile = new CompactFile();
@@ -198,5 +199,4 @@ public class FileUtils {
         }
         return false;
     }
-
 }

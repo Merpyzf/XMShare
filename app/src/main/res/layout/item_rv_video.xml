@@ -15,7 +15,7 @@
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:src="@drawable/ic_video_default"
+            android:src="@drawable/ic_default_video"
             android:scaleType="centerInside" />
 
         <ImageView

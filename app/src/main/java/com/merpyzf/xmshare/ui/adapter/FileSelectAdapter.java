@@ -15,12 +15,11 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
-import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.util.UiUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.List;
 
 import pl.droidsonroids.gif.GifDrawable;
@@ -44,26 +43,23 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
         helper.addOnLongClickListener(R.id.ll_selected_files);
         helper.addOnClickListener(R.id.iv_remove);
         FileInfo fileInfo = (FileInfo) item;
-        float size = fileInfo.getLength() / (1024 * 1024 * 1f);
-        DecimalFormat decimalFormat = new DecimalFormat("#.0");
-        String formatSize = decimalFormat.format(size);
-
-
+        String[] fileSizeArray = FileUtils.getFileSizeArrayStr(fileInfo.getLength());
         helper.setText(R.id.tv_title, fileInfo.getName());
         helper.setText(R.id.tv_path, fileInfo.getPath());
-        helper.setText(R.id.tv_size, "文件大小:" + formatSize + " MB");
+        helper.setText(R.id.tv_size, "文件大小:" + fileSizeArray[0] + fileSizeArray[1]);
         ImageView imageView = helper.getView(R.id.iv_file_thumb);
-
         if (item instanceof ApkFile) {
             ApkFile apkFile = (ApkFile) item;
             imageView.setImageDrawable(apkFile.getApkDrawable());
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;
-            File albumFile = new File(FilePathManager.getLocalMusicAlbumCacheDir(), musicFile.getAlbumId()+".png");
+            File albumFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
                         .load(albumFile)
+                        .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
+                        .error(UiUtils.getPlaceHolder(fileInfo.getType()))
                         .crossFade()
                         .centerCrop()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -82,6 +78,8 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             } else {
                 Glide.with(mContext)
                         .load(picFile.getPath())
+                        .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
+                        .error(UiUtils.getPlaceHolder(fileInfo.getType()))
                         .crossFade()
                         .centerCrop()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -89,9 +87,11 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             }
         } else if (item instanceof VideoFile) {
             VideoFile videoFile = (VideoFile) item;
-            File videoThumb = new File(FilePathManager.getLocalVideoThumbCacheDir(), Md5Utils.getMd5(videoFile.getPath()));
+            File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(videoFile.getName());
             Glide.with(mContext)
                     .load(videoThumb)
+                    .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
+                    .error(UiUtils.getPlaceHolder(fileInfo.getType()))
                     .crossFade()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

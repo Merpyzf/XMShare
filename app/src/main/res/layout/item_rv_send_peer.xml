@@ -22,7 +22,6 @@
             android:padding="10dp"
             app:civ_border_color="@color/white"
             app:civ_border_width="1dp"
-            android:src="@drawable/ic_thumb_empty"
             />
 
         <LinearLayout

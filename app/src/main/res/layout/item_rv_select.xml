@@ -32,7 +32,7 @@
                     android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_thumb_empty" />
+                    />
 
 
                 <pl.droidsonroids.gif.GifImageView

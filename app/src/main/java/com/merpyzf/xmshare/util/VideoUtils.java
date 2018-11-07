@@ -96,7 +96,7 @@ public class VideoUtils {
                         if(!isContain) {
                             bos = new BufferedOutputStream(new FileOutputStream(videoThumb));
                             if (bitmap == null) {
-                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_video_default);
+                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_default_video);
                             }
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                         }

@@ -22,7 +22,7 @@
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:layout_centerVertical="true"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_header" />
 

@@ -8,7 +8,9 @@ import android.content.res.ColorStateList;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
+import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
+import com.merpyzf.xmshare.R;
 
 /**
  * Created by merpyzf on 2018/4/15.
@@ -98,6 +100,32 @@ public class UiUtils {
         return new ColorStateList(states, colors);
     }
 
+    /**
+     * 根据不同的文件类型获取占位图片
+     *
+     * @param fileInfoType
+     * @return
+     */
+    public static int getPlaceHolder(int fileInfoType) {
+        int placeHolder = 0;
+        switch (fileInfoType) {
+            case FileInfo.FILE_TYPE_APP:
+                placeHolder = R.drawable.ic_default_app;
+                break;
+            case FileInfo.FILE_TYPE_MUSIC:
+                placeHolder = R.drawable.ic_default_album_art;
+                break;
+            case FileInfo.FILE_TYPE_VIDEO:
+                placeHolder = R.drawable.ic_default_video;
+                break;
+            case FileInfo.FILE_TYPE_IMAGE:
+                placeHolder = R.drawable.ic_default_image;
+                break;
+            default:
+                break;
+        }
+        return placeHolder;
+    }
 
 }
 

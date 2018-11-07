@@ -353,6 +353,7 @@ public class FileUtils {
         }
         context.sendBroadcast(intent);
     }
+
     public static boolean isContain(File parent, String fileName) {
         String[] fileNames = parent.list();
         for (String childFileName : fileNames) {

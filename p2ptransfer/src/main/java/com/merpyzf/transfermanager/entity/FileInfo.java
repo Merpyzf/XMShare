@@ -322,26 +322,6 @@ public class FileInfo extends DataSupport implements Serializable {
         this.setThumbLength(Integer.valueOf(split[4]));
         this.setMd5(split[5]);
         this.setIsLast(Integer.valueOf(split[6]));
-
-
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null){
-            return false;
-        }else {
-            if(this.getClass() == obj.getClass()){
-                FileInfo f = (FileInfo) obj;
-                if(this.name.equals(f.getName()) && this.path.equals(f.getPath())){
-                    return true;
-                }else {
-                    return false;
-                }
-            }else {
-                return false;
-            }
-        }
     }
 }
 

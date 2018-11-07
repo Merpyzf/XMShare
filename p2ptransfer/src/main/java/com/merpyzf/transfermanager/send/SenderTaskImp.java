@@ -75,8 +75,8 @@ public class SenderTaskImp implements SendTask, Runnable {
         mSocket = new Socket();
         // 设置字节流读取的阻塞时间为3秒
         mSocket.setSoTimeout(3 * 1000);
-        mSocket.setSendBufferSize(64 * 1024 * 1024);
-        mSocket.setPerformancePreferences(2, 1, 2);
+        //mSocket.setSendBufferSize(64 * 1024 * 1024);
+        //mSocket.setPerformancePreferences(2, 1, 2);
         mSocket.connect(new InetSocketAddress(mtargetAddress, Const.SOCKET_PORT), 3000);
         mOutputStream = mSocket.getOutputStream();
     }

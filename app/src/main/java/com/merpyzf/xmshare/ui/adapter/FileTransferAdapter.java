@@ -20,10 +20,12 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.Md5Utils;
+import com.merpyzf.xmshare.util.UiUtils;
 import com.merpyzf.xmshare.R;
 
 import java.io.File;
 import java.util.List;
+
 
 /**
  * Created by wangke on 2018/1/18.
@@ -63,11 +65,11 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         File thumbFile = getThumbFile(fileInfo);
         Glide.with(mContext)
                 .load(thumbFile)
-                .placeholder(R.drawable.ic_thumb_empty)
+                .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
                 .crossFade()
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .error(R.drawable.ic_header)
+                .error(UiUtils.getPlaceHolder(fileInfo.getType()))
                 .into(ivThumb);
         if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_WAITING) {
             tvProgress.setText("等待中");
@@ -88,11 +90,11 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                     File saveFile = FileUtils.getSaveFile(fileInfo);
                     Glide.with(mContext)
                             .load(saveFile)
-                            .placeholder(R.drawable.ic_thumb_empty)
+                            .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
                             .crossFade()
                             .centerCrop()
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .error(R.drawable.ic_header)
+                            .error(UiUtils.getPlaceHolder(fileInfo.getType()))
                             .into(ivThumb);
                 }
                 tvProgress.setText("传输完毕," + getOpenTypeText(fileInfo));

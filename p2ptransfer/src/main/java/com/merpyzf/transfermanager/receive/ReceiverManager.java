@@ -122,8 +122,8 @@ public class ReceiverManager implements Runnable {
             mServerSocket = new ServerSocket();
             //是否复用未完全关闭的地址端口
             mServerSocket.setReuseAddress(true);
-            mServerSocket.setReceiveBufferSize(64 * 1024 * 1024);
-            mServerSocket.setPerformancePreferences(2, 1, 2);
+            //mServerSocket.setReceiveBufferSize(64 * 1024 * 1024);
+            //mServerSocket.setPerformancePreferences(2, 1, 2);
             mServerSocket.bind(new InetSocketAddress(Const.SOCKET_PORT));
             while (!isStop) {
                 Log.i(TAG, "SocketServer 阻塞中,等待设备连接....");
