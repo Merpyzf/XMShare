@@ -20,6 +20,7 @@ import com.merpyzf.xmshare.ui.widget.IndicatorChangedCallback;
 import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 import com.merpyzf.xmshare.util.FileUtils;
+import com.merpyzf.xmshare.util.SettingHelper;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -102,6 +104,18 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                     fileInfo.setSize(file1.length());
                     return fileInfo;
                 })
+                .filter(new Predicate<FileInfo>() {
+                    @Override
+                    public boolean test(FileInfo fileInfo) throws Exception {
+                        boolean isShow = SettingHelper.showHiddenFile(mContext);
+                        if (!isShow) {
+                            if (fileInfo.getName().startsWith(".")) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                })
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<FileInfo>() {
@@ -131,17 +145,16 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        Log.i("WW2k", "被点击了");
         FileInfo fileInfo = (FileInfo) adapter.getItem(position);
         Indicator indicator = new Indicator(fileInfo.getName(), fileInfo.getPath());
         mSelectIndicator.addIndicator(indicator);
-        loadDir(fileInfo.getPath());
-
+        if (fileInfo.isDirectory()) {
+            loadDir(fileInfo.getPath());
+        }
     }
 
 
     public void onBackPressed() {
-
         if (mSelectIndicator.isRoot()) {
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fl_main_container, new FunctionListFragment());

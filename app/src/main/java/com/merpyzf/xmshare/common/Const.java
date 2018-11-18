@@ -26,6 +26,11 @@ public class Const {
      * 传输模式
      */
     public static final String KEY_TRANSFER_MODE = "transfer_mode";
+
+    public static final String IS_SHOW_HIDDEN_FILE = "is_show_hidden_file";
+    public static final int SHOW_HIDDEN_FILE = 1;
+    public static final int DONT_SHOW_HIDDEN_FILE = -1;
+
     /**
      * 使用已连接的局域网传输模式
      */
