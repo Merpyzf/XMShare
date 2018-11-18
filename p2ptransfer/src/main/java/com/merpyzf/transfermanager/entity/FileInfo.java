@@ -266,7 +266,6 @@ public class FileInfo extends DataSupport implements Serializable {
         this.lastModified = lastModified;
     }
 
-
     public String generateHeader(Context context) {
 
         StringBuilder Header = new StringBuilder();
@@ -323,6 +322,20 @@ public class FileInfo extends DataSupport implements Serializable {
         this.setMd5(split[5]);
         this.setIsLast(Integer.valueOf(split[6]));
     }
+
+    //@Override
+    //public boolean equals(Object obj) {
+    //    if (obj instanceof FileInfo) {
+    //        FileInfo fileInfo = (FileInfo) obj;
+    //        if (fileInfo.getPath().equals(this.path) && fileInfo.getLength() == this.getLength()) {
+    //            return true;
+    //        } else {
+    //            return false;
+    //        }
+    //    } else {
+    //        return false;
+    //    }
+    //}
 }
 
 

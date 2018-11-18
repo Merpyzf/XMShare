@@ -57,7 +57,7 @@ public class PhotoDirBean implements Serializable {
 
     public boolean isChecked() {
         for (FileInfo fileInfo : imageList) {
-            if (!App.getSendFileList().contains(fileInfo)) {
+            if (!App.getTransferFileList().contains(fileInfo)) {
                 isChecked = false;
                 return isChecked;
             }

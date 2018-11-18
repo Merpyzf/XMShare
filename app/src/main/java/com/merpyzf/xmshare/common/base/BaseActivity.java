@@ -1,5 +1,6 @@
 package com.merpyzf.xmshare.common.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -28,7 +29,7 @@ import butterknife.Unbinder;
 
 public abstract class BaseActivity extends RxAppCompatActivity {
     private Unbinder mUnbinder;
-    protected Context mContext;
+    protected Activity mContext;
 
     public static void start(Context context, Class activity) {
         context.startActivity(new Intent(context, activity));

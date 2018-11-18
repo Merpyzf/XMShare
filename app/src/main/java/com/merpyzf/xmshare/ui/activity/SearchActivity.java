@@ -58,10 +58,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void initData() {
         super.initData();
-        mFileList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("fileList");
-        for (FileInfo fileInfo : mFileList) {
-            //Log.i("W2k", "name --> "+fileInfo.getName());
-        }
     }
 
     @Override

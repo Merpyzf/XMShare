@@ -178,8 +178,8 @@ public class SenderTaskImp implements SendTask, Runnable {
             e.printStackTrace();
             sendError(e);
         } finally {
-            // 传输完毕后的资源释放
-            release();
+             //传输完毕后的资源释放
+            //release();
         }
 
     }

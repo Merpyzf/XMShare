@@ -378,5 +378,10 @@ public class ExampleUnitTest {
 
     }
 
+    public void testVauleDefault(){
+
+        boolean b = false;
+        System.out.println(b);
+    }
 
 }

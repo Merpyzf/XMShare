@@ -431,7 +431,7 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                                             if (scanPeerFragment.mOnPairActionListener != null) {
                                                 // 取消wifi扫描
                                                 scanPeerFragment.isStopScan = true;
-                                                scanPeerFragment.mOnPairActionListener.onStartTransfer(peer, App.getSendFileList());
+                                                scanPeerFragment.mOnPairActionListener.onStartTransfer(peer, App.getTransferFileList());
                                                 d.dispose();
                                             }
                                         } else {

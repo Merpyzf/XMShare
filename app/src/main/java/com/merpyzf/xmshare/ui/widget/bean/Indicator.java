@@ -1,14 +1,16 @@
 package com.merpyzf.xmshare.ui.widget.bean;
 
-public class Label {
-
-    public Label(String name, String value) {
-        this.name = name;
-        this.path = value;
-    }
-
+/**
+ * @author wangke
+ */
+public class Indicator {
     private String name;
-    private String path;
+    private String value;
+
+    public Indicator(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
 
     public String getName() {
         return name;
@@ -18,12 +20,12 @@ public class Label {
         this.name = key;
     }
 
-    public String getPath() {
-        return path;
+    public String getValue() {
+        return value;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setValue(String value) {
+        this.value = value;
     }
 
 
@@ -35,19 +37,17 @@ public class Label {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
-        Label label = (Label) o;
-
-        if (name != null ? !name.equals(label.name) : label.name != null) {
+        Indicator indicator = (Indicator) o;
+        if (name != null ? !name.equals(indicator.name) : indicator.name != null) {
             return false;
         }
-        return path != null ? path.equals(label.path) : label.path == null;
+        return value != null ? value.equals(indicator.value) : indicator.value == null;
     }
 
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (path != null ? path.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
 }

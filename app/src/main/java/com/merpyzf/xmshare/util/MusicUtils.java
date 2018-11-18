@@ -85,7 +85,7 @@ public class MusicUtils {
         try {
             if (bitmap == null) {
                 musicFile.setAlbumId(-1);
-                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_default_album_art);
+                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_holder_album_art);
             }
             File albumFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
             if (FilePathManager.getLocalMusicAlbumCacheDir().canWrite() &&
@@ -134,6 +134,10 @@ public class MusicUtils {
                         fileInfo.setSuffix(FileUtils.getFileSuffix(path));
                         if (extraMaxBytes > 1024 * 1024) {
                             fileList.add(fileInfo);
+                        }
+                        // TODO: 2018/11/11 偶尔会出现cursor关闭的问题
+                        if (data.isClosed()) {
+                            break;
                         }
                     }
                     return Observable.just(fileList);

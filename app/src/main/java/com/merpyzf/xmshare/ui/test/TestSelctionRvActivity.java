@@ -46,7 +46,7 @@ public class TestSelctionRvActivity extends AppCompatActivity {
                         for (Section mData : mDatas) {
                             if (!mData.isHeader) {
                                 if (mData.t.getLastModified().equals(lastChanged)) {
-                                    App.addSendFile(mData.t);
+                                    App.addTransferFile(mData.t);
                                 }
                             }
                         }
@@ -54,7 +54,7 @@ public class TestSelctionRvActivity extends AppCompatActivity {
                         for (Section mData : mDatas) {
                             if (!mData.isHeader) {
                                 if (mData.t.getLastModified().equals(lastChanged)) {
-                                    App.removeSendFile(mData.t);
+                                    App.removeTransferFile(mData.t);
                                 }
                             }
                         }
@@ -71,11 +71,11 @@ public class TestSelctionRvActivity extends AppCompatActivity {
         mSelctionAdapter.setOnItemClickListener((adapter, view, position) -> {
             Section section = (Section) adapter.getItem(position);
             if (!section.isHeader) {
-                if(App.getSendFileList().contains(section.t)){
+                if(App.getTransferFileList().contains(section.t)){
 
-                    App.removeSendFile(section.t);
+                    App.removeTransferFile(section.t);
                 }else {
-                    App.addSendFile(section.t);
+                    App.addTransferFile(section.t);
                 }
 
 
@@ -84,7 +84,7 @@ public class TestSelctionRvActivity extends AppCompatActivity {
                 String headName = section.t.getLastModified();
                 for (Section mData : mDatas) {
                     if (!mData.isHeader) {
-                        if (headName.equals(mData.t.getLastModified()) && !App.getSendFileList().contains(mData.t)) {
+                        if (headName.equals(mData.t.getLastModified()) && !App.getTransferFileList().contains(mData.t)) {
                             for (Section data : mDatas) {
                                 if (data.isHeader && data.header.equals(headName)) {
                                     data.setCheckedAllChild(false);

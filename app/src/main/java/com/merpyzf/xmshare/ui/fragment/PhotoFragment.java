@@ -8,7 +8,8 @@ import android.widget.TextView;
 
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseFragment;
-import com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp;
+import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
+import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 
 import butterknife.BindView;
 
@@ -22,7 +23,7 @@ public class PhotoFragment extends BaseFragment {
     @BindView(R.id.checkbox_all)
     CheckBox mCheckbox;
     @BindView(R.id.fileSelectIndicator)
-    FileSelectIndicatorImp mFileSelectIndicator;
+    SelectIndicatorView mSelectIndicator;
 
     @Override
     protected int getContentLayoutId() {
@@ -32,6 +33,7 @@ public class PhotoFragment extends BaseFragment {
     @Override
     protected void initWidget(View rootView) {
         super.initWidget(rootView);
+        mSelectIndicator.addIndicator(new Indicator("相册", ""));
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_container, new PhotoDirsFragment());
         fragmentTransaction.commit();
@@ -50,9 +52,10 @@ public class PhotoFragment extends BaseFragment {
         return mTvChecked;
     }
 
-    public FileSelectIndicatorImp getFileSelectIndicator() {
-        return mFileSelectIndicator;
+    public SelectIndicatorView getFileSelectIndicator() {
+        return mSelectIndicator;
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

@@ -162,7 +162,7 @@ public class TransferReceiveFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        App.getSendFileList().clear();
+        App.getTransferFileList().clear();
         App.closeHotspotOnAndroidO();
         super.onDestroy();
     }

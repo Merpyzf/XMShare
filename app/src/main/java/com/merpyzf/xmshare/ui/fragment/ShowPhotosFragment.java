@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.App;
@@ -33,11 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Observable;
 
 import butterknife.BindView;
-import io.reactivex.ObservableSource;
-import io.reactivex.functions.Function;
 
 /**
  * 展示相册中的照片
@@ -138,9 +134,9 @@ public class ShowPhotosFragment extends BaseFragment {
                 ImageView ivSelect = view.findViewById(R.id.iv_select);
                 PicFile picFile = (PicFile) section.t;
                 // 选中一个item
-                if (!App.getSendFileList().contains(picFile)) {
+                if (!App.getTransferFileList().contains(picFile)) {
                     ivSelect.setVisibility(View.VISIBLE);
-                    App.addSendFile(picFile);
+                    App.addTransferFile(picFile);
                     FilesStatusObservable.getInstance().notifyObservers(picFile,
                             TAG, FilesStatusObservable.FILE_SELECTED);
                     startFileSelectedAnimation(view);
@@ -148,7 +144,7 @@ public class ShowPhotosFragment extends BaseFragment {
                     // 取消选中一个item
                 } else {
                     ivSelect.setVisibility(View.INVISIBLE);
-                    App.removeSendFile(picFile);
+                    App.removeTransferFile(picFile);
                     FilesStatusObservable.getInstance().notifyObservers(picFile, TAG,
                             FilesStatusObservable.FILE_CANCEL_SELECTED);
                     updatePhotoAlbumCheckedStatus();
@@ -205,7 +201,7 @@ public class ShowPhotosFragment extends BaseFragment {
                     for (Section mData : mDatas) {
                         if (!mData.isHeader) {
                             if (mData.t.getLastModified().equals(lastChanged)) {
-                                App.addSendFile(mData.t);
+                                App.addTransferFile(mData.t);
                                 FilesStatusObservable.getInstance()
                                         .notifyObservers(mData.t, TAG,
                                                 FilesStatusObservable.FILE_SELECTED);
@@ -216,7 +212,7 @@ public class ShowPhotosFragment extends BaseFragment {
                     for (Section mData : mDatas) {
                         if (!mData.isHeader) {
                             if (mData.t.getLastModified().equals(lastChanged)) {
-                                App.removeSendFile(mData.t);
+                                App.removeTransferFile(mData.t);
                                 FilesStatusObservable.getInstance()
                                         .notifyObservers(mData.t, TAG,
                                                 FilesStatusObservable.FILE_CANCEL_SELECTED);
@@ -273,7 +269,7 @@ public class ShowPhotosFragment extends BaseFragment {
     private boolean isSelectedAllPhotos() {
         for (Section section : mDatas) {
             if (!section.isHeader) {
-                if (!App.getSendFileList().contains(section.t)) {
+                if (!App.getTransferFileList().contains(section.t)) {
                     return false;
                 }
             }
@@ -282,8 +278,13 @@ public class ShowPhotosFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         FilesStatusObservable.getInstance().remove(mFileStatusObserver);
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
     }
 
@@ -319,7 +320,7 @@ public class ShowPhotosFragment extends BaseFragment {
                     if (!s.isHeader) {
                         // 循环遍历每一组的子孩子，如果存在一个child和组名相同时并且没有被选中则将head的状态设置为未选中
                         if (s.t.getLastModified().equals(headName)) {
-                            if (!App.getSendFileList().contains(s.t)) {
+                            if (!App.getTransferFileList().contains(s.t)) {
                                 unCheckedChildCount++;
                             }
                         }
@@ -344,7 +345,7 @@ public class ShowPhotosFragment extends BaseFragment {
             headName = section.t.getLastModified();
             for (Section mData : mDatas) {
                 if (!mData.isHeader) {
-                    if (headName.equals(mData.t.getLastModified()) && !App.getSendFileList()
+                    if (headName.equals(mData.t.getLastModified()) && !App.getTransferFileList()
                             .contains(mData.t)) {
                         for (Section data : mDatas) {
                             if (data.isHeader && data.header.equals(headName)) {

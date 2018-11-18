@@ -15,6 +15,7 @@ import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
+import com.merpyzf.xmshare.util.UiUtils;
 
 import java.io.File;
 import java.util.List;
@@ -55,8 +56,9 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
         switch (helper.getItemViewType()) {
             case com.merpyzf.xmshare.ui.test.adapter.BaseHeaderAdapter.TYPE_DATA:
                 if (fileType == FileInfo.FILE_TYPE_IMAGE) {
-                    errorImgRes = R.drawable.ic_holder_image;
-                    placeHolderImgRes = R.drawable.ic_holder_image;
+
+                    errorImgRes = UiUtils.getPlaceHolder(fileType);
+                    placeHolderImgRes = UiUtils.getPlaceHolder(fileType);
                     loadImgPath = item.getData().getPath();
                 } else if (fileType == FileInfo.FILE_TYPE_APP) {
                     tvActionTip.setText("安装");
@@ -72,16 +74,16 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Fi
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
                     loadImgPath = FilePathManager.getLocalMusicAlbumCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
-                    errorImgRes = R.drawable.ic_holder_music;
-                    placeHolderImgRes = R.drawable.ic_holder_music;
+                    errorImgRes = UiUtils.getPlaceHolder(fileType);
+                    placeHolderImgRes = UiUtils.getPlaceHolder(fileType);
                 } else if (fileType == FileInfo.FILE_TYPE_VIDEO) {
                     tvActionTip.setVisibility(View.INVISIBLE);
                     helper.setText(R.id.tv_name, item.getData().getName() + "");
                     float size = FormatUtils.convert2Mb(new File(item.getData().getPath()).length());
                     helper.setText(R.id.tv_size, size + "mb");
                     loadImgPath = FilePathManager.getLocalVideoThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
-                    errorImgRes = R.drawable.ic_holder_video;
-                    placeHolderImgRes = R.drawable.ic_holder_video;
+                    errorImgRes = UiUtils.getPlaceHolder(fileType);
+                    placeHolderImgRes = UiUtils.getPlaceHolder(fileType);
                 }
                 Glide.with(mContext)
                         .load(loadImgPath)

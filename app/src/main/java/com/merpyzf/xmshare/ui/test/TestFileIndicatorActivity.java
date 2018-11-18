@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.Button;
 
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp;
-import com.merpyzf.xmshare.ui.widget.bean.Label;
+import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
+import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 
 public class TestFileIndicatorActivity extends AppCompatActivity {
 
-    private FileSelectIndicatorImp mFileSelectIndicatorImp;
+    private SelectIndicatorView mSelectIndicatorView;
     private Button mBtnAdd;
 
     @Override
@@ -26,10 +26,10 @@ public class TestFileIndicatorActivity extends AppCompatActivity {
 
         Log.i("wk", path);
 
-        mFileSelectIndicatorImp = findViewById(R.id.fileSelectIndicator);
+        mSelectIndicatorView = findViewById(R.id.fileSelectIndicator);
 
 
-        mFileSelectIndicatorImp.add(new Label("内部文件存储", Environment.getExternalStorageDirectory().getParent()));
+        mSelectIndicatorView.addIndicator(new Indicator("内部文件存储", Environment.getExternalStorageDirectory().getParent()));
 
         final int[] num = {2};
 
@@ -38,28 +38,28 @@ public class TestFileIndicatorActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                mFileSelectIndicatorImp.add(new Label("wangke"+(num[0]++), "wangke"));
+                mSelectIndicatorView.addIndicator(new Indicator("wangke"+(num[0]++), "wangke"));
 
 
             }
         });
 
-
-        mFileSelectIndicatorImp.setIndicatorClickCallBack((currentPath, isBack) -> {
-
-            Log.i("wk", "当前点击的路径 -> "+currentPath);
-
-
-            if(isBack){
-
-                Log.i("wk", "返回到上一个界面");
-
-            }
-
-
-
-
-        });
+    //
+        //    mSelectIndicatorView.setIndicatorClickCallBack((currentPath, isBack) -> {
+        //
+        //        Log.i("wk", "当前点击的路径 -> "+currentPath);
+        //
+        //
+        //        if(isBack){
+        //
+        //            Log.i("wk", "返回到上一个界面");
+        //
+        //        }
+        //
+        //
+        //
+        //
+        //});
     }
 
 

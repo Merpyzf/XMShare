@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public abstract class BaseFragment extends RxFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.i("WW2K", "onCreateView执行了");
         mContext = getActivity();
         if (null == mRootView) {
             View root = inflater.inflate(getContentLayoutId(), container, false);
@@ -98,6 +100,7 @@ public abstract class BaseFragment extends RxFragment {
 
     @Override
     public void onDestroyView() {
+        Log.i("WW2k", "onDestoryView执行了");
         ViewGroup parentView = (ViewGroup) mRootView.getParent();
         if (null != parentView) {
             parentView.removeView(mRootView);

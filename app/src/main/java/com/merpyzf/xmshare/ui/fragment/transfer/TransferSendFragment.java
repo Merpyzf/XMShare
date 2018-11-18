@@ -77,7 +77,7 @@ public class TransferSendFragment extends BaseFragment {
             }
         });
         // 当View创建完毕后进行文件的发送
-        SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), App.getSendFileList());
+        SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), App.getTransferFileList());
     }
 
     private void showTransferDataSize() {
@@ -130,7 +130,7 @@ public class TransferSendFragment extends BaseFragment {
         mRvSendList.setLayoutManager(new LinearLayoutManager(mContext));
         mRvSendList.getItemAnimator().setChangeDuration(0);
         mFileTransferAdapter = new FileTransferAdapter(R.layout.item_rv_transfer,
-                FileTransferAdapter.TYPE_SEND, App.getSendFileList());
+                FileTransferAdapter.TYPE_SEND, App.getTransferFileList());
         mRvSendList.setAdapter(mFileTransferAdapter);
     }
 

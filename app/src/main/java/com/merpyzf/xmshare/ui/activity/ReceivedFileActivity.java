@@ -13,7 +13,7 @@ import android.view.View;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.bean.FileInfoFactory;
+import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
 import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;

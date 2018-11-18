@@ -17,7 +17,7 @@ import java.util.Map;
  * date: 2018/8/11.
  * version: 1.0
  */
-public class FileUriHandler extends SimpleRequestHandler {
+public class DownloadUriHandler extends SimpleRequestHandler {
     private static final String TAG = RequestHandler.class.getSimpleName();
 
     @Override

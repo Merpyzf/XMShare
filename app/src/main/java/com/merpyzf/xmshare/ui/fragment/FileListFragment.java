@@ -1,11 +1,7 @@
 package com.merpyzf.xmshare.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.ViewUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -15,7 +11,6 @@ import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
@@ -32,7 +27,6 @@ import com.merpyzf.xmshare.util.CollectionUtils;
 import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.merpyzf.xmshare.util.MusicUtils;
-import com.merpyzf.xmshare.util.UiUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.trello.rxlifecycle2.android.FragmentEvent;
@@ -73,6 +67,7 @@ public class FileListFragment extends BaseFragment {
     private View mBottomSheetView;
     private FileLoadManager mFileLoadManager;
     private String TAG = FileListFragment.class.getSimpleName();
+    private MyAbsFileStatusObserver mFileStatusObserver;
 
     public static FileListFragment newInstance(int type) {
         return new FileListFragment(type);
@@ -110,10 +105,10 @@ public class FileListFragment extends BaseFragment {
         mFileListAdapter.setOnItemClickListener((adapter, view, position) -> {
             ImageView ivSelect = view.findViewById(R.id.iv_select);
             FileInfo fileInfo = mFileLists.get(position);
-            if (!App.getSendFileList().contains(fileInfo)) {
+            if (!App.getTransferFileList().contains(fileInfo)) {
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
-                App.addSendFile(fileInfo);
+                App.addTransferFile(fileInfo);
                 fileInfo.setMd5(Md5Utils.getFileMd5(fileInfo));
                 // 将文件选择的事件回调给外部
                 FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG,
@@ -127,37 +122,25 @@ public class FileListFragment extends BaseFragment {
                 // 动画开始后再将View还原为原始尺寸，此处先缓存下来
                 int tempHeight = startView.getLayoutParams().height;
                 int tempWidth = startView.getLayoutParams().width;
-                startView.getLayoutParams().height = DisplayUtils.dip2px(getContext(), 130);
-                startView.getLayoutParams().width = DisplayUtils.dip2px(getContext(), 130);
+                startView.getLayoutParams().height = DisplayUtils.dip2px(getContext(), 100);
+                startView.getLayoutParams().width = DisplayUtils.dip2px(getContext(), 100);
                 AnimationUtils.setAddTaskAnimation(getActivity(), startView, targetView, null);
                 startView.getLayoutParams().height = tempHeight;
                 startView.getLayoutParams().width = tempWidth;
             } else {
                 // 将选择文件的事件回调给外部
                 ivSelect.setVisibility(View.INVISIBLE);
-                App.removeSendFile(fileInfo);
+                App.removeTransferFile(fileInfo);
                 FilesStatusObservable.getInstance()
                         .notifyObservers(fileInfo, TAG,
                                 FilesStatusObservable.FILE_CANCEL_SELECTED);
             }
             mCheckBoxAll.setChecked(isSelectedAllFile());
         });
+        mFileStatusObserver = new MyAbsFileStatusObserver();
         // 监听已选传输文件列表的变化
         FilesStatusObservable.getInstance()
-                .register(TAG, new AbsFileStatusObserver() {
-                    @Override
-                    public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
-                        mFileListAdapter.notifyDataSetChanged();
-                        mCheckBoxAll.setChecked(isSelectedAllFile());
-                    }
-
-                    @Override
-                    public void onCancelSelected(FileInfo fileInfo) {
-                        // 当选择的文件列表发生改变时的回调
-                        mFileListAdapter.notifyDataSetChanged();
-                        mCheckBoxAll.setChecked(isSelectedAllFile());
-                    }
-                });
+                .register(TAG, mFileStatusObserver);
         // 顶部全选按钮的事件
         mCheckBoxAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // 将全选事件回调给外界
@@ -240,6 +223,7 @@ public class FileListFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         mFileLoadManager.destroyLoader();
+        FilesStatusObservable.getInstance().remove(mFileStatusObserver);
         super.onDestroyView();
     }
 
@@ -309,10 +293,25 @@ public class FileListFragment extends BaseFragment {
 
     private boolean isSelectedAllFile() {
         for (FileInfo fileInfo : mFileLists) {
-            if (!App.getSendFileList().contains(fileInfo)) {
+            if (!App.getTransferFileList().contains(fileInfo)) {
                 return false;
             }
         }
         return true;
+    }
+
+    class MyAbsFileStatusObserver extends AbsFileStatusObserver {
+        @Override
+        public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
+            mFileListAdapter.notifyDataSetChanged();
+            mCheckBoxAll.setChecked(isSelectedAllFile());
+        }
+
+        @Override
+        public void onCancelSelected(FileInfo fileInfo) {
+            // 当选择的文件列表发生改变时的回调
+            mFileListAdapter.notifyDataSetChanged();
+            mCheckBoxAll.setChecked(isSelectedAllFile());
+        }
     }
 }

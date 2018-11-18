@@ -1,6 +1,5 @@
 package com.merpyzf.xmshare.ui.test;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -72,7 +71,7 @@ public class HostActivity extends AppCompatActivity {
                     if (mCountPing < Const.PING_COUNT) {
                         if (NetworkUtil.pingIpAddress(peer.getHostAddress())) {
                             // 发送文件
-                            senderManager.send(peer.getHostAddress(), App.getSendFileList());
+                            senderManager.send(peer.getHostAddress(), App.getTransferFileList());
                             break;
                         }
                         Log.i("w2k", peer.getHostAddress() + " ping...");

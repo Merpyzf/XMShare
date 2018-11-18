@@ -12,7 +12,7 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.Section;
-import com.merpyzf.xmshare.util.AnimationUtils;
+import com.merpyzf.xmshare.util.UiUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,14 +63,14 @@ public class PhotoSectionAdapter extends BaseSectionQuickAdapter<Section, BaseVi
 
             Glide.with(mContext)
                     .load(picFile.getPath())
-                    .error(R.drawable.ic_holder_image)
-                    .placeholder(R.drawable.ic_holder_image)
+                    .error(UiUtils.getPlaceHolder(picFile.getType()))
+                    .placeholder(UiUtils.getPlaceHolder(picFile.getType()))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
                     .into(iv);
         }
 
-        if (App.getSendFileList().contains(picFile)) {
+        if (App.getTransferFileList().contains(picFile)) {
             ivSelect.setVisibility(View.VISIBLE);
 
         } else {

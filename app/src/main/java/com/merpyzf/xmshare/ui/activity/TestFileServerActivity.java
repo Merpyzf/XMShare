@@ -4,14 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 
 import com.merpyzf.fileserver.FileServer;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.bean.FileInfoFactory;
+import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,8 +39,8 @@ public class TestFileServerActivity extends AppCompatActivity {
 
         mBtnStartup.setOnClickListener(v -> {
             String localIp = NetworkUtil.getLocalIp(this);
-            mFileServer = FileServer.getInstance("192.168.43.1", 8888);
-            mFileServer.startupFileShareServer(mContext, FileInfoFactory.toFileServerType(App.getSendFileList()));
+            mFileServer = FileServer.getInstance();
+            mFileServer.startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
         });
         mBtnShutdown.setOnClickListener(v -> mFileServer.stopRunning());
     }

@@ -63,6 +63,8 @@ public class Const {
     public static final int FAB_STATE_SEND = 0x01;
     public static final int FAB_STATE_CLEAR = 0x02;
 
+    public static final String TAG_FILE_MANAGER = "frg_manager";
+
 
     /**
      * 初始化数据

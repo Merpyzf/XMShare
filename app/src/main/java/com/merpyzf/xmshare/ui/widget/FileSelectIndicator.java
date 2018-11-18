@@ -2,7 +2,7 @@ package com.merpyzf.xmshare.ui.widget;
 
 import android.view.View;
 
-import com.merpyzf.xmshare.ui.widget.bean.Label;
+import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 
 
 /**
@@ -12,31 +12,47 @@ import com.merpyzf.xmshare.ui.widget.bean.Label;
 public interface FileSelectIndicator {
 
     /**
-     * 添加一个目录
-     * @param path 目录的绝对路径
+     * 添加一个指示器
+     *
+     * @param indicator
      */
-    void add(Label path);
-
-    /**
-     * 移除一个目录
-     * @param path 目录的绝对路径
-     */
-    void removeAfter(Label path);
+    void addIndicator(Indicator indicator);
 
 
     /**
-     * 设置内部/外部存储设备的根目录的路径
-     * @param path 路径
+     * 移除给定指示器之后的所有的指示器
+     *
+     * @param indicator
      */
-    void setBaseStoragePath(Label path);
-
+    void removeAfter(Indicator indicator);
 
     /**
-     * 创建一个指示器中要显示的View
+     * 移除给定索引之后的所有指示器
+     *
+     * @param index
+     */
+    void removeAfterByIndex(int index);
+
+    /**
+     * 移除最后面的那个指示器
+     */
+    void pop();
+
+    /**
+     * 是否返回到根标签了
+     *
      * @return
      */
-    View createIndicatorView(Label dirName);
+    boolean isRoot();
 
+
+    /**
+     * 创建指示器View
+     *
+     * @param indicator
+     * @return
+     */
+    View createIndicatorView(Indicator indicator);
 
 
 }

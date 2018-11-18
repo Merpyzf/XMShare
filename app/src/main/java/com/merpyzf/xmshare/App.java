@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.common.Const;
@@ -14,11 +14,6 @@ import org.litepal.LitePalApplication;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by wangke on 2018/1/16.
@@ -32,7 +27,7 @@ public class App extends LitePalApplication {
     /**
      * 待发送的文件集合
      */
-    private static List<FileInfo> mSendFileList;
+    private static List<FileInfo> mTransferFiles;
     private static String TAG = App.class.getSimpleName();
     private static WifiManager.LocalOnlyHotspotReservation mReservation = null;
 
@@ -45,7 +40,7 @@ public class App extends LitePalApplication {
             StrictMode.setVmPolicy(builder.build());
         }
         AppContext = getApplicationContext();
-        mSendFileList = new ArrayList<>();
+        mTransferFiles = new ArrayList<>();
     }
 
 
@@ -54,47 +49,49 @@ public class App extends LitePalApplication {
      *
      * @param fileInfo
      */
-    public static void addSendFile(FileInfo fileInfo) {
+    public static void addTransferFile(FileInfo fileInfo) {
 
-        if (!mSendFileList.contains(fileInfo)) {
-            mSendFileList.add(fileInfo);
+        if (!mTransferFiles.contains(fileInfo)) {
+            mTransferFiles.add(fileInfo);
         }
     }
 
 
-    public static void addSendFiles(List<FileInfo> fileInfoList) {
-
+    public static void addTransferFiles(List<FileInfo> fileInfoList) {
         for (FileInfo fileInfo : fileInfoList) {
-            if (!mSendFileList.contains(fileInfo)) {
-                mSendFileList.add(fileInfo);
+            if (!mTransferFiles.contains(fileInfo)) {
+                mTransferFiles.add(fileInfo);
             }
         }
     }
 
-
-    public static void removeSendFiles(List<FileInfo> fileInfoList) {
-
+    public static void removeTransferFiles(List<FileInfo> fileInfoList) {
         for (FileInfo fileInfo : fileInfoList) {
-
-            if (mSendFileList.contains(fileInfo)) {
-                mSendFileList.remove(fileInfo);
+            if (mTransferFiles.contains(fileInfo)) {
+                mTransferFiles.remove(fileInfo);
             }
-
         }
-
     }
-
 
     /**
      * 从文件集合中移除一个待发送的文件
      *
      * @param fileInfo
      */
-    public static void removeSendFile(FileInfo fileInfo) {
-
-        if (mSendFileList.contains(fileInfo)) {
-            mSendFileList.remove(fileInfo);
+    public static void removeTransferFile(FileInfo fileInfo) {
+        if (mTransferFiles.contains(fileInfo)) {
+            mTransferFiles.remove(fileInfo);
             //
+        }
+    }
+
+    public static void removeTransferFileByPath(String filePath) {
+        for (int i = 0; i < mTransferFiles.size(); i++) {
+            FileInfo transferFile = mTransferFiles.get(i);
+            if (TextUtils.equals(filePath, transferFile.getPath())) {
+                mTransferFiles.remove(i);
+                break;
+            }
         }
     }
 
@@ -103,9 +100,9 @@ public class App extends LitePalApplication {
      *
      * @return
      */
-    public static List<FileInfo> getSendFileList() {
+    public static List<FileInfo> getTransferFileList() {
 
-        return mSendFileList;
+        return mTransferFiles;
 
     }
 
@@ -113,14 +110,16 @@ public class App extends LitePalApplication {
      * 重置待发送文件集合的状态
      */
     public static void resetSelectedFilesStatus() {
-        for (int i = 0; i < mSendFileList.size(); i++) {
-            FileInfo fileInfo = mSendFileList.get(i);
+        for (int i = 0; i < mTransferFiles.size(); i++) {
+            FileInfo fileInfo = mTransferFiles.get(i);
             fileInfo.reset();
         }
     }
+
     public static Context getAppContext() {
         return AppContext;
     }
+
     public static void setReservation(WifiManager.LocalOnlyHotspotReservation reservation) {
         mReservation = reservation;
     }

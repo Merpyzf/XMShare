@@ -8,6 +8,7 @@ import com.merpyzf.fileserver.common.bean.FileInfo;
 import com.merpyzf.fileserver.util.FileUtils;
 import com.merpyzf.fileserver.util.IOUtils;
 import com.merpyzf.fileserver.util.Md5Utils;
+import com.merpyzf.transfermanager.util.FilePathManager;
 import com.yanzhenjie.andserver.RequestHandler;
 import com.yanzhenjie.andserver.util.HttpRequestParser;
 
@@ -88,7 +89,7 @@ public class WebUriHandler implements RequestHandler {
             containerHtml.append(strFileItem);
         }
         String indexHtml = indexTemplate.replace("{title}", "小马快传文件服务")
-                .replace("{nav_title}", "文件共享服务 分享文件个数: " + mFileList.size())
+                .replace("{nav_title}", "小马快传 分享文件个数: " + mFileList.size())
                 .replace("{current_path}", "")
                 .replace("{container}", containerHtml);
         return indexHtml;
@@ -109,31 +110,28 @@ public class WebUriHandler implements RequestHandler {
         int type = fileInfo.getType();
         String strFileType = null;
         String coverHref;
-        String path = null;
+        String thumbPath = null;
         if (type == FileInfo.FILE_TYPE_OTHER) {
 
         } else {
             switch (type) {
                 case FileInfo.FILE_TYPE_APP:
-                    path = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                            Objects.requireNonNull(Md5Utils.getMd5(fileInfo.getName()))).getPath();
+                    thumbPath = FilePathManager.getLocalAppThumbCacheFile(fileInfo.getName()).getPath();
                     strFileType = "应用apk";
                     break;
                 case FileInfo.FILE_TYPE_IMAGE:
-                    path = fileInfo.getPath();
+                    thumbPath = fileInfo.getPath();
                     strFileType = "图片";
                     String name = fileInfo.getName();
                     Log.i(TAG, "图片名称--> " + name);
 
                     break;
                 case FileInfo.FILE_TYPE_MUSIC:
-                    path = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                            Objects.requireNonNull(Md5Utils.getMd5(fileInfo.getAlbumId() + ""))).getPath();
+                    thumbPath = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(fileInfo.getAlbumId())).getPath();
                     strFileType = "音乐";
                     break;
                 case FileInfo.FILE_TYPE_VIDEO:
-                    path = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                            Objects.requireNonNull(Md5Utils.getMd5(fileInfo.getPath()))).getPath();
+                    thumbPath = FilePathManager.getLocalVideoThumbCacheFile(fileInfo.getName()).getPath();
                     strFileType = "视频";
                     break;
                 case FileInfo.FILE_TYPE_COMPACT:
@@ -148,8 +146,8 @@ public class WebUriHandler implements RequestHandler {
             }
         }
 
-        coverHref = "/img?type=" + type + "&path=" + path;
-        strFileItem = fileItemTemplate.replace("{file_href}", "/file?path=" + fileInfo.getPath() + "&name=" + fileInfo.getName()+"."+fileInfo.getSuffix())
+        coverHref = "/img?type=" + type + "&path=" + thumbPath;
+        strFileItem = fileItemTemplate.replace("{file_href}", "/file?path=" + fileInfo.getPath() + "&name=" + fileInfo.getName() + "." + fileInfo.getSuffix())
                 .replace("{file_name}", fileInfo.getName())
                 .replace("{cover}", coverHref)
                 .replace("{type}", "类型: " + strFileType)

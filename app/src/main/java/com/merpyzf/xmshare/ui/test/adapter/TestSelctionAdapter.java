@@ -40,7 +40,7 @@ public class TestSelctionAdapter extends BaseSectionQuickAdapter<Section, BaseVi
         helper.setText(R.id.tv_title, item.t.getName());
         ImageView ivSelect = helper.getView(R.id.iv_select);
 
-        if (App.getSendFileList().contains(item.t)) {
+        if (App.getTransferFileList().contains(item.t)) {
             ivSelect.setVisibility(View.VISIBLE);
         } else {
             ivSelect.setVisibility(View.INVISIBLE);

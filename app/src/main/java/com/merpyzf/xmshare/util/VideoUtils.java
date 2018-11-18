@@ -96,7 +96,7 @@ public class VideoUtils {
                         if(!isContain) {
                             bos = new BufferedOutputStream(new FileOutputStream(videoThumb));
                             if (bitmap == null) {
-                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_default_video);
+                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_holder_video);
                             }
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                         }
@@ -148,6 +148,10 @@ public class VideoUtils {
                         if (length > 1024 * 1024) {
                             fileList.add(videoFile);
                             Log.i("wk", "将视频文件添加到FileList");
+                        }
+                        // TODO: 2018/11/11 偶尔会出现cursor关闭的问题
+                        if (data.isClosed()) {
+                            break;
                         }
                     }
                     return Observable.just(fileList);

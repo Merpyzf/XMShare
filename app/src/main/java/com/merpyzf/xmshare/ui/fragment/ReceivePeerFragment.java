@@ -258,19 +258,19 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
      */
     private void closeMobileNetwork() {
 
-        if (NetworkUtil.isMobile(mContext)) {
-            MaterialDialog.Builder builder = new MaterialDialog.Builder(mContext)
-                    .title("提示")
-                    .content("开启热点可能会产生流量资费，请选择是否关闭数据流量？")
-                    .positiveText("果断关闭")
-                    .negativeText("保持开启")
-                    .canceledOnTouchOutside(false)
-                    .onPositive((dialog, which) -> {
-                        // TODO: 2018/8/14 关闭移动网络的方法未实现
-                    });
-            MaterialDialog dialog = builder.build();
-            dialog.show();
-        }
+        //if (NetworkUtil.isMobile(mContext)) {
+        //    MaterialDialog.Builder builder = new MaterialDialog.Builder(mContext)
+        //            .title("提示")
+        //            .content("开启热点可能会产生流量资费，请选择是否关闭数据流量？")
+        //            .positiveText("果断关闭")
+        //            .negativeText("保持开启")
+        //            .canceledOnTouchOutside(false)
+        //            .onPositive((dialog, which) -> {
+        //                // TODO: 2018/8/14 关闭移动网络的方法未实现
+        //            });
+        //    MaterialDialog dialog = builder.build();
+        //    dialog.show();
+        //}
     }
 
     // TODO: 2018/8/7 fix: 缩短方法行数
@@ -317,7 +317,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             new RxPermissions(getActivity())
                     .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
                     .subscribe(permission -> {
-
                         if (permission.granted) {
                             ApManager.configApStateOnAndroidO(getContext(), new ApManager.HotspotStateCallback() {
                                 @RequiresApi(api = Build.VERSION_CODES.O)

@@ -110,16 +110,16 @@ public class UiUtils {
         int placeHolder = 0;
         switch (fileInfoType) {
             case FileInfo.FILE_TYPE_APP:
-                placeHolder = R.drawable.ic_default_app;
+                placeHolder = R.drawable.ic_holder_app;
                 break;
             case FileInfo.FILE_TYPE_MUSIC:
-                placeHolder = R.drawable.ic_default_album_art;
+                placeHolder = R.drawable.ic_holder_album_art;
                 break;
             case FileInfo.FILE_TYPE_VIDEO:
-                placeHolder = R.drawable.ic_default_video;
+                placeHolder = R.drawable.ic_holder_video;
                 break;
             case FileInfo.FILE_TYPE_IMAGE:
-                placeHolder = R.drawable.ic_default_image;
+                placeHolder = R.drawable.ic_holder_image;
                 break;
             default:
                 break;

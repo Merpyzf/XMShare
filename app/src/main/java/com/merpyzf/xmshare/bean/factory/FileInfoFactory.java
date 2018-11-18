@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.bean;
+package com.merpyzf.xmshare.bean.factory;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.CompactFile;
@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * FileInfo工厂类
- *
  * @author wangke
  * @date 2018/4/16
  */

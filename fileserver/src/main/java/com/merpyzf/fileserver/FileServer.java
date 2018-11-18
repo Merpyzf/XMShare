@@ -1,10 +1,11 @@
 package com.merpyzf.fileserver;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.merpyzf.fileserver.common.Const;
 import com.merpyzf.fileserver.common.bean.FileInfo;
-import com.merpyzf.fileserver.handler.FileUriHandler;
+import com.merpyzf.fileserver.handler.DownloadUriHandler;
 import com.merpyzf.fileserver.handler.ImgUriHandler;
 import com.merpyzf.fileserver.handler.WebUriHandler;
 import com.yanzhenjie.andserver.AndServer;
@@ -23,26 +24,17 @@ import java.util.List;
 public class FileServer {
 
     private static FileServer sFileServer;
-    private int port = Const.DEFAULT_PORT;
-    private String host;
     private Server mServer;
 
-    private FileServer(String host, int port) {
-        this.host = host;
-        this.port = port;
+    private FileServer() {
     }
 
-    /**
-     * 单例获取一个FileServer对象，需要指定访问此服务的端口号
-     *
-     * @param port 端口号
-     * @return FileServer对象
-     */
-    public static FileServer getInstance(String host, int port) {
+
+    public static FileServer getInstance() {
         if (sFileServer == null) {
             synchronized (FileServer.class) {
                 if (sFileServer == null) {
-                    sFileServer = new FileServer(host, port);
+                    sFileServer = new FileServer();
                 }
             }
         }
@@ -55,15 +47,15 @@ public class FileServer {
      *
      * @param fileList 待分享文件集合
      */
-    public void startupFileShareServer(Context context, List<FileInfo> fileList) {
+    public void startupFileShareServer(Context context, String hostAddress, List<FileInfo> fileList) {
 
         try {
             mServer = AndServer.serverBuilder()
-                    .port(port)
-                    .inetAddress(InetAddress.getByName(host))
+                    .port(Const.DEFAULT_PORT)
+                    .inetAddress(InetAddress.getByName(hostAddress))
                     .registerHandler("/", new WebUriHandler(context, fileList))
                     .registerHandler("/img", new ImgUriHandler())
-                    .registerHandler("/file", new FileUriHandler())
+                    .registerHandler("/file", new DownloadUriHandler())
                     .build();
             mServer.startup();
         } catch (UnknownHostException e) {
@@ -74,15 +66,15 @@ public class FileServer {
     /**
      * 开启文件共享服务，用于分享设备的整个目录
      */
-    public void startupFileServer(Context context) {
+    public void startupFileServer(Context context, String hostAddress) {
 
         try {
             mServer = AndServer.serverBuilder()
-                    .port(port)
-                    .inetAddress(InetAddress.getByName(host))
+                    .port(Const.DEFAULT_PORT)
+                    .inetAddress(InetAddress.getByName(hostAddress))
                     .registerHandler("/", new WebUriHandler(context))
                     .registerHandler("/img", new ImgUriHandler())
-                    .registerHandler("/file", new FileUriHandler())
+                    .registerHandler("/file", new DownloadUriHandler())
                     .build();
             mServer.startup();
         } catch (UnknownHostException e) {
@@ -104,24 +96,10 @@ public class FileServer {
      * 停止服务
      */
     public void stopRunning() {
-        mServer.shutdown();
+        if (mServer != null) {
+            mServer.shutdown();
+        }
     }
 
-    /**
-     * 设置绑定此服务的主机端口号，设置成功后需要重启服务才能生效
-     *
-     * @param port 端口号
-     */
-    public void setPort(int port) {
-        this.port = port;
-    }
 
-    /**
-     * 设置绑定此服务的主机地址，设置成功后需要重启服务才能生效
-     *
-     * @param host 主机地址
-     */
-    public void setHost(String host) {
-        this.host = host;
-    }
 }

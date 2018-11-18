@@ -3,7 +3,6 @@ package com.merpyzf.xmshare.ui.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -19,10 +18,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.App;
@@ -38,9 +39,10 @@ import com.merpyzf.xmshare.ui.fragment.MainFragment;
 import com.merpyzf.xmshare.ui.fragment.PhotoFragment;
 import com.merpyzf.xmshare.observer.PersonalObservable;
 import com.merpyzf.xmshare.observer.PersonalObserver;
+import com.merpyzf.xmshare.ui.fragment.filemanager.FileManagerFragment;
 import com.merpyzf.xmshare.util.AnimationUtils;
-import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
@@ -82,6 +84,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     CircleImageView mCivAvatar;
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+    @BindView(R.id.iv_action_search)
+    ImageView mIvActionSearch;
     CircleImageView mNavCivAvatar;
     TextView mNavTvNickname;
 
@@ -102,7 +106,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     @Override
     public void initRecyclerView() {
         mRvSelectedFiles.setLayoutManager(new LinearLayoutManager(mContext));
-        mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getSendFileList());
+        mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getTransferFileList());
         mRvSelectedFiles.setAdapter(mFileSelectAdapter);
     }
 
@@ -134,28 +138,28 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mFilesStatusObserver = new FilesStatusObserver() {
             @Override
             public void onSelected(FileInfo fileInfo) {
-                App.addSendFile(fileInfo);
+                App.addTransferFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
 
             @Override
             public void onCancelSelected(FileInfo fileInfo) {
-                App.removeSendFile(fileInfo);
+                App.removeTransferFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
 
             @Override
             public void onSelectedAll(List<FileInfo> fileInfoList) {
-                App.addSendFiles(fileInfoList);
+                App.addTransferFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
 
             @Override
             public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
-                App.removeSendFiles(fileInfoList);
+                App.removeTransferFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
@@ -190,7 +194,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 // 如果未选择文件则禁止BottomSheet滑动
-                if (App.getSendFileList().size() == 0) {
+                if (App.getTransferFileList().size() == 0) {
                     mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
@@ -210,7 +214,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             List data = adapter.getData();
             FileInfo fileInfo = (FileInfo) adapter.getData().get(position);
             mFileSelectAdapter.notifyItemRemoved(position);
-            App.removeSendFile(fileInfo);
+            App.removeTransferFile(fileInfo);
 
             FilesStatusObservable.getInstance().notifyObservers(fileInfo, HOME_OBSERVER_NAME,
                     FilesStatusObservable.FILE_CANCEL_SELECTED);
@@ -230,18 +234,39 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mNavCivAvatar.setOnClickListener(v -> PersonalActivity.start(mContext));
         mFabBtn.setOnClickListener(v -> {
             if (sFabState == Const.FAB_STATE_SEND) {
-                if (App.getSendFileList().size() > 0) {
+                if (App.getTransferFileList().size() > 0) {
                     markLastFile();
-                    SendActivity.start(mContext);
+                    MaterialDialog.Builder builder = new MaterialDialog.Builder(mContext)
+                            .title("选择传输方式")
+                            .items("向web端传输", "向手机端传输")
+                            .itemsCallback((dialog, itemView, position, text) -> {
+                                switch (position) {
+                                    // to web
+                                    case 0:
+                                        WebShareActivity.start(mContext, WebShareActivity.class);
+                                        ToastUtils.showShort(mContext, "向web端传输");
+                                        break;
+                                    // to android
+                                    case 1:
+                                        SendActivity.start(mContext);
+                                        dialog.dismiss();
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                            });
+                    MaterialDialog dialog = builder.build();
+                    dialog.show();
                 } else {
                     Toast.makeText(mContext, "请选择文件", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                App.getSendFileList().clear();
+                App.getTransferFileList().clear();
                 // 发送文件选择状态改变的应用内广播
                 updateBottomTitle();
                 mFileSelectAdapter.notifyDataSetChanged();
-                FilesStatusObservable.getInstance().notifyObservers(App.getSendFileList(), HOME_OBSERVER_NAME,
+                FilesStatusObservable.getInstance().notifyObservers(App.getTransferFileList(), HOME_OBSERVER_NAME,
                         FilesStatusObservable.FILE_CANCEL_SELECTED_ALL);
             }
         });
@@ -288,10 +313,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
+        mIvActionSearch.setOnClickListener(v -> {
+            SearchActivity.start(mContext, SearchActivity.class);
+        });
     }
 
     private void markLastFile() {
-        FileInfo fileInfo = App.getSendFileList().get(App.getSendFileList().size() - 1);
+        FileInfo fileInfo = App.getTransferFileList().get(App.getTransferFileList().size() - 1);
         fileInfo.setIsLast(com.merpyzf.transfermanager.common.Const.IS_LAST);
     }
 
@@ -349,14 +377,14 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         if (mTvBottomTitle == null) {
             return;
         }
-        if (App.getSendFileList().size() == 0) {
+        if (App.getTransferFileList().size() == 0) {
             if (mTvBottomTitle == null) {
                 return;
             }
             mTvBottomTitle.setText("请选择要传输的文件");
             return;
         }
-        mTvBottomTitle.setText("已选文件个数: " + App.getSendFileList().size());
+        mTvBottomTitle.setText("已选文件个数: " + App.getTransferFileList().size());
     }
 
     /**
@@ -400,6 +428,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             if (currentItem == Const.PAGE_IMAGE) {
                 popBackStack(getSupportFragmentManager());
                 popIndicator();
+            } else if (currentItem == Const.PAGE_MAIN) {
+                FileManagerFragment fileManagerFragment = (FileManagerFragment) getSupportFragmentManager().findFragmentByTag(Const.TAG_FILE_MANAGER);
+                if (fileManagerFragment != null) {
+                    fileManagerFragment.onBackPressed();
+                } else {
+                    finish();
+                }
             } else {
                 finish();
             }
@@ -434,9 +469,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     protected void onDestroy() {
         // 取消注册，从观察者集合中移除
         PersonalObservable.getInstance().unRegister(this);
-        App.getSendFileList().clear();
+        FilesStatusObservable.getInstance().removeAll();
+        App.getTransferFileList().clear();
         super.onDestroy();
     }
-
-
 }

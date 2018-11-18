@@ -38,15 +38,26 @@ public class FilesStatusObservable {
     }
 
     public void register(String observerName, FilesStatusObserver observer) {
-        if (observer!=null && mObserverMap.get(observerName) == null) {
+        if (observer != null && mObserverMap.get(observerName) == null) {
             mObserverMap.put(observerName, observer);
         }
     }
 
     public void remove(FilesStatusObserver observer) {
-        if (observer!=null && mObserverMap.containsValue(observer)) {
+        if (observer != null && mObserverMap.containsValue(observer)) {
             mObserverMap.values().remove(observer);
         }
+    }
+
+    public void remove(String tag) {
+        FilesStatusObserver observer = mObserverMap.get(tag);
+        if (observer != null) {
+            mObserverMap.values().remove(observer);
+        }
+    }
+
+    public void removeAll() {
+        mObserverMap.clear();
     }
 
     public void notifyObservers(FileInfo changedFile, String observerName, int notifyType) {

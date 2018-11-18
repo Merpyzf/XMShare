@@ -209,9 +209,7 @@ public class SendActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int itemId = item.getItemId();
-
         switch (itemId) {
             case android.R.id.home:
                 onBackPressed();
@@ -219,7 +217,6 @@ public class SendActivity extends BaseActivity {
             default:
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

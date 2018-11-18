@@ -56,7 +56,10 @@ public class PhotoUtils {
                                 }
                                 dirSet.add(file.getParent());
                             }
-
+                            // TODO: 2018/11/11 偶尔会出现cursor关闭的问题
+                            if (data.isClosed()) {
+                                break;
+                            }
                         }
 
                     }

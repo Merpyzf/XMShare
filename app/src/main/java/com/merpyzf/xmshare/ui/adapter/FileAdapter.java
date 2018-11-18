@@ -24,6 +24,7 @@ import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.util.AnimationUtils;
+import com.merpyzf.xmshare.util.UiUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import net.qiujuer.genius.res.Resource;
@@ -88,8 +89,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .dontAnimate()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .placeholder(R.drawable.ic_default_album_art)
-                    .error(R.drawable.ic_default_album_art)
+                    .placeholder(R.drawable.ic_holder_album_art)
+                    .error(R.drawable.ic_holder_album_art)
                     .into(imageView);
 
 
@@ -137,17 +138,16 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                 gifIv.setVisibility(View.INVISIBLE);
                 Glide.with(mContext)
                         .load(picFile.getPath())
-                        .error(R.drawable.ic_holder_image)
-                        .placeholder(R.drawable.ic_holder_image)
+                        .error(UiUtils.getPlaceHolder(picFile.getType()))
+                        .placeholder(UiUtils.getPlaceHolder(picFile.getType()))
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .centerCrop()
                         .into(iv);
             }
-
             /**
              * 被选中了
              */
-            if (App.getSendFileList().contains(item)) {
+            if (App.getTransferFileList().contains(item)) {
                 // 缩小
                 AnimationUtils.zoomOutCover(iv, 0);
             } else {
@@ -165,8 +165,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(videoName);
             Glide.with(mContext)
                     .load(videoThumb)
-                    .placeholder(R.drawable.ic_default_video)
-                    .error(R.drawable.ic_default_video)
+                    .placeholder(R.drawable.ic_holder_video)
+                    .error(R.drawable.ic_holder_video)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .dontAnimate()
                     .centerCrop()
@@ -177,7 +177,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
         ImageView ivSelect = helper.getView(R.id.iv_select);
 
-        if (App.getSendFileList().contains(item)) {
+        if (App.getTransferFileList().contains(item)) {
             ivSelect.setVisibility(View.VISIBLE);
 
         } else {

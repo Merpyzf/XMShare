@@ -2,13 +2,7 @@ package com.merpyzf.xmshare.ui.fragment;
 
 
 import android.annotation.SuppressLint;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,7 +22,8 @@ import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.observer.AbsFileStatusObserver;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.ui.adapter.PhotoDirsAdapter;
-import com.merpyzf.xmshare.ui.widget.bean.Label;
+import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
+import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 import com.merpyzf.xmshare.util.PhotoUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
@@ -215,7 +209,7 @@ public class PhotoDirsFragment extends BaseFragment implements
         bundle.putSerializable("photos", item);
         fragmentTransaction.replace(R.id.fl_container, ShowPhotosFragment.getInstance(bundle));
         fragmentTransaction.commit();
-        mPhotoFragment.getFileSelectIndicator().add(new Label(item.getName(), ""));
+        mPhotoFragment.getFileSelectIndicator().addIndicator(new Indicator(item.getName(), ""));
     }
 
     @Override
@@ -282,9 +276,14 @@ public class PhotoDirsFragment extends BaseFragment implements
     }
 
     @Override
+    public void onDestroyView() {
+        FilesStatusObservable.getInstance().remove(mFileStatusObservable);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDestroy() {
         mFileLoadManager.destroyLoader();
-        FilesStatusObservable.getInstance().remove(mFileStatusObservable);
         super.onDestroy();
     }
 

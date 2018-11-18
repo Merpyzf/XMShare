@@ -4,15 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.storage.StorageManager;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.CompactFile;
 import com.merpyzf.transfermanager.entity.DocFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.xmshare.bean.Volume;
 import com.merpyzf.xmshare.common.Const;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,6 +201,12 @@ public class FileUtils {
                 return true;
             }
         }
+        return false;
+    }
+
+
+    public static boolean isPhoto(File file) {
+
         return false;
     }
 }
