@@ -4,16 +4,16 @@ package com.merpyzf.xmshare.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.CompactFile;
 import com.merpyzf.transfermanager.entity.DocFile;
@@ -25,9 +25,10 @@ import com.merpyzf.xmshare.bean.model.LitepalFileInfo;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.ui.activity.ReceivedFileActivity;
+import com.merpyzf.xmshare.ui.adapter.VolumeAdapter;
 import com.merpyzf.xmshare.ui.fragment.filemanager.FileManagerFragment;
-import com.merpyzf.xmshare.util.ApkUtils;
-import com.merpyzf.xmshare.util.FileUtils;
+import com.merpyzf.xmshare.ui.widget.DirItemDecotation;
+import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.util.StorageUtils;
 import com.merpyzf.xmshare.util.ToastUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
@@ -39,13 +40,10 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class FunctionListFragment extends BaseFragment implements View.OnClickListener {
+public class FunctionListFragment extends BaseFragment implements View.OnClickListener, BaseQuickAdapter.OnItemClickListener {
 
     @BindView(R.id.tv_document_num)
     TextView mTvDocNum;
@@ -55,17 +53,14 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
     TextView mTvcompactNum;
     @BindView(R.id.ll_receive_files)
     LinearLayout mLlReceiveFiles;
-    @BindView(R.id.rl_inner)
-    RelativeLayout mRlInnerStorage;
-    @BindView(R.id.rl_sdcard)
-    RelativeLayout mRlSdcardStorage;
+    @BindView(R.id.rl_volume)
+    RecyclerView mRlVolume;
 
     private List<DocFile> mDocFileList = new ArrayList<>();
     private List<ApkFile> mApkFileList = new ArrayList<>();
     private List<CompactFile> mCompactFileList = new ArrayList<>();
-    private ArrayList<Volume> mVolumes;
-    private String mInnerStoragePath = null;
-    private String mExternStoragePath = null;
+    private ArrayList<Volume> mVolumes = new ArrayList<>();
+    private VolumeAdapter mVolumeAdapter;
 
     @Override
     protected int getContentLayoutId() {
@@ -81,8 +76,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
                 view.setOnClickListener(this);
             }
         }
-        mRlInnerStorage.setOnClickListener(this);
-        mRlSdcardStorage.setOnClickListener(this);
+        mVolumeAdapter.setOnItemClickListener(this);
     }
 
     /**
@@ -92,24 +86,8 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
     @Override
     protected void initData() {
         super.initData();
-        mVolumes = StorageUtils.getVolumes(getContext());
-        if (mVolumes.size() == 1) {
-            mRlSdcardStorage.setVisibility(View.GONE);
-            mInnerStoragePath = mVolumes.get(0).getPath();
-        } else if (mVolumes.size() == 2) {
-            for (Volume volume : mVolumes) {
-                if (volume.isRemovable() == true) {
-                    mExternStoragePath = volume.getPath();
-                } else {
-                    mInnerStoragePath = volume.getPath();
-                }
-            }
-        } else if (mVolumes.size() == 0) {
-            mRlSdcardStorage.setVisibility(View.GONE);
-            mRlInnerStorage.setVisibility(View.GONE);
-        }
-
-
+        mVolumes.addAll(StorageUtils.getVolumes(getContext()));
+        mVolumeAdapter.notifyDataSetChanged();
         //// 两者都进行更新
         //int count = LitepalFileInfo.count(LitepalFileInfo.class);
         //if (count == 0) {
@@ -252,8 +230,6 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
             // 若文件不存在则删除其在数据库中的缓存
             LitepalFileInfo.delete(LitepalFileInfo.class, id);
         }
-
-
     }
 
 
@@ -264,7 +240,10 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
      */
     @Override
     protected void initWidget(View rootView) {
-        Log.i("fm", "----> initView方法执行了");
+        mRlVolume.setLayoutManager(new LinearLayoutManager(mContext));
+        mVolumeAdapter = new VolumeAdapter(mContext, R.layout.item_rv_volume, mVolumes);
+        mRlVolume.setAdapter(mVolumeAdapter);
+
     }
 
 
@@ -292,33 +271,6 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
                 intent.putExtra("fileType", FileInfo.FILE_TYPE_OTHER);
                 startActivity(intent);
                 break;
-            case R.id.rl_inner:
-                if (mInnerStoragePath != null) {
-                    ToastUtils.showShort(getContext(), "内部存储路径-> " + mInnerStoragePath);
-                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(getActivity())
-                            .getSupportFragmentManager().beginTransaction();
-                    FileManagerFragment fileManagerFragment = new FileManagerFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putCharSequence("rootPath", mInnerStoragePath);
-                    fileManagerFragment.setArguments(bundle);
-                    fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
-                    fragmentTransaction.commit();
-                }
-                break;
-            case R.id.rl_sdcard:
-                if (mExternStoragePath != null) {
-                    ToastUtils.showShort(getContext(), "外部存储的路径-> " + mExternStoragePath);
-                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(getActivity())
-                            .getSupportFragmentManager().beginTransaction();
-                    FileManagerFragment fileManagerFragment = new FileManagerFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putCharSequence("rootPath", mExternStoragePath);
-                    fileManagerFragment.setArguments(bundle);
-                    fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
-                    fragmentTransaction.commit();
-
-                }
-                break;
 
             default:
                 break;
@@ -344,4 +296,27 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
         return isContain;
     }
 
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        Volume volume = (Volume) adapter.getItem(position);
+        if (volume.isRemovable()) {
+            FragmentTransaction fragmentTransaction = Objects.requireNonNull(getActivity())
+                    .getSupportFragmentManager().beginTransaction();
+            FileManagerFragment fileManagerFragment = new FileManagerFragment();
+            Bundle bundle = new Bundle();
+            bundle.putCharSequence("rootPath", volume.getPath());
+            fileManagerFragment.setArguments(bundle);
+            fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
+            fragmentTransaction.commit();
+        } else {
+            FragmentTransaction fragmentTransaction = Objects.requireNonNull(getActivity())
+                    .getSupportFragmentManager().beginTransaction();
+            FileManagerFragment fileManagerFragment = new FileManagerFragment();
+            Bundle bundle = new Bundle();
+            bundle.putCharSequence("rootPath", volume.getPath());
+            fileManagerFragment.setArguments(bundle);
+            fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
+            fragmentTransaction.commit();
+        }
+    }
 }

@@ -278,143 +278,14 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:background="@color/colorSecondaryText" />
+                    android:layout_height="0.2dp"
+                    android:background="#6e6e6e" />
 
 
-                <RelativeLayout
-                    android:id="@+id/rl_inner"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rl_volume"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:orientation="horizontal"
-
-                    >
-
-                    <ImageView
-                        android:id="@+id/iv_inner_storage"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_inner_storage"
-                        android:tint="@color/colorSecondaryText"
-
-                        />
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/iv_inner_storage"
-                        android:text="内部存储设备" />
-
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_arrow_right"
-                        android:tint="@color/colorSecondaryText" />
-
-
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:background="@color/colorSecondaryText" />
-
-                <RelativeLayout
-                    android:id="@+id/rl_sdcard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/iv_sdcard_storage"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_inner_storage"
-                        android:tint="@color/colorSecondaryText"
-
-                        />
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/iv_sdcard_storage"
-                        android:text="外部存储设备" />
-
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_arrow_right"
-                        android:tint="@color/colorSecondaryText" />
-
-
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:background="@color/colorSecondaryText" />
-
-
-                <RelativeLayout
-                    android:id="@+id/rl_share_contacts"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:orientation="horizontal"
-
-                    >
-
-                    <ImageView
-                        android:id="@+id/iv_share_contacts"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_contacts"
-                        android:tint="@color/colorSecondaryText"
-
-                        />
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/iv_share_contacts"
-                        android:text="共享联系人" />
-
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_arrow_right"
-                        android:tint="@color/colorSecondaryText" />
-
-
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.3dp"
-                    android:background="@color/colorSecondaryText" />
+                    android:layout_height="match_parent" />
 
 
             </LinearLayout>

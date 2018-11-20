@@ -20,6 +20,7 @@ import com.merpyzf.xmshare.ui.widget.DirItemDecotation;
 import com.merpyzf.xmshare.ui.widget.IndicatorChangedCallback;
 import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
+import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.SettingHelper;
 import com.trello.rxlifecycle2.android.FragmentEvent;
@@ -47,7 +48,6 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     RecyclerView mRvFileList;
     @BindView(R.id.select_indicator)
     SelectIndicatorView mSelectIndicator;
-
     private String mRootPath;
     private List<FileInfo> mFileList;
     private FileManagerAdapter mAdapter;
@@ -100,16 +100,6 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         mFileList.clear();
         Observable.fromArray(file.listFiles())
                 .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .map(f -> {
-                    FileInfo fileInfo = new FileInfo();
-                    fileInfo.setDirectory(f.isDirectory());
-                    fileInfo.setName(f.getName());
-                    fileInfo.setPath(f.getPath());
-                    fileInfo.setPhoto(FileUtils.isPhoto(f));
-                    fileInfo.setSize(f.length());
-                    fileInfo.setFirstLetter(getFirstLetter(fileInfo.getName()));
-                    return fileInfo;
-                })
                 .filter(fileInfo -> {
                     boolean isShow = SettingHelper.showHiddenFile(mContext);
                     if (!isShow) {
@@ -119,6 +109,18 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                     }
                     return true;
                 })
+                .map(f -> {
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.setDirectory(f.isDirectory());
+                    fileInfo.setName(f.getName());
+                    fileInfo.setPath(f.getPath());
+                    fileInfo.setPhoto(FileUtils.isPhoto(f));
+                    fileInfo.setSize(f.length());
+                    fileInfo.setFirstLetter(getFirstLetter(fileInfo.getName()));
+                    fileInfo.setPhoto(FileTypeHelper.isPhotoType(FileUtils.getFileSuffix(fileInfo.getPath())));
+                    return fileInfo;
+                })
+
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<FileInfo>() {
@@ -191,13 +193,17 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         FileInfo fileInfo = (FileInfo) adapter.getItem(position);
-        Indicator indicator = new Indicator(fileInfo.getName(), fileInfo.getPath());
-        mSelectIndicator.addIndicator(indicator);
         if (fileInfo.isDirectory()) {
             loadDir(fileInfo.getPath());
+            Indicator indicator = new Indicator(fileInfo.getName(), fileInfo.getPath());
+            mSelectIndicator.addIndicator(indicator);
         }
     }
 
+    @Override
+    public void onIndicatorChanged(Indicator indicator) {
+        loadDir(indicator.getValue());
+    }
 
     public void onBackPressed() {
         if (mSelectIndicator.isRoot()) {
@@ -207,10 +213,5 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         } else {
             mSelectIndicator.pop();
         }
-    }
-
-    @Override
-    public void onIndicatorChanged(Indicator indicator) {
-        loadDir(indicator.getValue());
     }
 }
