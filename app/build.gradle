@@ -107,5 +107,7 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.12'
     // material风格dialog组件
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
+    // 文字转拼音工具
+    implementation 'com.github.promeg:tinypinyin:2.0.3'
 
 }

@@ -67,17 +67,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                     break;
                 }
             }
-
         }
-        //
-        for (FileInfo fileInfo : mReceiveFileList) {
-            if(fileInfo instanceof MusicFile){
-
-                long albumId = ((MusicFile) fileInfo).getAlbumId();
-                Log.i("WW2k", "albumId-->"+albumId);
-            }
-        }
-
         sendMessage(mReceiveFileList, Const.TransferStatus.TRANSFER_FILE_LIST_SUCCESS);
     }
 

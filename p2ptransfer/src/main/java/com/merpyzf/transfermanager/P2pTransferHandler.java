@@ -4,6 +4,7 @@ package com.merpyzf.transfermanager;
 import android.os.Handler;
 import android.os.Message;
 
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.observer.TransferObserver;

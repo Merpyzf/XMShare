@@ -323,19 +323,20 @@ public class FileInfo extends DataSupport implements Serializable {
         this.setIsLast(Integer.valueOf(split[6]));
     }
 
-    //@Override
-    //public boolean equals(Object obj) {
-    //    if (obj instanceof FileInfo) {
-    //        FileInfo fileInfo = (FileInfo) obj;
-    //        if (fileInfo.getPath().equals(this.path) && fileInfo.getLength() == this.getLength()) {
-    //            return true;
-    //        } else {
-    //            return false;
-    //        }
-    //    } else {
-    //        return false;
-    //    }
-    //}
+    @Override
+    public boolean equals(Object obj) {
+        //通过文件所处的路径和文件的带下来判断两者是否是同一个对象
+        if (obj instanceof FileInfo) {
+            FileInfo fileInfo = (FileInfo) obj;
+            if (fileInfo.getPath().equals(this.path) && fileInfo.getLength() == this.getLength()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }
 
 

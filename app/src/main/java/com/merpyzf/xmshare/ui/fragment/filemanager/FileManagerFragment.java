@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.FileInfo;
 import com.merpyzf.xmshare.common.base.BaseFragment;
@@ -25,6 +26,8 @@ import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -92,29 +95,29 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
      */
     public void loadDir(String dir) {
         File file = new File(dir);
+        ArrayList<FileInfo> tempDirs = new ArrayList();
+        ArrayList<FileInfo> tempFiles = new ArrayList();
         mFileList.clear();
         Observable.fromArray(file.listFiles())
                 .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .map(file1 -> {
+                .map(f -> {
                     FileInfo fileInfo = new FileInfo();
-                    fileInfo.setDirectory(file1.isDirectory());
-                    fileInfo.setName(file1.getName());
-                    fileInfo.setPath(file1.getPath());
-                    fileInfo.setPhoto(FileUtils.isPhoto(file1));
-                    fileInfo.setSize(file1.length());
+                    fileInfo.setDirectory(f.isDirectory());
+                    fileInfo.setName(f.getName());
+                    fileInfo.setPath(f.getPath());
+                    fileInfo.setPhoto(FileUtils.isPhoto(f));
+                    fileInfo.setSize(f.length());
+                    fileInfo.setFirstLetter(getFirstLetter(fileInfo.getName()));
                     return fileInfo;
                 })
-                .filter(new Predicate<FileInfo>() {
-                    @Override
-                    public boolean test(FileInfo fileInfo) throws Exception {
-                        boolean isShow = SettingHelper.showHiddenFile(mContext);
-                        if (!isShow) {
-                            if (fileInfo.getName().startsWith(".")) {
-                                return false;
-                            }
+                .filter(fileInfo -> {
+                    boolean isShow = SettingHelper.showHiddenFile(mContext);
+                    if (!isShow) {
+                        if (fileInfo.getName().startsWith(".")) {
+                            return false;
                         }
-                        return true;
                     }
+                    return true;
                 })
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -126,7 +129,12 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
                     @Override
                     public void onNext(FileInfo fileInfo) {
-                        mFileList.add(fileInfo);
+                        if (fileInfo.isDirectory()) {
+                            tempDirs.add(fileInfo);
+                        } else {
+                            tempFiles.add(fileInfo);
+                        }
+                        Log.i("WW2k", fileInfo.getFirstLetter() + "");
                     }
 
                     @Override
@@ -136,10 +144,47 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
                     @Override
                     public void onComplete() {
+                        Collections.sort(tempDirs, (o1, o2) -> {
+                            if (o1.getFirstLetter() > o2.getFirstLetter()) {
+                                return 1;
+                            } else if (o1.getFirstLetter() < o2.getFirstLetter()) {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                        Collections.sort(tempFiles, (o1, o2) -> {
+                            if (o1.getFirstLetter() > o2.getFirstLetter()) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        });
+                        // 按照文件夹在前文件在后的顺序添加到集合中去
+                        mFileList.addAll(tempDirs);
+                        mFileList.addAll(tempFiles);
                         mAdapter.notifyDataSetChanged();
                     }
                 });
 
+    }
+
+    /**
+     * 根据文件名获取第一个字符所对应的首字母
+     *
+     * @param name
+     * @return
+     */
+    private char getFirstLetter(String name) {
+        char firstLetter;
+        // 判断是否是隐藏文件
+        if (name.startsWith(".")) {
+            // 如果是则取第二个字符
+            firstLetter = Character.toLowerCase(Pinyin.toPinyin(name.charAt(1)).charAt(0));
+        } else {
+            // 如果不是则直接取第一个字符
+            firstLetter = Character.toLowerCase(Pinyin.toPinyin(name.charAt(0)).charAt(0));
+        }
+        return firstLetter;
     }
 
 

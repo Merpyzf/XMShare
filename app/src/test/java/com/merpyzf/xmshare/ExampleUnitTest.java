@@ -377,11 +377,13 @@ public class ExampleUnitTest {
 
 
     }
-
+    @Test
     public void testVauleDefault(){
 
-        boolean b = false;
-        System.out.println(b);
+
+
     }
+
+
 
 }

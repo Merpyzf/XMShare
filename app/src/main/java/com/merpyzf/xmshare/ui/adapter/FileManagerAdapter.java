@@ -21,7 +21,6 @@ public class FileManagerAdapter extends BaseQuickAdapter<FileInfo, BaseViewHolde
 
     @Override
     protected void convert(BaseViewHolder helper, FileInfo item) {
-
         StringBuffer fileInfo = new StringBuffer();
         int folderCount = 0;
         int fileCount = 0;
@@ -46,6 +45,9 @@ public class FileManagerAdapter extends BaseQuickAdapter<FileInfo, BaseViewHolde
             String[] fileSizeArray = getFileSizeArrayStr(item.getSize());
             fileInfo.append(fileSizeArray[0]);
             fileInfo.append(fileSizeArray[1]);
+
+
+
             helper.setImageResource(R.id.iv_ico, R.drawable.ic_other);
         }
         helper.setText(R.id.tv_title, item.getName());

@@ -95,7 +95,7 @@ public class Const {
         AVATAR_LIST.add(R.drawable.ic_avatar_15);
         AVATAR_LIST.add(R.drawable.ic_avatar_16_o);
 
-
+        // 文档文件类型
         FILE_DOCUMENT_TYPES = new ArrayList<>();
         FILE_DOCUMENT_TYPES.add("txt");
         FILE_DOCUMENT_TYPES.add("doc");
@@ -116,15 +116,18 @@ public class Const {
         FILE_DOCUMENT_TYPES.add(".caj");
 
 
+        // 压缩文件类型
         FILE_COMPACT_TYPES = new ArrayList<>();
-
         FILE_COMPACT_TYPES.add("zip");
         FILE_COMPACT_TYPES.add("rar");
         FILE_COMPACT_TYPES.add("tar");
         FILE_COMPACT_TYPES.add("tgz");
         FILE_COMPACT_TYPES.add("7z");
-        FILE_COMPACT_TYPES.add("IMG");
-        FILE_COMPACT_TYPES.add("ISO");
+        FILE_COMPACT_TYPES.add("img");
+        FILE_COMPACT_TYPES.add("iso");
+
+        // 图片文件类型
+
 
 
     }

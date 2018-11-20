@@ -9,6 +9,7 @@ public class FileInfo {
 
     private String name;
     private String path;
+    private char firstLetter;
     private long size;
     private boolean isDirectory = false;
     private boolean isPhoto = false;
@@ -62,5 +63,13 @@ public class FileInfo {
 
     public void setPhoto(boolean photo) {
         isPhoto = photo;
+    }
+
+    public char getFirstLetter() {
+        return firstLetter;
+    }
+
+    public void setFirstLetter(char firstLetter) {
+        this.firstLetter = firstLetter;
     }
 }
