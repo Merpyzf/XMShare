@@ -16,6 +16,7 @@ import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
@@ -28,7 +29,8 @@ import java.util.List;
 
 
 /**
- * Created by wangke on 2018/1/18.
+ * @author wangke
+ * @date 2018/1/18
  * 文件传输列表
  */
 public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
@@ -64,7 +66,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         tvSize.setText(fileSizeArrayStr[0] + fileSizeArrayStr[1]);
         File thumbFile = getThumbFile(fileInfo);
 
-        if(fileInfo instanceof BaseFileInfo){
+        if (fileInfo instanceof StorageFile) {
             String suffix = fileInfo.getSuffix();
             if (FileTypeHelper.isPhotoType(suffix)) {
                 Glide.with(mContext)
@@ -78,17 +80,16 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             } else {
                 ivThumb.setImageResource(FileTypeHelper.getIcoResBySuffix(suffix));
             }
+        } else {
+            Glide.with(mContext)
+                    .load(thumbFile)
+                    .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
+                    .crossFade()
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .error(UiUtils.getPlaceHolder(fileInfo.getType()))
+                    .into(ivThumb);
         }
-
-
-        Glide.with(mContext)
-                .load(thumbFile)
-                .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
-                .crossFade()
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .error(UiUtils.getPlaceHolder(fileInfo.getType()))
-                .into(ivThumb);
         if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_WAITING) {
             tvProgress.setText("等待中");
             progressBar.setVisibility(View.INVISIBLE);
@@ -125,6 +126,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             ivDone.setVisibility(View.INVISIBLE);
             tvProgress.setText("传输失败");
         }
+
     }
 
     private File getThumbFile(BaseFileInfo fileInfo) {
