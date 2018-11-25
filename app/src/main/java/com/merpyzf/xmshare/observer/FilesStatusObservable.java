@@ -1,8 +1,6 @@
 package com.merpyzf.xmshare.observer;
 
-import android.util.Log;
-
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.common.Const;
 
 import java.util.HashMap;
@@ -60,7 +58,7 @@ public class FilesStatusObservable {
         mObserverMap.clear();
     }
 
-    public void notifyObservers(FileInfo changedFile, String observerName, int notifyType) {
+    public void notifyObservers(BaseFileInfo changedFile, String observerName, int notifyType) {
         boolean flag = false;
         for (Map.Entry<String, FilesStatusObserver> observerEntry : mObserverMap.entrySet()) {
             FilesStatusObserver observer = observerEntry.getValue();
@@ -101,7 +99,7 @@ public class FilesStatusObservable {
         }
     }
 
-    public void notifyObservers(List<FileInfo> changedFiles, String observerName, int notifyType) {
+    public void notifyObservers(List<BaseFileInfo> changedFiles, String observerName, int notifyType) {
 
         // 文件传输列表的文件发生改变后才需要将改动通知给所有的文件展示页面
         // 而文件展示页面将文件的改变通知给主页面的文件传输列表的文件是一对一的

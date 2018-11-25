@@ -74,11 +74,9 @@ public final class CaptureActivityHandler extends Handler {
       }
 
     } else if (message.what == R.id.restart_preview) {
-      Log.d(TAG, "Got restart preview message");
       restartPreviewAndDecode();
 
     } else if (message.what == R.id.decode_succeeded) {
-      Log.d(TAG, "Got decode succeeded message");
       state = State.SUCCESS;
       Bundle bundle = message.getData();
 
@@ -94,12 +92,10 @@ public final class CaptureActivityHandler extends Handler {
       CameraManager.get().requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
 
     } else if (message.what == R.id.return_scan_result) {
-      Log.d(TAG, "Got return scan result message");
       activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
       activity.finish();
 
     } else if (message.what == R.id.launch_product_query) {
-      Log.d(TAG, "Got product query message");
       String url = (String) message.obj;
       Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);

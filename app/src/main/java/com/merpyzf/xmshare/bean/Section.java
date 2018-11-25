@@ -1,9 +1,9 @@
 package com.merpyzf.xmshare.bean;
 
 import com.chad.library.adapter.base.entity.SectionEntity;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 
-public class Section extends SectionEntity<FileInfo> {
+public class Section extends SectionEntity<BaseFileInfo> {
     private boolean isCheckedAllChild = false;
     private int childNum;
     public Section(boolean isHeader, String header) {
@@ -15,7 +15,7 @@ public class Section extends SectionEntity<FileInfo> {
         this.childNum = childNum;
     }
 
-    public Section(FileInfo fileInfo) {
+    public Section(BaseFileInfo fileInfo) {
         super(fileInfo);
     }
 

@@ -4,9 +4,8 @@ package com.merpyzf.transfermanager;
 import android.os.Handler;
 import android.os.Message;
 
-import com.github.promeg.pinyinhelper.Pinyin;
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.observer.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 
@@ -36,7 +35,7 @@ public class P2pTransferHandler extends Handler {
              * 待接收文件列表传输完毕
              */
             case Const.TransferStatus.TRANSFER_FILE_LIST_SUCCESS:
-                List<FileInfo> mReceiveFileList = (List<FileInfo>) msg.obj;
+                List<BaseFileInfo> mReceiveFileList = (List<BaseFileInfo>) msg.obj;
                 if (mTransferFileListListener != null && mReceiveFileList.size() > 0) {
                     // 当接收到待传输文件列表时的回调
                     mTransferFileListListener.onReceiveCompleted(mReceiveFileList);
@@ -47,7 +46,7 @@ public class P2pTransferHandler extends Handler {
              */
             case Const.TransferStatus.TRANSFING:
                 for (int i = 0; i < mTransferObservers.size(); i++) {
-                    mTransferObservers.get(i).onTransferProgress((FileInfo) msg.obj);
+                    mTransferObservers.get(i).onTransferProgress((BaseFileInfo) msg.obj);
                 }
                 break;
             /**
@@ -55,7 +54,7 @@ public class P2pTransferHandler extends Handler {
              */
             case Const.TransferStatus.TRANSFER_SUCCESS:
                 for (int i = 0; i < mTransferObservers.size(); i++) {
-                    mTransferObservers.get(i).onTransferStatus((FileInfo) msg.obj);
+                    mTransferObservers.get(i).onTransferStatus((BaseFileInfo) msg.obj);
                 }
                 break;
             /**

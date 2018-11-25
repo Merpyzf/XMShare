@@ -60,28 +60,28 @@ public class PeerHandler extends Handler {
 
         switch (cmd) {
             // 设备上线
-            case SignMessage.cmd.ON_LINE:
+            case SignMessage.Cmd.ON_LINE:
                 if (mOnPeerActionListener != null) {
                     mOnPeerActionListener.onDeviceOnLine(peer);
                 }
                 break;
             // 设备下线
-            case SignMessage.cmd.OFF_LINE:
+            case SignMessage.Cmd.OFF_LINE:
                 if (mOnPeerActionListener != null) {
                     mOnPeerActionListener.onDeviceOffLine(peer);
                 }
                 break;
-            case SignMessage.cmd.REQUEST_CONN:
+            case SignMessage.Cmd.REQUEST_CONN:
                 if (mOnPeerActionListener != null) {
                     mOnPeerActionListener.onRequestConnect(peer);
                 }
                 break;
-            case SignMessage.cmd.ANSWER_REQUEST_CONN:
+            case SignMessage.Cmd.ANSWER_REQUEST_CONN:
                 if (mOnPeerActionListener != null) {
                     mOnPeerActionListener.onAnswerRequestConnect(peer);
                 }
                 break;
-            case SignMessage.cmd.TRANSFER_BREAK:
+            case SignMessage.Cmd.TRANSFER_BREAK:
                 if (mPeerTransferBreakCallback != null) {
                     mPeerTransferBreakCallback.onTransferBreak(peer);
                 }

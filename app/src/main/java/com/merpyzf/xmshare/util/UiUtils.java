@@ -9,7 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.R;
 
@@ -110,16 +110,16 @@ public class UiUtils {
     public static int getPlaceHolder(int fileInfoType) {
         int placeHolder = 0;
         switch (fileInfoType) {
-            case FileInfo.FILE_TYPE_APP:
+            case BaseFileInfo.FILE_TYPE_APP:
                 placeHolder = R.drawable.ic_holder_app;
                 break;
-            case FileInfo.FILE_TYPE_MUSIC:
+            case BaseFileInfo.FILE_TYPE_MUSIC:
                 placeHolder = R.drawable.ic_holder_album_art;
                 break;
-            case FileInfo.FILE_TYPE_VIDEO:
+            case BaseFileInfo.FILE_TYPE_VIDEO:
                 placeHolder = R.drawable.ic_holder_video;
                 break;
-            case FileInfo.FILE_TYPE_IMAGE:
+            case BaseFileInfo.FILE_TYPE_IMAGE:
                 placeHolder = R.drawable.ic_holder_image;
                 break;
             default:

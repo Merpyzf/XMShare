@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.observer.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.FileUtils;
@@ -41,14 +41,14 @@ public class TransferReceiveFragment extends BaseFragment {
     TextView mTvSave;
     @BindView(R.id.rl_info)
     RelativeLayout mRlInfo;
-    private List<FileInfo> mTransferFileList;
+    private List<BaseFileInfo> mTransferFileList;
     private FileTransferAdapter mFileTransferAdapter;
     private long mTotalSize = 0;
     private long mLastFileSize = 0;
     private static final String TAG = TransferReceiveFragment.class.getSimpleName();
 
     @SuppressLint("ValidFragment")
-    public TransferReceiveFragment(List<FileInfo> transferFileList) {
+    public TransferReceiveFragment(List<BaseFileInfo> transferFileList) {
         this.mTransferFileList = transferFileList;
     }
 
@@ -69,13 +69,13 @@ public class TransferReceiveFragment extends BaseFragment {
     protected void initEvent() {
         ReceiverManager.getInstance(mContext).register(new TransferObserver() {
             @Override
-            public void onTransferProgress(FileInfo fileInfo) {
+            public void onTransferProgress(BaseFileInfo fileInfo) {
                 notifyItemChanged(fileInfo);
                 updateTransferSpeed(fileInfo);
             }
 
             @Override
-            public void onTransferStatus(FileInfo fileInfo) {
+            public void onTransferStatus(BaseFileInfo fileInfo) {
                 notifyItemChanged(fileInfo);
                 FileUtils.addFileToMediaStore(getActivity(), new File(fileInfo.getPath()));
                 mLastFileSize = fileInfo.getLength();
@@ -90,10 +90,10 @@ public class TransferReceiveFragment extends BaseFragment {
             }
         });
         mFileTransferAdapter.setOnItemClickListener((adapter, view, position) -> {
-            FileInfo fileInfo = (FileInfo) adapter.getItem(position);
+            BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
             // -> 调用系统的组件播放
             switch (fileInfo.getType()) {
-                case FileInfo.FILE_TYPE_APP:
+                case BaseFileInfo.FILE_TYPE_APP:
                     if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
                         AppUtils.installApk(mContext, new File(Environment.getExternalStorageDirectory() + fileInfo.getPath()));
                     } else {
@@ -101,13 +101,13 @@ public class TransferReceiveFragment extends BaseFragment {
                     }
                     break;
                 // 点击查看图片
-                case FileInfo.FILE_TYPE_IMAGE:
+                case BaseFileInfo.FILE_TYPE_IMAGE:
                     break;
                 // 点击播放音乐
-                case FileInfo.FILE_TYPE_MUSIC:
+                case BaseFileInfo.FILE_TYPE_MUSIC:
                     break;
                 // 点击播放视频
-                case FileInfo.FILE_TYPE_VIDEO:
+                case BaseFileInfo.FILE_TYPE_VIDEO:
                     break;
                 default:
                     break;
@@ -135,7 +135,7 @@ public class TransferReceiveFragment extends BaseFragment {
         }
     }
 
-    private void updateTransferSpeed(FileInfo fileInfo) {
+    private void updateTransferSpeed(BaseFileInfo fileInfo) {
         String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
         String[] transferSpeed = fileInfo.getTransferSpeed();
         if (null != arrayStr) {
@@ -152,7 +152,7 @@ public class TransferReceiveFragment extends BaseFragment {
         }
     }
 
-    private void notifyItemChanged(FileInfo fileInfo) {
+    private void notifyItemChanged(BaseFileInfo fileInfo) {
         int position = mFileTransferAdapter.getData().indexOf(fileInfo);
         mFileTransferAdapter.notifyItemChanged(position);
     }

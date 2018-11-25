@@ -1,9 +1,7 @@
 package com.merpyzf.transfermanager.entity;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.github.promeg.pinyinhelper.Pinyin;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.util.FileUtils;
 
@@ -12,9 +10,12 @@ import org.litepal.crud.DataSupport;
 import java.io.Serializable;
 
 /**
- * Created by wangke on 2017/12/23.
+ * 基类文件对象
+ *
+ * @author wangke
+ * @date 2017/12/23
  */
-public class FileInfo extends DataSupport implements Serializable {
+public class BaseFileInfo extends DataSupport implements Serializable {
 
     /**
      * 应用类型(APK)
@@ -41,7 +42,6 @@ public class FileInfo extends DataSupport implements Serializable {
      */
     public static final int FILE_TYPE_DOCUMENT = 0x05;
 
-
     /**
      * 压缩文件
      */
@@ -50,7 +50,7 @@ public class FileInfo extends DataSupport implements Serializable {
     /**
      * 其他文件 (传输的是文件或文件夹之类的)
      */
-    public static final int FILE_TYPE_OTHER = 0x07;
+    public static final int FILE_TYPE_STORAGE = 0x07;
 
 
     /**
@@ -76,7 +76,7 @@ public class FileInfo extends DataSupport implements Serializable {
     /**
      * 中/英文名称对应的第一个字母
      */
-    private char firstCase;
+    private char firstLetter;
     /**
      * 文件大小
      */
@@ -86,14 +86,14 @@ public class FileInfo extends DataSupport implements Serializable {
      */
     private int thumbLength = 0;
 
-    byte[] fileThumbArray;
     /**
-     * 文件传输的进度
+     * 存放文件缩略图的字节数组
+     */
+    byte[] thumbBytes;
+    /**
+     * 记录文件的传输进度
      */
     private float progress;
-
-    private String lastModified;
-
     /**
      * 文件传输速度
      */
@@ -102,6 +102,8 @@ public class FileInfo extends DataSupport implements Serializable {
      * 文件传输状态
      */
     private int fileTransferStatus = Const.TransferStatus.TRANSFER_WAITING;
+
+    private String lastModified;
     /**
      * 是否是传输中的最后一个文件，如果是则为1，不是默认为0
      */
@@ -112,12 +114,12 @@ public class FileInfo extends DataSupport implements Serializable {
     private String md5;
 
 
-    public FileInfo() {
+    public BaseFileInfo() {
     }
 
-    public FileInfo(String name, String path, int type, int length, String suffix) {
+    public BaseFileInfo(String name, String path, int type, int length, String suffix) {
         this.name = name;
-        this.firstCase = setFirstCase(name);
+        this.firstLetter = FileUtils.getFirstLetter(name);
         this.path = path;
         this.type = type;
         this.length = length;
@@ -139,20 +141,7 @@ public class FileInfo extends DataSupport implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-        this.firstCase = setFirstCase(name);
-    }
-
-    private char setFirstCase(String name) {
-        if (!"".equals(name)) {
-            char firstCase = Pinyin.toPinyin(name.charAt(0)).toLowerCase().toCharArray()[0];
-            if (firstCase >= 48 && firstCase <= 57) {
-                return '#';
-            } else {
-                return firstCase;
-            }
-        } else {
-            return '#';
-        }
+        this.firstLetter = FileUtils.getFirstLetter(name);
     }
 
     public String getPath() {
@@ -161,6 +150,7 @@ public class FileInfo extends DataSupport implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+        this.suffix = FileUtils.getFileSuffix(path);
     }
 
     public int getType() {
@@ -186,7 +176,6 @@ public class FileInfo extends DataSupport implements Serializable {
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
-
 
     public int getIsLast() {
         return isLast;
@@ -236,25 +225,16 @@ public class FileInfo extends DataSupport implements Serializable {
         this.thumbLength = thumbLength;
     }
 
-    public char getFirstCase() {
-        return firstCase;
+    public char getFirstLetter() {
+        return firstLetter;
     }
 
-    public byte[] getFileThumbArray() {
-        return fileThumbArray;
+    public byte[] getThumbBytes() {
+        return thumbBytes;
     }
 
-    public void setFileThumbArray(byte[] fileThumbArray) {
-        this.fileThumbArray = fileThumbArray;
-    }
-
-    /**
-     * 重置当前对象的状态
-     */
-    public void reset() {
-        progress = 0;
-        isLast = 0;
-        setFileTransferStatus(Const.TransferStatus.TRANSFER_WAITING);
+    public void setThumbBytes(byte[] thumbBytes) {
+        this.thumbBytes = thumbBytes;
     }
 
     public String getLastModified() {
@@ -264,6 +244,7 @@ public class FileInfo extends DataSupport implements Serializable {
     public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
+
 
     public boolean isLastFile() {
         return this.isLast == Const.IS_LAST;
@@ -289,10 +270,10 @@ public class FileInfo extends DataSupport implements Serializable {
         Header.append(Const.S_SEPARATOR);
 
         int fileThumbLength = 0;
-        if (this.type != FileInfo.FILE_TYPE_IMAGE || this.type != FileInfo.FILE_TYPE_OTHER) {
+        if (this.type != BaseFileInfo.FILE_TYPE_IMAGE || this.type != BaseFileInfo.FILE_TYPE_STORAGE) {
             // 缩略图大小(耗时操作)
-            fileThumbArray = FileUtils.getFileThumbByteArray(context, this);
-            fileThumbLength = fileThumbArray.length;
+            thumbBytes = FileUtils.getFileThumbByteArray(context, this);
+            fileThumbLength = thumbBytes.length;
         }
         // 文件缩略图大小
         Header.append(fileThumbLength);
@@ -329,8 +310,8 @@ public class FileInfo extends DataSupport implements Serializable {
     @Override
     public boolean equals(Object obj) {
         //通过文件所处的路径和文件的带下来判断两者是否是同一个对象
-        if (obj instanceof FileInfo) {
-            FileInfo fileInfo = (FileInfo) obj;
+        if (obj instanceof BaseFileInfo) {
+            BaseFileInfo fileInfo = (BaseFileInfo) obj;
             System.out.println("path" + fileInfo.getPath());
             System.out.println("length" + fileInfo.getLength());
 
@@ -342,6 +323,15 @@ public class FileInfo extends DataSupport implements Serializable {
         } else {
             return false;
         }
+    }
+
+    /**
+     * 重置
+     */
+    public void reset() {
+        progress = 0;
+        isLast = 0;
+        setFileTransferStatus(Const.TransferStatus.TRANSFER_WAITING);
     }
 }
 

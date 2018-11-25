@@ -1,11 +1,13 @@
 package com.merpyzf.transfermanager.entity;
 
 /**
- * Created by merpyzf on 2018/4/16.
+ *
+ * @author wangke
+ * @date 2018/4/16
  * 压缩文件类型
  */
 
-public class CompactFile extends FileInfo {
+public class CompactFile extends BaseFileInfo {
 
     public CompactFile() {
 

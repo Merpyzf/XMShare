@@ -13,7 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Created by wangke on 2018/1/25.
+ *
+ * @author wangke
+ * @date 2018/1/25
  */
 
 public class ApManager {
@@ -102,19 +104,8 @@ public class ApManager {
                     turnOffAp(context);
                 }
             }
-
-
             Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
             method.invoke(wifimanager, wificonfiguration, !isApOn(context));
-
-            // Android6.0以上的设备需要进行特殊处理
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Log.i("wk", "当前运行的设备为Android6.0以上的设备");
-
-
-            }
-
-
             return true;
         } catch (Exception e) {
             e.printStackTrace();

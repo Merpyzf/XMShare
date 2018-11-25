@@ -1,6 +1,6 @@
 package com.merpyzf.xmshare.ui.interfaces;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public abstract class OnPairActionListener {
      * @param peer        对端的主机信息
      * @param fileInfoLis 待发送的文件列表
      */
-    public void onStartTransfer(Peer peer, List<FileInfo> fileInfoLis) {
+    public void onStartTransfer(Peer peer, List<BaseFileInfo> fileInfoLis) {
 
     }
 

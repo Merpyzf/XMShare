@@ -116,7 +116,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
         mPeerManager.setOnPeerActionListener(new OnPeerActionListener() {
             @Override
             public void onDeviceOnLine(Peer peer) {
-                Log.i("WK", "上线设备-->" + peer.getNickName());
                 if (!mPeerList.contains(peer)) {
                     mPeerList.add(peer);
                     mPeerAdapter.notifyDataSetChanged();
@@ -233,7 +232,7 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
         signMessage.setNickName(SharedPreUtils.getNickName(mContext));
         signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
         signMessage.setMsgContent(" ");
-        signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
+        signMessage.setCmd(SignMessage.Cmd.REQUEST_CONN);
         return signMessage.convertProtocolStr();
     }
 
@@ -252,7 +251,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                     msg.what = TYPE_GET_IP;
                     msg.arg1 = count;
                     mHandler.sendMessage(msg);
-                    Log.i(TAG, "第 " + count + " 次尝试获取接收端IP 获取结果->  " + mLocalAddress);
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -414,7 +412,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                     break;
                 case TYPE_SEND_FILE:
                     Peer peer = (Peer) msg.obj;
-                    Log.i("w2k", "准备向 " + peer.getHostAddress() + " 发送文件");
                     // 当前ping的次数
                     final int[] currentPingCount = {0};
                     Observable.interval(0, 500, TimeUnit.MILLISECONDS)
@@ -423,7 +420,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                             .subscribe(new Observer<Long>() {
                                 @Override
                                 public void onSubscribe(Disposable d) {
-                                    Log.i(TAG, "ping.....");
                                     if (currentPingCount[0] < Const.PING_COUNT) {
                                         scanPeerFragment.mTvTip.setTextColor(Color.WHITE);
                                         scanPeerFragment.mTvTip.setText("正在检查网络连通性...");

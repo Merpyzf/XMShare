@@ -2,7 +2,7 @@ package com.merpyzf.xmshare.bean;
 
 import android.util.Log;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.App;
@@ -26,10 +26,10 @@ public class PhotoDirBean implements Serializable {
     // 是否选中
     private boolean isChecked = false;
 
-    private List<FileInfo> imageList;
+    private List<BaseFileInfo> imageList;
 
 
-    public PhotoDirBean(String coverImg, String name, boolean isChecked, List<FileInfo> imageList) {
+    public PhotoDirBean(String coverImg, String name, boolean isChecked, List<BaseFileInfo> imageList) {
         this.coverImg = coverImg;
         this.name = name;
         this.isChecked = isChecked;
@@ -56,12 +56,11 @@ public class PhotoDirBean implements Serializable {
     }
 
     public boolean isChecked() {
-        for (FileInfo fileInfo : imageList) {
+        for (BaseFileInfo fileInfo : imageList) {
             if (!App.getTransferFileList().contains(fileInfo)) {
                 isChecked = false;
                 return isChecked;
             }
-            Log.i("WW2K", "执行了");
         }
         isChecked = true;
         return isChecked;
@@ -71,18 +70,18 @@ public class PhotoDirBean implements Serializable {
         isChecked = checked;
     }
 
-    public List<FileInfo> getImageList() {
+    public List<BaseFileInfo> getImageList() {
         return imageList;
     }
 
-    public void setImageList(List<FileInfo> imageList) {
+    public void setImageList(List<BaseFileInfo> imageList) {
         this.imageList = imageList;
     }
 
 
     public void setImageList(File[] images) {
 
-        List<FileInfo> imageList = new ArrayList<>();
+        List<BaseFileInfo> imageList = new ArrayList<>();
         for (File image : images) {
 
             PicFile picFile = new PicFile();
@@ -90,10 +89,8 @@ public class PhotoDirBean implements Serializable {
             picFile.setName(image.getName());
             picFile.setLength((int) image.length());
             picFile.setSuffix(FileUtils.getFileSuffix(image));
-            picFile.setType(FileInfo.FILE_TYPE_IMAGE);
-            Log.i("WK", "图片: " + picFile.getName() + " 后缀: " + picFile.getSuffix());
+            picFile.setType(BaseFileInfo.FILE_TYPE_IMAGE);
             imageList.add(picFile);
-
         }
 
         Collections.sort(imageList, (o1, o2) -> {

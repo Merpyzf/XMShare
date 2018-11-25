@@ -1,11 +1,9 @@
 package com.merpyzf.xmshare.ui.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.transition.Fade;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -13,7 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.util.ToastUtils;
@@ -34,7 +32,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     EditText mEdtSearch;
     @BindView(R.id.rv_filelist)
     RecyclerView mRvFileList;
-    private ArrayList<FileInfo> mFileList;
+    private ArrayList<BaseFileInfo> mFileList;
 
     @Override
     protected int getContentLayoutId() {

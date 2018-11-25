@@ -1,21 +1,30 @@
-package com.merpyzf.transfermanager.entity;
+package com.merpyzf.transfermanager.entity.factory;
 
+import com.merpyzf.transfermanager.entity.ApkFile;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
+import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.StorageFile;
+import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 
 import java.io.File;
 
+/**
+ * @author wangke
+ */
 public class FileInfoFactory {
 
 
-    public static FileInfo convertFileType(FileInfo fileInfo) {
+    public static BaseFileInfo convertFileType(BaseFileInfo fileInfo) {
 
         switch (fileInfo.getType()) {
 
-            case FileInfo.FILE_TYPE_APP:
+            case BaseFileInfo.FILE_TYPE_APP:
 
                 ApkFile apkFile = new ApkFile();
                 apkFile.setName(fileInfo.getName());
-                apkFile.setType(FileInfo.FILE_TYPE_APP);
+                apkFile.setType(BaseFileInfo.FILE_TYPE_APP);
                 apkFile.setLength(fileInfo.getLength());
                 apkFile.setThumbLength(fileInfo.getThumbLength());
                 apkFile.setSuffix(fileInfo.getSuffix());
@@ -26,10 +35,10 @@ public class FileInfoFactory {
 
                 return apkFile;
 
-            case FileInfo.FILE_TYPE_IMAGE:
+            case BaseFileInfo.FILE_TYPE_IMAGE:
                 PicFile picFile = new PicFile();
                 picFile.setName(fileInfo.getName());
-                picFile.setType(FileInfo.FILE_TYPE_IMAGE);
+                picFile.setType(BaseFileInfo.FILE_TYPE_IMAGE);
                 picFile.setLength(fileInfo.getLength());
                 picFile.setSuffix(fileInfo.getSuffix());
                 picFile.setPath(FilePathManager.getSavePhotoDir().getPath() + File.separator +
@@ -39,10 +48,10 @@ public class FileInfoFactory {
 
                 return picFile;
 
-            case FileInfo.FILE_TYPE_MUSIC:
+            case BaseFileInfo.FILE_TYPE_MUSIC:
                 MusicFile musicFile = new MusicFile();
                 musicFile.setName(fileInfo.getName());
-                musicFile.setType(FileInfo.FILE_TYPE_MUSIC);
+                musicFile.setType(BaseFileInfo.FILE_TYPE_MUSIC);
                 musicFile.setLength(fileInfo.getLength());
                 musicFile.setThumbLength(fileInfo.getThumbLength());
                 musicFile.setSuffix(fileInfo.getSuffix());
@@ -53,10 +62,10 @@ public class FileInfoFactory {
                 musicFile.setIsLast(fileInfo.getIsLast());
                 return musicFile;
 
-            case FileInfo.FILE_TYPE_VIDEO:
+            case BaseFileInfo.FILE_TYPE_VIDEO:
                 VideoFile videoFile = new VideoFile();
                 videoFile.setName(fileInfo.getName());
-                videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
+                videoFile.setType(BaseFileInfo.FILE_TYPE_VIDEO);
                 videoFile.setLength(fileInfo.getLength());
                 videoFile.setThumbLength(fileInfo.getThumbLength());
                 videoFile.setSuffix(fileInfo.getSuffix());
@@ -66,10 +75,16 @@ public class FileInfoFactory {
                 videoFile.setIsLast(fileInfo.getIsLast());
                 return videoFile;
 
-            case FileInfo.FILE_TYPE_OTHER:
-                fileInfo.setPath(FilePathManager.getSaveOtherDir().getPath() + File.separator +
+            case BaseFileInfo.FILE_TYPE_STORAGE:
+                StorageFile storageFile = new StorageFile();
+                storageFile.setName(fileInfo.getName());
+                storageFile.setType(BaseFileInfo.FILE_TYPE_STORAGE);
+                storageFile.setLength(fileInfo.getLength());
+                storageFile.setSuffix(fileInfo.getSuffix());
+                storageFile.setPath(FilePathManager.getSaveOtherDir().getPath() + File.separator +
                         fileInfo.getName());
-                return fileInfo;
+                storageFile.setIsLast(fileInfo.getIsLast());
+                return storageFile;
             default:
                 break;
 

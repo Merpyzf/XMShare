@@ -1,15 +1,20 @@
 package com.merpyzf.transfermanager.entity;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 /**
- * Created by wangke on 2017/12/24.
+ *
+ * @author wangke
+ * @date 2017/12/24
  * 应用
  */
 
-public class ApkFile extends FileInfo {
+public class ApkFile extends BaseFileInfo {
 
-    // 避免对Drawable序列化
+    /**
+     * 避免对Drawable序列化
+     */
     private transient Drawable appIcoDrawable;
 
     public ApkFile(String name, String path, int type, int size, Drawable aplDrawable) {

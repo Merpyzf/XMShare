@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.observer.TransferObserver;
 
 import java.io.IOException;
@@ -126,7 +126,6 @@ public class ReceiverManager implements Runnable {
             //mServerSocket.setPerformancePreferences(2, 1, 2);
             mServerSocket.bind(new InetSocketAddress(Const.SOCKET_PORT));
             while (!isStop) {
-                Log.i(TAG, "SocketServer 阻塞中,等待设备连接....");
                 mSocketClient = mServerSocket.accept();
                 mReceiveTaskImp = new ReceiveTaskImp(mContext, mSocketClient, mP2pTransferHandler);
                 mSingleThreadPool.execute(mReceiveTaskImp);
@@ -146,7 +145,7 @@ public class ReceiverManager implements Runnable {
          *
          * @param transferFileList
          */
-        void onReceiveCompleted(List<FileInfo> transferFileList);
+        void onReceiveCompleted(List<BaseFileInfo> transferFileList);
 
     }
 

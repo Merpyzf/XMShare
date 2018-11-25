@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.observer.AbsTransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
@@ -40,7 +40,7 @@ public class TransferSendFragment extends BaseFragment {
     // 显示传输时详细信息的布局
     @BindView(R.id.rl_info)
     RelativeLayout mRlInfo;
-    private FileTransferAdapter<FileInfo> mFileTransferAdapter;
+    private FileTransferAdapter<BaseFileInfo> mFileTransferAdapter;
     private Peer mPeer;
     private long mTotalSize = 0;
     private long mLastFileSize = 0;
@@ -55,13 +55,13 @@ public class TransferSendFragment extends BaseFragment {
     protected void initEvent() {
         SenderManager.getInstance(getContext()).register(new AbsTransferObserver() {
             @Override
-            public void onTransferProgress(FileInfo fileInfo) {
+            public void onTransferProgress(BaseFileInfo fileInfo) {
                 notifyItemChanged(fileInfo);
                 updateTransferSpeed(fileInfo);
             }
 
             @Override
-            public void onTransferStatus(FileInfo fileInfo) {
+            public void onTransferStatus(BaseFileInfo fileInfo) {
                 notifyItemChanged(fileInfo);
                 // 记录本次文件传输的字节数
                 mLastFileSize = fileInfo.getLength();
@@ -94,7 +94,7 @@ public class TransferSendFragment extends BaseFragment {
         }
     }
 
-    private void updateTransferSpeed(FileInfo fileInfo) {
+    private void updateTransferSpeed(BaseFileInfo fileInfo) {
         String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
         String[] transferSpeed = fileInfo.getTransferSpeed();
         // TODO: 2018/4/18 不明白此处为什么会出现 nullpointer expection,当传输的文件比较多的时候会偶尔触发，暂时通过下面的方法解决这个问题
@@ -114,7 +114,7 @@ public class TransferSendFragment extends BaseFragment {
 
     }
 
-    private void notifyItemChanged(FileInfo fileInfo) {
+    private void notifyItemChanged(BaseFileInfo fileInfo) {
         int position = mFileTransferAdapter.getData().indexOf(fileInfo);
         mFileTransferAdapter.notifyItemChanged(position);
     }

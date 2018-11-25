@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.transfermanager.entity.ApkFile;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.CompactFile;
 import com.merpyzf.transfermanager.entity.DocFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
 import com.merpyzf.xmshare.bean.Volume;
@@ -27,10 +27,7 @@ import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.ui.activity.ReceivedFileActivity;
 import com.merpyzf.xmshare.ui.adapter.VolumeAdapter;
 import com.merpyzf.xmshare.ui.fragment.filemanager.FileManagerFragment;
-import com.merpyzf.xmshare.ui.widget.DirItemDecotation;
-import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.util.StorageUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
@@ -98,7 +95,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
         //    updateUIFromCache();
         //}
         //Observable.create((ObservableOnSubscribe<String>) e -> {
-        //    List<FileInfo> scanResults = FileUtils.traverseFolder(mInnerStoragePath);
+        //    List<BaseFileInfo> scanResults = FileUtils.traverseFolder(mInnerStoragePath);
         //    // 进行数据库缓存
         //    List<LitepalFileInfo> litepalFileInfos = LitepalFileInfo.findAll(LitepalFileInfo.class);
         //    for (int i = 0; i < scanResults.size(); i++) {
@@ -114,15 +111,15 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
         //
         //    // 直接将原来的列表清空然后用新获取的值替换
         //    for (int i = 0; i < scanResults.size(); i++) {
-        //        FileInfo fileInfo = scanResults.get(i);
+        //        BaseFileInfo fileInfo = scanResults.get(i);
         //        switch (fileInfo.getType()) {
-        //            case FileInfo.FILE_TYPE_APP:
+        //            case BaseFileInfo.FILE_TYPE_APP:
         //                mApkFileList.add((ApkFile) fileInfo);
         //                break;
-        //            case FileInfo.FILE_TYPE_DOCUMENT:
+        //            case BaseFileInfo.FILE_TYPE_DOCUMENT:
         //                mDocFileList.add((DocFile) fileInfo);
         //                break;
-        //            case FileInfo.FILE_TYPE_COMPACT:
+        //            case BaseFileInfo.FILE_TYPE_COMPACT:
         //                mCompactFileList.add((CompactFile) fileInfo);
         //                break;
         //            default:
@@ -161,7 +158,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
         List<LitepalFileInfo> litepalFileInfos = LitepalFileInfo.findAll(LitepalFileInfo.class);
         Observable.fromIterable(litepalFileInfos)
                 .filter(litepalFileInfo -> {
-                    if (litepalFileInfo.getType() == FileInfo.FILE_TYPE_APP) {
+                    if (litepalFileInfo.getType() == BaseFileInfo.FILE_TYPE_APP) {
                         if (!new File(litepalFileInfo.getPath()).exists()) {
                             deleteCache(litepalFileInfo);
                             Log.i("w2k", "文件不存在删除-->" + litepalFileInfo.getPath());
@@ -179,7 +176,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
                 });
         Observable.fromIterable(litepalFileInfos)
                 .filter(litepalFileInfo -> {
-                    if (litepalFileInfo.getType() == FileInfo.FILE_TYPE_DOCUMENT) {
+                    if (litepalFileInfo.getType() == BaseFileInfo.FILE_TYPE_DOCUMENT) {
                         if (!new File(litepalFileInfo.getPath()).exists()) {
                             deleteCache(litepalFileInfo);
                             Log.i("w2k", "文件不存在删除-->" + litepalFileInfo.getPath());
@@ -197,7 +194,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
                 });
         Observable.fromIterable(litepalFileInfos)
                 .filter(litepalFileInfo -> {
-                    if (litepalFileInfo.getType() == FileInfo.FILE_TYPE_COMPACT) {
+                    if (litepalFileInfo.getType() == BaseFileInfo.FILE_TYPE_COMPACT) {
                         if (!new File(litepalFileInfo.getPath()).exists()) {
                             deleteCache(litepalFileInfo);
                             Log.i("w2k", "文件不存在删除-->" + litepalFileInfo.getPath());
@@ -252,23 +249,23 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
         Intent intent = new Intent(getContext(), ReceivedFileActivity.class);
         switch (v.getId()) {
             case R.id.ll_app:
-                intent.putExtra("fileType", FileInfo.FILE_TYPE_APP);
+                intent.putExtra("fileType", BaseFileInfo.FILE_TYPE_APP);
                 startActivity(intent);
                 break;
             case R.id.ll_image:
-                intent.putExtra("fileType", FileInfo.FILE_TYPE_IMAGE);
+                intent.putExtra("fileType", BaseFileInfo.FILE_TYPE_IMAGE);
                 startActivity(intent);
                 break;
             case R.id.ll_music:
-                intent.putExtra("fileType", FileInfo.FILE_TYPE_MUSIC);
+                intent.putExtra("fileType", BaseFileInfo.FILE_TYPE_MUSIC);
                 startActivity(intent);
                 break;
             case R.id.ll_video:
-                intent.putExtra("fileType", FileInfo.FILE_TYPE_VIDEO);
+                intent.putExtra("fileType", BaseFileInfo.FILE_TYPE_VIDEO);
                 startActivity(intent);
                 break;
             case R.id.ll_other:
-                intent.putExtra("fileType", FileInfo.FILE_TYPE_OTHER);
+                intent.putExtra("fileType", BaseFileInfo.FILE_TYPE_STORAGE);
                 startActivity(intent);
                 break;
 
@@ -284,7 +281,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
      * @param fileInfo         源文件
      * @param litepalFileInfos 从数据库中读取到的集合
      */
-    private boolean isContainInCache(FileInfo fileInfo, List<LitepalFileInfo> litepalFileInfos) {
+    private boolean isContainInCache(BaseFileInfo fileInfo, List<LitepalFileInfo> litepalFileInfos) {
 
         boolean isContain = false;
 

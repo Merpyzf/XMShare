@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
 import com.merpyzf.xmshare.common.FileLoadManager;
@@ -22,7 +22,6 @@ import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.observer.AbsFileStatusObserver;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.ui.adapter.PhotoDirsAdapter;
-import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 import com.merpyzf.xmshare.util.PhotoUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
@@ -112,13 +111,13 @@ public class PhotoDirsFragment extends BaseFragment implements
         });
         mFileStatusObservable = new AbsFileStatusObserver() {
             @Override
-            public void onCancelSelected(FileInfo fileInfo) {
+            public void onCancelSelected(BaseFileInfo fileInfo) {
                 mAdapter.notifyDataSetChanged();
                 mCheckBoxAll.setChecked(isSelectedAllAlbum());
             }
 
             @Override
-            public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
+            public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList) {
                 mCheckBoxAll.setChecked(isCheckAllDirs());
                 mAdapter.notifyDataSetChanged();
             }

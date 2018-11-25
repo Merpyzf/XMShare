@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.observer.AbsTransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
@@ -116,7 +116,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     receiverManager.register( new AbsTransferObserver() {
                         // TODO: 2018/1/28 增加一个文件全部传输完毕的回调
                         @Override
-                        public void onTransferStatus(FileInfo fileInfo) {
+                        public void onTransferStatus(BaseFileInfo fileInfo) {
                             // 如果当前传输的是最后一个文件，并且传输成功后重置标记
                             if (fileInfo.getIsLast() == Const.IS_LAST && fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
                                 isTransfering = false;
@@ -132,18 +132,12 @@ public class ReceiveActivity extends AppCompatActivity {
                     SingleThreadPool.getSingleton().execute(receiverManager);
                     // 当接收到待传输的文件列表时，跳转到文件传输的界面
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
-
-                        Log.i("w2k", "同意对端发送文件");
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         mTransferReceiveFragment = new TransferReceiveFragment(transferFileList);
                         transaction.replace(R.id.frame_content, mTransferReceiveFragment);
                         transaction.commit();
                         isTransfering = true;
-
-
                     });
-
-
                 }
 
                 // 热点下的事件
@@ -168,14 +162,10 @@ public class ReceiveActivity extends AppCompatActivity {
         if (mPeerManager != null) {
 
             mPeerManager.setPeerTransferBreakListener(peer -> {
-
-                Log.i(TAG, "收到中断的广播了");
-
                 if (isTransfering) {
                     Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
                     finish();
                 }
-
             });
         }
 

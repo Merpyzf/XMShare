@@ -42,7 +42,6 @@ final class AutoFocusCallback implements Camera.AutoFocusCallback {
       autoFocusHandler.sendMessageDelayed(message, AUTOFOCUS_INTERVAL_MS);
       autoFocusHandler = null;
     } else {
-      Log.d(TAG, "Got auto-focus callback, but no handler for it");
     }
   }
 

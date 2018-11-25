@@ -8,35 +8,23 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import com.merpyzf.transfermanager.entity.ApkFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
-import com.merpyzf.xmshare.ui.fragment.FileListFragment;
 import com.merpyzf.xmshare.util.ApkUtils;
-import com.merpyzf.xmshare.util.CollectionUtils;
 import com.merpyzf.xmshare.util.MusicUtils;
 import com.merpyzf.xmshare.util.PhotoUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
-import com.trello.rxlifecycle2.android.FragmentEvent;
-import com.trello.rxlifecycle2.components.RxFragment;
 
 import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
 
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_APP;
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_IMAGE;
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_MUSIC;
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_VIDEO;
-import static org.litepal.crud.DataSupport.markAsDeleted;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_APP;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_IMAGE;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_MUSIC;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_VIDEO;
 
 /**
  * 文件加载管理器，加载设备内文件
@@ -83,7 +71,7 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
             return new CursorLoader(mContext, uri, projections, null, null, MediaStore.Audio.Media.DATE_ADDED + " DESC");
 
         } else if (id == FILE_TYPE_IMAGE) {
-            if (id == FileInfo.FILE_TYPE_IMAGE) {
+            if (id == BaseFileInfo.FILE_TYPE_IMAGE) {
                 uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 projections = new String[]
                         {
@@ -113,10 +101,10 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (mLoadFileType == FILE_TYPE_MUSIC) {
-            Observable<List<FileInfo>> observable = MusicUtils.asyncLoadingMusic(data);
+            Observable<List<BaseFileInfo>> observable = MusicUtils.asyncLoadingMusic(data);
             onLoadFinished(observable);
         } else if (mLoadFileType == FILE_TYPE_VIDEO) {
-            Observable<List<FileInfo>> observable = VideoUtils.asyncLoadingVideo(data);
+            Observable<List<BaseFileInfo>> observable = VideoUtils.asyncLoadingVideo(data);
             onLoadFinished(observable);
         } else if (mLoadFileType == FILE_TYPE_IMAGE) {
             Observable<List<PhotoDirBean>> observable = PhotoUtils.AsyncLoadingFromCourse(data);

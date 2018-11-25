@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.FileInfo;
@@ -21,14 +22,14 @@ import java.util.List;
 
 import static com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr;
 
-public class FileManagerAdapter extends BaseQuickAdapter<FileInfo, BaseViewHolder> {
+public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHolder> {
 
-    public FileManagerAdapter(int layoutResId, @Nullable List<FileInfo> data) {
+    public FileManagerAdapter(int layoutResId, @Nullable List<StorageFile> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, FileInfo item) {
+    protected void convert(BaseViewHolder helper, StorageFile item) {
         ImageView ivIco = helper.getView(R.id.iv_ico);
         ImageView ivSelect = helper.getView(R.id.iv_select);
         helper.addOnClickListener(R.id.iv_select);
@@ -53,7 +54,7 @@ public class FileManagerAdapter extends BaseQuickAdapter<FileInfo, BaseViewHolde
             ivIco.setImageResource(R.drawable.ic_folder);
         } else {
             fileInfo.append("文件大小: ");
-            String[] fileSizeArray = getFileSizeArrayStr(item.getSize());
+            String[] fileSizeArray = getFileSizeArrayStr(item.getLength());
             fileInfo.append(fileSizeArray[0]);
             fileInfo.append(fileSizeArray[1]);
             if (item.isPhoto()) {

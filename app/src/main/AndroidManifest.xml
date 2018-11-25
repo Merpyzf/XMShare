@@ -61,12 +61,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.test.BottomSheetDialogActivity" />
-        <activity android:name=".ui.test.TestRadarViewActivity" />
-        <activity android:name=".ui.test.ScanVideoActivity" />
         <activity android:name=".ui.activity.SettingActivity" />
-        <activity android:name=".ui.test.APActivity" />
-        <activity android:name=".ui.test.HostActivity" />
 
         <receiver
             android:name=".receiver.APChangedReceiver"
@@ -80,21 +75,9 @@
         <activity
             android:name=".ui.activity.PersonalActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
-        <activity android:name=".ui.test.TestBluetoothActivity" />
         <activity android:name=".ui.activity.InviteActivity" />
-        <activity android:name=".ui.test.TestSearchActivity" />
-        <activity android:name=".ui.test.TestFileIndicatorActivity" >
-
-        </activity>
-        <activity android:name=".ui.test.TestChangeSkinActivity" />
-        <activity android:name=".ui.test.TestApActivity" />
-        <activity android:name=".ui.test.QRTestActivity" />
         <activity android:name=".ui.activity.InputHotspotPwdActivity" />
-        <activity
-            android:name=".ui.test.PinnedActivity"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity android:name=".ui.activity.ReceivedFileActivity" />
-        <activity android:name=".ui.activity.TestFileServerActivity" />
         <activity
             android:name=".ui.activity.SearchActivity"
             android:windowSoftInputMode="stateAlwaysHidden" >
@@ -102,11 +85,6 @@
 
 
         </activity>
-        <activity android:name=".ui.activity.HelloWordActivity" >
-
-        </activity>
-        <activity android:name=".ui.test.TestRecyclerViewActivity" />
-        <activity android:name=".ui.test.TestSelctionRvActivity"></activity>
         <activity android:name=".ui.activity.WebShareActivity"></activity>
     </application>
 

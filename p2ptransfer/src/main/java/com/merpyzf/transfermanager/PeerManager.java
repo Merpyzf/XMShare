@@ -14,7 +14,6 @@ import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.transfermanager.util.timer.Timeout;
 
 import java.net.InetAddress;
-import java.util.Timer;
 
 /**
  * Created by wangke on 2017/12/17.
@@ -52,37 +51,29 @@ public class PeerManager {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-
-                        Log.i("w2k", "发送中断传输的广播");
                         String name = Thread.currentThread().getName();
                         SignMessage signMessage = new SignMessage();
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("TRANSFER_BREAK");
-                        signMessage.setCmd(SignMessage.cmd.TRANSFER_BREAK);
+                        signMessage.setCmd(SignMessage.Cmd.TRANSFER_BREAK);
                         // TODO: 2018/1/24 获取已存储在本地的用户名
                         signMessage.setNickName(SharedPreUtils.getNickName(mContext));
                         signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
                         sendBroadcastMsg(signMessage);
-
                     }
                 }).start();
             }
         };
-
         timeout.onTimeOut();
         //发送两个广播消息
         new OSTimer(null, timeout, 50, false).start();
         new OSTimer(null, timeout, 100, false).start();
-
-
     }
-
 
     /**
      * 发送设备上线广播
      */
     public OSTimer sendOnLineBroadcast(boolean isCycle) {
-
         Timeout timeout = new Timeout() {
             @Override
             public void onTimeOut() {
@@ -94,7 +85,7 @@ public class PeerManager {
                         SignMessage signMessage = new SignMessage();
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("ON_LINE");
-                        signMessage.setCmd(SignMessage.cmd.ON_LINE);
+                        signMessage.setCmd(SignMessage.Cmd.ON_LINE);
                         signMessage.setNickName(SharedPreUtils.getNickName(mContext));
                         signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
                         sendBroadcastMsg(signMessage);
@@ -108,9 +99,7 @@ public class PeerManager {
         //发送两个广播消息
         OSTimer osTimer = new OSTimer(null, timeout, 100, isCycle);
         osTimer.start();
-
         return osTimer;
-
     }
 
 
@@ -118,8 +107,6 @@ public class PeerManager {
      * 发送设备上线广播
      */
     public OSTimer sendOnLineBroadcast(final String destAddress, boolean isCycle) {
-
-
         Timeout timeout = new Timeout() {
             @Override
             public void onTimeOut() {
@@ -140,7 +127,7 @@ public class PeerManager {
                         SignMessage signMessage = new SignMessage();
                         signMessage.setHostAddress(WifiMgr.getInstance(mContext).getHotspotLocalIpAddress());
                         signMessage.setMsgContent("ON_LINE");
-                        signMessage.setCmd(SignMessage.cmd.ON_LINE);
+                        signMessage.setCmd(SignMessage.Cmd.ON_LINE);
                         signMessage.setNickName(SharedPreUtils.getNickName(mContext));
                         signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
                         sendBroadcastMsg(destAddress, signMessage);
@@ -153,9 +140,7 @@ public class PeerManager {
         //发送两个广播消息
         OSTimer osTimer = new OSTimer(null, timeout, 100, isCycle);
         osTimer.start();
-
         return osTimer;
-
     }
 
 
@@ -163,8 +148,6 @@ public class PeerManager {
      * 发送设备下线广播
      */
     public void sendOffLineBroadcast() {
-
-
         Timeout timeout = new Timeout() {
             @Override
             public void onTimeOut() {
@@ -172,26 +155,21 @@ public class PeerManager {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i("wk", "发送设备离线广播");
-                        String name = Thread.currentThread().getName();
                         SignMessage signMessage = new SignMessage();
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("OFF_LINE");
-                        signMessage.setCmd(SignMessage.cmd.OFF_LINE);
+                        signMessage.setCmd(SignMessage.Cmd.OFF_LINE);
                         signMessage.setNickName(SharedPreUtils.getNickName(mContext));
                         signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
                         sendBroadcastMsg(signMessage);
-
                     }
                 }).start();
             }
         };
-
         timeout.onTimeOut();
         //发送两个广播消息
         new OSTimer(null, timeout, 50, false).start();
         new OSTimer(null, timeout, 100, false).start();
-
     }
 
     /**
@@ -214,7 +192,6 @@ public class PeerManager {
      * 给局域网内的其他设备发送UDP
      */
     public void send2Peer(final String msg, final InetAddress dest, final int port) {
-
         // TODO: 2018/4/26 替换掉这种线程操作
         // TODO: 2018/1/13 只发送一个UDP数据包，可能会出现UDP包丢失未能正确传送给对端的问题
         new Thread(new Runnable() {

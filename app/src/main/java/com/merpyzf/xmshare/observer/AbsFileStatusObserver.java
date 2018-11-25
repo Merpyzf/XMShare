@@ -1,6 +1,6 @@
 package com.merpyzf.xmshare.observer;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 
 import java.util.List;
 
@@ -8,22 +8,22 @@ public abstract class AbsFileStatusObserver implements FilesStatusObserver {
 
 
     @Override
-    public void onSelected(FileInfo fileInfo) {
+    public void onSelected(BaseFileInfo fileInfo) {
 
     }
 
     @Override
-    public void onCancelSelected(FileInfo fileInfo) {
+    public void onCancelSelected(BaseFileInfo fileInfo) {
 
     }
 
     @Override
-    public void onSelectedAll(List<FileInfo> fileInfoList) {
+    public void onSelectedAll(List<BaseFileInfo> fileInfoList) {
 
     }
 
     @Override
-    public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
+    public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList) {
 
     }
 }

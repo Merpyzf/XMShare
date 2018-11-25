@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
@@ -41,7 +41,7 @@ public class ReceivedFileActivity extends BaseActivity {
     RecyclerView mRecyclerView;
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
-    List<PinnedHeaderEntity<FileInfo>> mFileInfoList = new ArrayList<>();
+    List<PinnedHeaderEntity<BaseFileInfo>> mFileInfoList = new ArrayList<>();
     private ReceivedFileAdapter mAdapter;
     private int mFileType;
 
@@ -53,13 +53,10 @@ public class ReceivedFileActivity extends BaseActivity {
 
     @Override
     protected void initWidget(Bundle savedInstanceState) {
-
         initRecyclerView();
-        Log.i("wk", "浏览文件的文件类型" + mFileType);
         mAdapter = new ReceivedFileAdapter(mFileInfoList, mFileType);
         mAdapter.setEmptyView(LayoutInflater.from(getApplicationContext()).inflate(R.layout.view_rv_file_empty, null, false));
         mRecyclerView.setAdapter(mAdapter);
-
     }
 
     @Override
@@ -72,15 +69,15 @@ public class ReceivedFileActivity extends BaseActivity {
     private CharSequence getToolBarTitle(int mFileType) {
 
         switch (mFileType) {
-            case FileInfo.FILE_TYPE_APP:
+            case BaseFileInfo.FILE_TYPE_APP:
                 return "收到的应用";
-            case FileInfo.FILE_TYPE_IMAGE:
+            case BaseFileInfo.FILE_TYPE_IMAGE:
                 return "收到的图片";
-            case FileInfo.FILE_TYPE_MUSIC:
+            case BaseFileInfo.FILE_TYPE_MUSIC:
                 return "收到的音乐";
-            case FileInfo.FILE_TYPE_VIDEO:
+            case BaseFileInfo.FILE_TYPE_VIDEO:
                 return "收到的视频";
-            case FileInfo.FILE_TYPE_OTHER:
+            case BaseFileInfo.FILE_TYPE_STORAGE:
                 return "其他";
             default:
                 break;
@@ -93,7 +90,8 @@ public class ReceivedFileActivity extends BaseActivity {
     protected void initRecyclerView() {
         super.initRecyclerView();
 
-        mRecyclerView.addItemDecoration(new PinnedHeaderItemDecoration.Builder(com.merpyzf.xmshare.ui.test.adapter.BaseHeaderAdapter.TYPE_HEADER).setDividerId(R.drawable.divider).enableDivider(true)
+        mRecyclerView.addItemDecoration(new PinnedHeaderItemDecoration.Builder(BaseHeaderAdapter.TYPE_HEADER)
+                .setDividerId(R.drawable.divider).enableDivider(true)
                 .setHeaderClickListener(new OnHeaderClickListener() {
                     @Override
                     public void onHeaderClick(View view, int id, int position) {
@@ -112,7 +110,7 @@ public class ReceivedFileActivity extends BaseActivity {
 
                 }).create());
 
-        if (mFileType == FileInfo.FILE_TYPE_IMAGE) {
+        if (mFileType == BaseFileInfo.FILE_TYPE_IMAGE) {
 
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
@@ -140,19 +138,19 @@ public class ReceivedFileActivity extends BaseActivity {
         File receiveDir = null;
         switch (mFileType) {
             // 应用
-            case FileInfo.FILE_TYPE_APP:
+            case BaseFileInfo.FILE_TYPE_APP:
                 receiveDir = FilePathManager.getSaveAppDir();
                 break;
-            case FileInfo.FILE_TYPE_IMAGE:
+            case BaseFileInfo.FILE_TYPE_IMAGE:
                 receiveDir = FilePathManager.getSavePhotoDir();
                 break;
-            case FileInfo.FILE_TYPE_MUSIC:
+            case BaseFileInfo.FILE_TYPE_MUSIC:
                 receiveDir = FilePathManager.getSaveMusicDir();
                 break;
-            case FileInfo.FILE_TYPE_VIDEO:
+            case BaseFileInfo.FILE_TYPE_VIDEO:
                 receiveDir = FilePathManager.getSaveVideoDir();
                 break;
-            case FileInfo.FILE_TYPE_OTHER:
+            case BaseFileInfo.FILE_TYPE_STORAGE:
                 break;
             default:
                 break;
@@ -160,7 +158,7 @@ public class ReceivedFileActivity extends BaseActivity {
 
         }
 
-        Map<String, List<FileInfo>> map = null;
+        Map<String, List<BaseFileInfo>> map = null;
         if (receiveDir != null) {
 
             File[] files = receiveDir.listFiles();
@@ -169,7 +167,7 @@ public class ReceivedFileActivity extends BaseActivity {
                 Date modifiedDate = new Date(file.lastModified());
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String strModifiedDate = simpleDateFormat.format(modifiedDate);
-                List<FileInfo> fileInfoList = map.get(strModifiedDate);
+                List<BaseFileInfo> fileInfoList = map.get(strModifiedDate);
                 if (fileInfoList == null) {
                     fileInfoList = new ArrayList<>();
                     fileInfoList.add(FileInfoFactory.toFileInfoType(file, mFileType));
@@ -201,7 +199,7 @@ public class ReceivedFileActivity extends BaseActivity {
             });
             for (String key : tempKeyList) {
                 mFileInfoList.add(new PinnedHeaderEntity<>(null, BaseHeaderAdapter.TYPE_HEADER, key.replace("/", "-")));
-                for (FileInfo fileInfo : map.get(key.replace("/", "-"))) {
+                for (BaseFileInfo fileInfo : map.get(key.replace("/", "-"))) {
                     // 可能需要按照时间顺序进行排序
                     mFileInfoList.add(new PinnedHeaderEntity<>(fileInfo, BaseHeaderAdapter.TYPE_DATA, key));
                 }

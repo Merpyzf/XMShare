@@ -251,7 +251,6 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
             Intent resultIntent = new Intent();
             Bundle bundle = new Bundle();
             bundle.putString(INTENT_EXTRA_KEY_QR_SCAN, resultString);
-            Log.i("zxing", "scan result:" + resultString);
             resultIntent.putExtras(bundle);
             this.setResult(RESULT_CODE_QR_SCAN, resultIntent);
         }

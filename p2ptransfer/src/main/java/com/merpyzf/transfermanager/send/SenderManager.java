@@ -3,7 +3,7 @@ package com.merpyzf.transfermanager.send;
 import android.content.Context;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.observer.TransferObserver;
 
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class SenderManager {
      * @param destAddress
      * @param fileInfoList
      */
-    public void send(String destAddress, List<FileInfo> fileInfoList) {
+    public void send(String destAddress, List<BaseFileInfo> fileInfoList) {
         mSenderTaskImp = new SenderTaskImp(mContext, destAddress, fileInfoList, mP2pTransferHandler);
         mSingleThreadPool.execute(mSenderTaskImp);
     }

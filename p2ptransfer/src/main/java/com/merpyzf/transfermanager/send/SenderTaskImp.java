@@ -6,29 +6,31 @@ import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
+import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.util.CloseUtils;
 import com.merpyzf.transfermanager.util.FileUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.security.acl.LastOwnerException;
 import java.util.List;
 
 /**
- * Created by wangke on 2017/12/12.
+ * @author wangke
+ * @date 2017/12/12
  * <p>
  * 处理发送任务
  */
 
 public class SenderTaskImp implements SendTask, Runnable {
-
     private Context mContext;
-    private List<FileInfo> mFileList;
+    private List<BaseFileInfo> mFileList;
     private Socket mSocket;
     private OutputStream mOutputStream;
     private P2pTransferHandler mP2pTransferHandler;
@@ -38,7 +40,7 @@ public class SenderTaskImp implements SendTask, Runnable {
     /**
      * 文件发送时，先发送待传输的文件列表和缩略图,接着传送文件
      */
-    public SenderTaskImp(Context context, String targetAddress, List<FileInfo> sendFileList,
+    public SenderTaskImp(Context context, String targetAddress, List<BaseFileInfo> sendFileList,
                          P2pTransferHandler p2pTransferHandler) {
         this.mFileList = sendFileList;
         this.mP2pTransferHandler = p2pTransferHandler;
@@ -86,7 +88,7 @@ public class SenderTaskImp implements SendTask, Runnable {
      */
     @Override
     public void sendTransferList() throws Exception {
-        for (FileInfo fileInfo : mFileList) {
+        for (BaseFileInfo fileInfo : mFileList) {
             sendHeader(fileInfo);
         }
     }
@@ -98,19 +100,21 @@ public class SenderTaskImp implements SendTask, Runnable {
      * @throws Exception
      */
     @Override
-    public void sendHeader(FileInfo fileInfo) throws Exception {
+    public void sendHeader(BaseFileInfo fileInfo) throws Exception {
         String header = fileInfo.generateHeader(mContext);
         mOutputStream.write(header.getBytes());
         // 如果是图片和从文件管理器中选择的文件的话不发送缩略图
-        if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE || fileInfo.getType() != FileInfo.FILE_TYPE_OTHER) {
-            mOutputStream.write(fileInfo.getFileThumbArray());
+        if (fileInfo instanceof PicFile) {
+        } else if (fileInfo instanceof StorageFile) {
+        } else {
+            mOutputStream.write(fileInfo.getThumbBytes());
         }
         mOutputStream.flush();
     }
 
     @Override
     public void sendFileList() {
-        for (FileInfo fileInfo : mFileList) {
+        for (BaseFileInfo fileInfo : mFileList) {
             sendFileBody(fileInfo);
         }
     }
@@ -121,7 +125,7 @@ public class SenderTaskImp implements SendTask, Runnable {
      * @param fileInfo
      */
     @Override
-    public void sendFileBody(FileInfo fileInfo) {
+    public void sendFileBody(BaseFileInfo fileInfo) {
         File file = new File(fileInfo.getPath());
         long fileLength = file.length();
         // 记录每秒读取的字节长度
@@ -185,7 +189,7 @@ public class SenderTaskImp implements SendTask, Runnable {
     }
 
     @Override
-    public void sendMessage(FileInfo fileInfo, int transferStatus) {
+    public void sendMessage(BaseFileInfo fileInfo, int transferStatus) {
         fileInfo.setFileTransferStatus(transferStatus);
         Message message = mP2pTransferHandler.obtainMessage();
         message.what = transferStatus;

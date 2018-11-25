@@ -9,7 +9,7 @@ import android.media.MediaMetadataRetriever;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.CloseUtils;
 import com.merpyzf.transfermanager.util.FilePathManager;
@@ -27,7 +27,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_VIDEO;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_VIDEO;
 
 /**
  * Created by wangke on 2018/1/14.
@@ -60,17 +60,17 @@ public class VideoUtils {
     /**
      * 更新封面图片
      */
-    public static void updateThumbImg(Context context, List<FileInfo> fileInfoList) {
+    public static void updateThumbImg(Context context, List<BaseFileInfo> fileInfoList) {
 
-        List<FileInfo> copyFileInfoList = new ArrayList<>();
-        copyFileInfoList.addAll(fileInfoList);
-        writeThumbImg2local(context, copyFileInfoList);
+        List<BaseFileInfo> copyFileInfos = new ArrayList<>();
+        copyFileInfos.addAll(fileInfoList);
+        writeThumbImg2local(context, copyFileInfos);
 
     }
 
 
     @SuppressLint("CheckResult")
-    public static void writeThumbImg2local(Context context, List<FileInfo> videoList) {
+    public static void writeThumbImg2local(Context context, List<BaseFileInfo> videoList) {
 
 
         Observable.fromIterable(videoList)
@@ -122,12 +122,12 @@ public class VideoUtils {
     /**
      * 异步加载视频
      *
-     * @param data Observable<List<FileInfo>>
+     * @param data Observable<List<BaseFileInfo>>
      */
-    public static Observable<List<FileInfo>> asyncLoadingVideo(Cursor data) {
+    public static Observable<List<BaseFileInfo>> asyncLoadingVideo(Cursor data) {
         return Observable.just(data)
                 .flatMap(cursor -> {
-                    List<FileInfo> fileList = new ArrayList<>();
+                    List<BaseFileInfo> fileList = new ArrayList<>();
                     data.moveToFirst();
                     while (data.moveToNext()) {
                         VideoFile videoFile = new VideoFile();
@@ -140,14 +140,11 @@ public class VideoUtils {
                         videoFile.setDuration(data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION)));
                         // 设置文件后缀
                         videoFile.setSuffix(FileUtils.getFileSuffix(path));
-                        Log.i("WK", "视频文件: " + videoFile.getName() + " 后缀: " + videoFile.getSuffix());
-
                         // 设置文件类型
                         videoFile.setType(FILE_TYPE_VIDEO);
                         // 筛选大于1MB的文件
                         if (length > 1024 * 1024) {
                             fileList.add(videoFile);
-                            Log.i("wk", "将视频文件添加到FileList");
                         }
                         // TODO: 2018/11/11 偶尔会出现cursor关闭的问题
                         if (data.isClosed()) {

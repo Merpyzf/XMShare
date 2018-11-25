@@ -1,7 +1,5 @@
 package com.merpyzf.xmshare.bean.model;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
-
 import org.litepal.crud.DataSupport;
 
 /**

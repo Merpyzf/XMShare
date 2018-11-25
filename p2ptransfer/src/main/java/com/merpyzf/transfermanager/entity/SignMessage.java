@@ -3,25 +3,35 @@ package com.merpyzf.transfermanager.entity;
 import com.merpyzf.transfermanager.common.Const;
 
 /**
- * Created by wangke on 2017/12/12.
+ * @author wangke
+ * @date 2017/12/12
  * 连接建立前的示意报文
  */
 
 public class SignMessage {
-
-    // 数据包的包名
+    /**
+     * 数据包的包名
+     */
     private String packetName;
-    // 发送数据包的设备的主机地址
+    /**
+     * 发送数据包的设备的主机地址
+     */
     private String hostAddress;
-    //消息的内容
+    /**
+     * 消息的内容
+     */
     private String msgContent;
-    //发送设备的昵称
+    /**
+     * 发送设备的昵称
+     */
     private String nickName;
-
-    // 头像下标
+    /**
+     * 头像
+     */
     private int avatarPosition;
-
-    // 这条消息对应的命令代号
+    /**
+     * 命令
+     */
     private int cmd;
 
     /**
@@ -30,28 +40,34 @@ public class SignMessage {
      * 3. 回复配对请求
      */
 
-    public static class cmd {
+    public static class Cmd {
 
-        //局域网内设备请求上线(在屏幕上显示局域网内可见的设备)
+        /**
+         * 局域网内设备请求上线(在屏幕上显示局域网内可见的设备)
+         */
         public static final int ON_LINE = 1;
-        // 回应请求建立连接的请求
+        /**
+         * 回应请求建立连接的请求
+         */
         public static final int ANSWER_REQUEST_CONN = 2;
-        //下线
+        /**
+         * 下线
+         */
         public static final int OFF_LINE = 3;
-        //请求建立连接
+        /**
+         * 请求建立连接
+         */
         public static final int REQUEST_CONN = 4;
-        // 文件传输中断的信号
+        /**
+         * 文件传输中断的信号
+         */
         public static final int TRANSFER_BREAK = 5;
-
-
     }
 
     public SignMessage() {
-
         this.packetName = getTime();
 
     }
-
 
     public SignMessage(String hostAddress, String msgContent, String nickName) {
         this.packetName = getTime();
@@ -59,7 +75,6 @@ public class SignMessage {
         this.msgContent = msgContent;
         this.nickName = nickName;
     }
-
 
     public String getPacketName() {
         return packetName;
@@ -115,7 +130,6 @@ public class SignMessage {
      * @return
      */
     public String convertProtocolStr() {
-
         StringBuilder protocolStr = new StringBuilder();
         protocolStr.append(packetName);
         protocolStr.append(Const.S_SEPARATOR);
@@ -130,7 +144,6 @@ public class SignMessage {
         protocolStr.append(String.valueOf(cmd));
         protocolStr.append(Const.S_END);
         return protocolStr.toString();
-
     }
 
     /**
@@ -142,13 +155,11 @@ public class SignMessage {
     public static SignMessage decodeProtocol(String signMessage) {
 
         if (signMessage != null && signMessage.length() > 0) {
-
             int end = signMessage.indexOf(Const.S_END);
             signMessage = signMessage.subSequence(0, end).toString();
             SignMessage message = new SignMessage();
 
             String[] msgProperties = signMessage.split(Const.S_SEPARATOR);
-
             if (msgProperties.length == Const.MSG_PROPERTIES_LENGTH) {
                 message.setPacketName(msgProperties[0]);
                 message.setHostAddress(msgProperties[1]);
@@ -158,18 +169,11 @@ public class SignMessage {
                 message.setCmd(Integer.valueOf(msgProperties[5]));
             }
             return message;
-
         }
-
-
         return null;
-
     }
-
 
     public String getTime() {
         return String.valueOf(System.currentTimeMillis());
     }
-
-
 }

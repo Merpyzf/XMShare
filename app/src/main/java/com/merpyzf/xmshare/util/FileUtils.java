@@ -4,20 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.storage.StorageManager;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.CompactFile;
 import com.merpyzf.transfermanager.entity.DocFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.bean.Volume;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.common.Const;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +23,7 @@ import java.util.List;
 
 public class FileUtils {
 
-    private static List<FileInfo> mFileList = new ArrayList<>();
+    private static List<BaseFileInfo> mFileList = new ArrayList<>();
 
     // TODO: 2018/4/16 等待编辑
 
@@ -37,7 +32,7 @@ public class FileUtils {
      *
      * @param path 根目录
      */
-    public static List<FileInfo> traverseFolder(String path) {
+    public static List<BaseFileInfo> traverseFolder(String path) {
         File file = new File(path);
         if (file.exists()) {
             File[] files = file.listFiles();
@@ -57,7 +52,7 @@ public class FileUtils {
                             docFile.setPath(file2.getPath());
                             docFile.setLength((int) file2.length());
                             docFile.setSuffix(suffix);
-                            docFile.setType(FileInfo.FILE_TYPE_DOCUMENT);
+                            docFile.setType(BaseFileInfo.FILE_TYPE_DOCUMENT);
                             mFileList.add(docFile);
 
                         } else if (isApkType(suffix)) {
@@ -66,10 +61,9 @@ public class FileUtils {
                             apkFile.setPath(file2.getPath());
                             apkFile.setLength((int) file2.length());
                             apkFile.setSuffix(suffix);
-                            apkFile.setType(FileInfo.FILE_TYPE_APP);
+                            apkFile.setType(BaseFileInfo.FILE_TYPE_APP);
                             // todo: 扫描完成后需要对apk的ico进行缓存
                             apkFile.setApkDrawable(null);
-                            Log.i("WW3K", "扫描到的未安装的apk文件-> " + apkFile.getName());
                             mFileList.add(apkFile);
                         } else if (isCompactType(suffix)) {
                             CompactFile compactFile = new CompactFile();
@@ -77,14 +71,12 @@ public class FileUtils {
                             compactFile.setPath(file2.getPath());
                             compactFile.setLength((int) file2.length());
                             compactFile.setSuffix(suffix);
-                            compactFile.setType(FileInfo.FILE_TYPE_COMPACT);
+                            compactFile.setType(BaseFileInfo.FILE_TYPE_COMPACT);
                             mFileList.add(compactFile);
                         }
                     }
                 }
             }
-        } else {
-            Log.i("wk", "文件不存在!");
         }
         return mFileList;
     }
@@ -147,6 +139,9 @@ public class FileUtils {
      * @return 当获取不到时返回 ""
      */
     public static String getFileSuffix(String filePath) {
+        if(filePath == null){
+            return null;
+        }
         int beginIndex = filePath.lastIndexOf(".") + 1;
         if (beginIndex == 0) {
             return "";
@@ -204,9 +199,4 @@ public class FileUtils {
         return false;
     }
 
-
-    public static boolean isPhoto(File file) {
-
-        return false;
-    }
 }

@@ -13,13 +13,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.ApkFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
-import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.UiUtils;
 import com.merpyzf.xmshare.R;
@@ -59,23 +58,22 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         TextView tvTitle = helper.getView(R.id.tv_title);
 
         // 当前条目对应的文件信息
-        FileInfo fileInfo = (FileInfo) item;
+        BaseFileInfo fileInfo = (BaseFileInfo) item;
         String[] fileSizeArrayStr = FileUtils.getFileSizeArrayStr(fileInfo.getLength());
         tvTitle.setText(fileInfo.getName());
         tvSize.setText(fileSizeArrayStr[0] + fileSizeArrayStr[1]);
         File thumbFile = getThumbFile(fileInfo);
 
-        if(fileInfo instanceof FileInfo){
+        if(fileInfo instanceof BaseFileInfo){
             String suffix = fileInfo.getSuffix();
-            Log.i("WW2k", "要加载的图片路径: "+fileInfo.getPath());
             if (FileTypeHelper.isPhotoType(suffix)) {
                 Glide.with(mContext)
                         .load(fileInfo.getPath())
-                        .placeholder(UiUtils.getPlaceHolder(FileInfo.FILE_TYPE_IMAGE))
+                        .placeholder(UiUtils.getPlaceHolder(BaseFileInfo.FILE_TYPE_IMAGE))
                         .crossFade()
                         .centerCrop()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .error(UiUtils.getPlaceHolder(FileInfo.FILE_TYPE_IMAGE))
+                        .error(UiUtils.getPlaceHolder(BaseFileInfo.FILE_TYPE_IMAGE))
                         .into(ivThumb);
             } else {
                 ivThumb.setImageResource(FileTypeHelper.getIcoResBySuffix(suffix));
@@ -129,7 +127,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         }
     }
 
-    private File getThumbFile(FileInfo fileInfo) {
+    private File getThumbFile(BaseFileInfo fileInfo) {
         File thumbFile = null;
         if (fileInfo instanceof ApkFile) {
             ApkFile apkFile = (ApkFile) fileInfo;
@@ -162,22 +160,22 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         return thumbFile;
     }
 
-    public String getOpenTypeText(FileInfo fileInfo) {
+    public String getOpenTypeText(BaseFileInfo fileInfo) {
 
         String typeText = null;
 
         switch (fileInfo.getType()) {
-            case FileInfo.FILE_TYPE_APP:
+            case BaseFileInfo.FILE_TYPE_APP:
                 typeText = "点击安装";
                 break;
-            case FileInfo.FILE_TYPE_MUSIC:
-            case FileInfo.FILE_TYPE_VIDEO:
+            case BaseFileInfo.FILE_TYPE_MUSIC:
+            case BaseFileInfo.FILE_TYPE_VIDEO:
                 typeText = "点击播放";
                 break;
-            case FileInfo.FILE_TYPE_IMAGE:
+            case BaseFileInfo.FILE_TYPE_IMAGE:
                 typeText = "点击查看";
                 break;
-            case FileInfo.FILE_TYPE_OTHER:
+            case BaseFileInfo.FILE_TYPE_STORAGE:
                 typeText = "点击查看";
                 break;
             default:

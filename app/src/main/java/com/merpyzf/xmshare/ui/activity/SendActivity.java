@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.observer.AbsTransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
@@ -118,7 +118,7 @@ public class SendActivity extends BaseActivity {
                 SenderManager.getInstance(mContext).register(new AbsTransferObserver() {
                     // 传输中的文件的状态
                     @Override
-                    public void onTransferStatus(FileInfo fileInfo) {
+                    public void onTransferStatus(BaseFileInfo fileInfo) {
                         // 如果当前传输的是最后一个文件，并且传输成功后重置标记
                         if (fileInfo.getIsLast() == Const.IS_LAST && fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
                             isTransfer = false;
@@ -175,9 +175,9 @@ public class SendActivity extends BaseActivity {
             }
 
             @Override
-            public void onStartTransfer(Peer peer, List<FileInfo> fileInfoLis) {
+            public void onStartTransfer(Peer peer, List<BaseFileInfo> fileInfoLis) {
                 super.onStartTransfer(peer, fileInfoLis);
-                Log.i(TAG, "跳转到文件发送界面");
+                // 加载文件发送界面
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 mTransferSendFragment = new TransferSendFragment(peer);
                 transaction.replace(R.id.frame_content, mTransferSendFragment);

@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
@@ -28,7 +28,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_MUSIC;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_MUSIC;
 
 /**
  * Created by wangke on 2017/12/23.
@@ -71,7 +71,7 @@ public class MusicUtils {
      * @param musicList
      */
     @SuppressLint("CheckResult")
-    public static synchronized void writeAlbumImgList2local(final Context context, List<FileInfo> musicList) {
+    public static synchronized void writeAlbumImgList2local(final Context context, List<BaseFileInfo> musicList) {
 
         Observable.fromIterable(musicList)
                 .flatMap(musicFile -> Observable.just(((MusicFile) musicFile))).subscribeOn(Schedulers.io())
@@ -110,14 +110,14 @@ public class MusicUtils {
     /**
      * 更新封面图片
      */
-    public static synchronized void updateAlbumImg(Context context, List<FileInfo> fileInfoList) {
+    public static synchronized void updateAlbumImg(Context context, List<BaseFileInfo> fileInfoList) {
         writeAlbumImgList2local(context, fileInfoList);
     }
 
-    public static Observable<List<FileInfo>> asyncLoadingMusic(Cursor data) {
+    public static Observable<List<BaseFileInfo>> asyncLoadingMusic(Cursor data) {
         return Observable.just(data)
                 .flatMap(cursor -> {
-                    List<FileInfo> fileList = new ArrayList<>();
+                    List<BaseFileInfo> fileList = new ArrayList<>();
                     data.moveToFirst();
                     // 遍历扫描到的音乐文件
                     while (data.moveToNext()) {

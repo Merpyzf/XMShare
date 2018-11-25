@@ -61,9 +61,9 @@ public class WebUriHandler implements RequestHandler {
             Map<String, String> params = HttpRequestParser.parseParams(request);
             String currentDirPath = "";
             if (params.containsKey("path")) {
-                Log.i("wk", "path--> " + params.get("path"));
+                //Log.i("wk", "path--> " + params.get("path"));
             } else {
-                Log.i("wk", "根路径");
+                //Log.i("wk", "根路径");
             }
             htmlPage = generateSharePage(currentDirPath);
         }

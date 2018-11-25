@@ -14,7 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.util.CloseUtils;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
@@ -70,20 +70,16 @@ public class ApkUtils {
                     app.setPath(appSourcePath);
                     app.setLength((int) length);
                     app.setSuffix("apk");
-                    app.setType(FileInfo.FILE_TYPE_APP);
+                    app.setType(BaseFileInfo.FILE_TYPE_APP);
                     apkFileList.add(app);
-                    //Log.i("WK", "应用: " + app.getName() + " 后缀: " + app.getSuffix());
-
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
             }
         }
         long end = System.currentTimeMillis();
-        Log.i("wk", "扫描本地安装应用总共耗时:" + (end - start) / 1000f);
         return apkFileList;
     }
-
 
     /**
      * 获取Drawable实际占用大小
@@ -157,9 +153,7 @@ public class ApkUtils {
 
         Observable.fromIterable(apkList)
                 .filter(fileInfo -> {
-
                     if (FilePathManager.getLocalAppThumbCacheDir().canWrite() && !isContain(FilePathManager.getLocalAppThumbCacheDir(), fileInfo)) {
-                        Log.i("wk", "缓存文件中不包含");
                         return true;
                     }
                     return false;

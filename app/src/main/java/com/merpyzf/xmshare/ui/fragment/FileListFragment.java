@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
@@ -38,9 +38,9 @@ import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_APP;
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_MUSIC;
-import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_VIDEO;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_APP;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_MUSIC;
+import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_VIDEO;
 
 /**
  * 扫描到的本地文件列表的展示页面
@@ -62,7 +62,7 @@ public class FileListFragment extends BaseFragment {
     TextView mTvChecked;
 
     private int mLoadFileType;
-    private List<FileInfo> mFileLists = new ArrayList<>();
+    private List<BaseFileInfo> mFileLists = new ArrayList<>();
     private FileAdapter mFileListAdapter;
     private View mBottomSheetView;
     private FileLoadManager mFileLoadManager;
@@ -104,7 +104,7 @@ public class FileListFragment extends BaseFragment {
         }
         mFileListAdapter.setOnItemClickListener((adapter, view, position) -> {
             ImageView ivSelect = view.findViewById(R.id.iv_select);
-            FileInfo fileInfo = mFileLists.get(position);
+            BaseFileInfo fileInfo = mFileLists.get(position);
             if (!App.getTransferFileList().contains(fileInfo)) {
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
@@ -184,7 +184,7 @@ public class FileListFragment extends BaseFragment {
 
 
                 } else if (mLoadFileType == FILE_TYPE_MUSIC) {
-                    observable.subscribe((Consumer<List<FileInfo>>) musicFiles -> {
+                    observable.subscribe((Consumer<List<BaseFileInfo>>) musicFiles -> {
                         if (musicFiles.size() == 0) {
                             mProgressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "没有扫描到音乐文件", Toast.LENGTH_SHORT).show();
@@ -199,7 +199,7 @@ public class FileListFragment extends BaseFragment {
                         MusicUtils.updateAlbumImg(getContext(), mFileLists);
                     });
                 } else if (mLoadFileType == FILE_TYPE_VIDEO) {
-                    observable.subscribe((Consumer<List<FileInfo>>) videoFiles -> {
+                    observable.subscribe((Consumer<List<BaseFileInfo>>) videoFiles -> {
                         if (videoFiles.size() == 0) {
                             mProgressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "没有扫描到视频文件", Toast.LENGTH_SHORT).show();
@@ -279,7 +279,7 @@ public class FileListFragment extends BaseFragment {
     }
 
     private boolean isSelectedAllFile() {
-        for (FileInfo fileInfo : mFileLists) {
+        for (BaseFileInfo fileInfo : mFileLists) {
             if (!App.getTransferFileList().contains(fileInfo)) {
                 return false;
             }
@@ -302,13 +302,13 @@ public class FileListFragment extends BaseFragment {
 
     class MyAbsFileStatusObserver extends AbsFileStatusObserver {
         @Override
-        public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
+        public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList) {
             mFileListAdapter.notifyDataSetChanged();
             mCheckBoxAll.setChecked(isSelectedAllFile());
         }
 
         @Override
-        public void onCancelSelected(FileInfo fileInfo) {
+        public void onCancelSelected(BaseFileInfo fileInfo) {
             // 当选择的文件列表发生改变时的回调
             mFileListAdapter.notifyDataSetChanged();
             mCheckBoxAll.setChecked(isSelectedAllFile());

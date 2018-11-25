@@ -1,6 +1,6 @@
 package com.merpyzf.xmshare.observer;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 
 import java.util.List;
 
@@ -13,24 +13,24 @@ public interface FilesStatusObserver {
      *
      * @param fileInfo 选择的文件
      */
-    public void onSelected(FileInfo fileInfo);
+    public void onSelected(BaseFileInfo fileInfo);
 
     /**
      * 文件取消选择的回调
      *
      * @param fileInfo 被取消的文件
      */
-    public void onCancelSelected(FileInfo fileInfo);
+    public void onCancelSelected(BaseFileInfo fileInfo);
 
     /**
      * 全选/取消全选的回调
      */
-    public void onSelectedAll(List<FileInfo> fileInfoList);
+    public void onSelectedAll(List<BaseFileInfo> fileInfoList);
 
     /**
      * 取消文件全选
      *
      * @param fileInfoList 取消选择的文件列表
      */
-    public void onCancelSelectedAll(List<FileInfo> fileInfoList);
+    public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList);
 }

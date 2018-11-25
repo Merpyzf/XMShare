@@ -1,6 +1,6 @@
 package com.merpyzf.transfermanager.receive;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 
 /**
  * Created by wangke on 2017/12/22.
@@ -23,7 +23,7 @@ public interface ReceiveTask {
     /**
      * 读取文件
      */
-    void receiveBody(FileInfo fileInfo) throws Exception;
+    void receiveBody(BaseFileInfo fileInfo) throws Exception;
 
     /**
      * 通过Handler将消息发送到主线程分发

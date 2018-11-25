@@ -5,7 +5,7 @@ package com.merpyzf.transfermanager.entity;
  * 视频文件
  */
 
-public class VideoFile extends FileInfo {
+public class VideoFile extends BaseFileInfo {
     // 封面ID
     private String albumId;
     // 视频时长

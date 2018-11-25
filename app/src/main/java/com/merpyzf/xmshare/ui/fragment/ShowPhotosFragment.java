@@ -5,12 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
@@ -71,27 +70,27 @@ public class ShowPhotosFragment extends BaseFragment {
     // TODO: 2018/10/24 此方法中的业务逻辑后期使用RxJava改写
     private List<Section> getSelectionData(PhotoDirBean dirBean) {
 
-        LinkedHashMap<String, List<FileInfo>> tempMap = new LinkedHashMap<>();
+        LinkedHashMap<String, List<BaseFileInfo>> tempMap = new LinkedHashMap<>();
         List<Section> datas = new ArrayList<>();
-        for (FileInfo fileInfo : dirBean.getImageList()) {
+        for (BaseFileInfo fileInfo : dirBean.getImageList()) {
             File file = new File(fileInfo.getPath());
             long lastModified = file.lastModified();
             String date = DateUtils.getDate(lastModified);
             if (tempMap.keySet().contains(date)) {
                 tempMap.get(date).add(fileInfo);
             } else {
-                ArrayList<FileInfo> fileInfos = new ArrayList<>();
+                ArrayList<BaseFileInfo> fileInfos = new ArrayList<>();
                 fileInfos.add(fileInfo);
                 tempMap.put(date, fileInfos);
             }
         }
-        for (Map.Entry<String, List<FileInfo>> entry : tempMap.entrySet()) {
+        for (Map.Entry<String, List<BaseFileInfo>> entry : tempMap.entrySet()) {
             String key = entry.getKey();
-            List<FileInfo> photos = entry.getValue();
+            List<BaseFileInfo> photos = entry.getValue();
             Section headSection = new Section(true, key, photos.size());
             headSection.setChildNum(photos.size());
             datas.add(headSection);
-            for (FileInfo photo : photos) {
+            for (BaseFileInfo photo : photos) {
                 photo.setLastModified(key);
                 datas.add(new Section(photo));
             }
@@ -102,7 +101,7 @@ public class ShowPhotosFragment extends BaseFragment {
 
     @Override
     protected int getContentLayoutId() {
-        return R.layout.fragment_test;
+        return R.layout.fragment_show_photos;
     }
 
     @Override
@@ -178,14 +177,14 @@ public class ShowPhotosFragment extends BaseFragment {
         });
         mFileStatusObserver = new AbsFileStatusObserver() {
             @Override
-            public void onCancelSelected(FileInfo fileInfo) {
+            public void onCancelSelected(BaseFileInfo fileInfo) {
                 mCheckBoxAll.setChecked(isSelectedAllPhotos());
                 updateSelectionHead();
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
+            public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList) {
                 mCheckBoxAll.setChecked(isSelectedAllPhotos());
                 updateSelectionHead();
                 mAdapter.notifyDataSetChanged();
@@ -326,7 +325,6 @@ public class ShowPhotosFragment extends BaseFragment {
                         }
                     }
                 }
-                Log.i("WW2K", "head: " + section.header + " - 未被选中的child的数量: " + unCheckedChildCount);
                 // 这一组当中所有的child都处在一个选中的状态
                 if (unCheckedChildCount == 0) {
                     section.setCheckedAllChild(true);

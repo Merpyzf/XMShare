@@ -4,7 +4,7 @@ package com.merpyzf.xmshare.util;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.bean.model.FileMd5Model;
 
 import java.io.File;
@@ -121,15 +121,15 @@ public class Md5Utils {
     /**
      * 生成文件的Md5值并存储到数据库中
      */
-    public static void asyncGenerateFileMd5(List<FileInfo> fileList) {
+    public static void asyncGenerateFileMd5(List<BaseFileInfo> fileList) {
 
 
-        List<FileInfo> copyFileInfoList = new ArrayList<>();
+        List<BaseFileInfo> copyFileInfos = new ArrayList<>();
 
-        copyFileInfoList.addAll(fileList);
+        copyFileInfos.addAll(fileList);
 
 
-        Observable.fromIterable(copyFileInfoList)
+        Observable.fromIterable(copyFileInfos)
                 .filter(fileInfo -> {
                     int count = FileMd5Model.where("filename = ?", fileInfo.getPath()).count(FileMd5Model.class);
                     if (count == 1) {
@@ -155,10 +155,8 @@ public class Md5Utils {
      * @param fileInfo
      * @return
      */
-    public static String getFileMd5(FileInfo fileInfo) {
-
+    public static String getFileMd5(BaseFileInfo fileInfo) {
         Cursor cursor = FileMd5Model.findBySQL("select *from filemd5model where filename = ?", fileInfo.getPath());
-        Log.i(TAG, "cursor的长度-->" + cursor.getCount());
         if (cursor.getCount() == 1) {
             cursor.moveToNext();
             String md5 = cursor.getString(cursor.getColumnIndex("md5"));

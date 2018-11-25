@@ -2,12 +2,13 @@ package com.merpyzf.transfermanager.receive;
 
 import android.content.Context;
 import android.os.Message;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.entity.FileInfoFactory;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
+import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.StorageFile;
+import com.merpyzf.transfermanager.entity.factory.FileInfoFactory;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.util.CacheUtils;
 import com.merpyzf.transfermanager.util.CloseUtils;
@@ -23,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by wangke on 2017/12/22.
+ *
+ * @author wangke
+ * @date 2017/12/22
  */
 
 public class ReceiveTaskImp implements Runnable, ReceiveTask {
@@ -31,7 +34,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     private Socket mSocketClient;
     private InputStream mInputStream;
     private P2pTransferHandler mP2pTransferHandler;
-    private List<FileInfo> mReceiveFileList;
+    private List<BaseFileInfo> mReceiveFileList;
     private Context mContext;
     private boolean isStop = false;
     private static final String TAG = ReceiveTaskImp.class.getSimpleName();
@@ -60,11 +63,12 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     public synchronized void receiveTransferList() throws Exception {
         mReceiveFileList = new ArrayList<>();
         while (true) {
-            FileInfo fileInfo = decodeFileHeader(mInputStream);
+            BaseFileInfo fileInfo = decodeFileHeader(mInputStream);
             if (null != fileInfo) {
+                fileInfo = FileInfoFactory.convertFileType(fileInfo);
                 //接收缩略图到本地，当前设定只有图片不接受缩略图
                 receiveThumbToLocal(fileInfo);
-                mReceiveFileList.add(FileInfoFactory.convertFileType(fileInfo));
+                mReceiveFileList.add(fileInfo);
                 if (fileInfo.getIsLast() == Const.IS_LAST) {
                     break;
                 }
@@ -94,7 +98,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     public void receiveFiles() throws Exception {
         int receiveIndex = 0;
         while (!isStop) {
-            FileInfo fileInfo = mReceiveFileList.get(receiveIndex++);
+            BaseFileInfo fileInfo = mReceiveFileList.get(receiveIndex++);
             receiveBody(fileInfo);
             if (fileInfo.isLastFile()) {
                 break;
@@ -107,10 +111,10 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
      *
      * @param fileInfo
      */
-    private void receiveThumbToLocal(FileInfo fileInfo) throws IOException {
+    private void receiveThumbToLocal(BaseFileInfo fileInfo) throws IOException {
         // 照片不用缓存缩略图
-        if (fileInfo.getType() == FileInfo.FILE_TYPE_IMAGE) {
-        } else if (fileInfo.getType() == FileInfo.FILE_TYPE_OTHER) {
+        if (fileInfo instanceof PicFile) {
+        } else if (fileInfo instanceof StorageFile) {
         } else {
             CacheUtils.cacheReceiveThumb(fileInfo, mInputStream);
         }
@@ -123,7 +127,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
      * @return
      * @throws Exception
      */
-    private FileInfo decodeFileHeader(InputStream inputStream) throws Exception {
+    private BaseFileInfo decodeFileHeader(InputStream inputStream) throws Exception {
         byte[] buffer = new byte[Const.FILE_HEADER_LENGTH];
         int available = inputStream.available();
         if (available >= Const.FILE_HEADER_LENGTH) {
@@ -134,11 +138,11 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             String strHeader = new String(buffer, Const.S_CHARSET);
             strHeader = trimLastFillChars(strHeader);
             int fileType = Integer.valueOf(strHeader.split(Const.S_SEPARATOR)[0]);
-            FileInfo fileInfo;
-            if (fileType == FileInfo.FILE_TYPE_MUSIC) {
+            BaseFileInfo fileInfo;
+            if (fileType == BaseFileInfo.FILE_TYPE_MUSIC) {
                 fileInfo = new MusicFile();
             } else {
-                fileInfo = new FileInfo();
+                fileInfo = new BaseFileInfo();
             }
             fileInfo.decodeHeader(strHeader);
             return fileInfo;
@@ -162,7 +166,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
      * @param fileInfo
      */
     @Override
-    public synchronized void receiveBody(FileInfo fileInfo) {
+    public synchronized void receiveBody(BaseFileInfo fileInfo) {
         // 读取文件的总长度
         long totalLength = fileInfo.getLength();
         int currentLength = 0;
@@ -220,8 +224,8 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
 
     @Override
     public void sendMessage(Object obj, int transferStatus) {
-        if (obj instanceof FileInfo) {
-            ((FileInfo) obj).setFileTransferStatus(transferStatus);
+        if (obj instanceof BaseFileInfo) {
+            ((BaseFileInfo) obj).setFileTransferStatus(transferStatus);
         }
         Message message = mP2pTransferHandler.obtainMessage();
         message.what = transferStatus;

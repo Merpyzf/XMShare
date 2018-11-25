@@ -1,18 +1,18 @@
 package com.merpyzf.transfermanager.entity;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.util.FileUtils;
 
 /**
- * Created by wangke on 2017/12/23.
+ *
+ * @author wangke
+ * @date 2017/12/23
  * 音乐文件
  */
 
-public class MusicFile extends FileInfo {
+public class MusicFile extends BaseFileInfo {
 
     // 专辑id
     private int albumId;
@@ -76,10 +76,10 @@ public class MusicFile extends FileInfo {
         Header.append(Const.S_SEPARATOR);
 
         int fileThumbLength = 0;
-        if (this.getType() != FileInfo.FILE_TYPE_IMAGE) {
+        if (this.getType() != BaseFileInfo.FILE_TYPE_IMAGE) {
             // 缩略图大小(耗时操作)
-            fileThumbArray = FileUtils.getFileThumbByteArray(context, this);
-            fileThumbLength = fileThumbArray.length;
+            thumbBytes = FileUtils.getFileThumbByteArray(context, this);
+            fileThumbLength = thumbBytes.length;
         }
         // 文件缩略图大小
         Header.append(fileThumbLength);

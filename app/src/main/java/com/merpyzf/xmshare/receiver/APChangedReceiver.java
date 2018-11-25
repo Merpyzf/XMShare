@@ -23,27 +23,18 @@ public abstract class APChangedReceiver extends BroadcastReceiver {
         // wifi的状态发生变化
         if (action.equals(ACTION_WIFI_AP_STATE_CHANGED)) {
             int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
-            Log.i(TAG, "Wifi Ap state--->>>" + state);
             if (WifiManager.WIFI_STATE_ENABLED == state % 10) {
-                Log.i(TAG, "AP 可用状态...");
                 onApEnableAction();
             } else if (WifiManager.WIFI_STATE_ENABLING == state % 10) {
-
-                // wifi 正在开启
-                Log.i(TAG, "AP 正在开启状态...");
             } else if (WifiManager.WIFI_STATE_DISABLED == state % 10) {
                 if (flag) {
                     onApDisAbleAction();
                     flag = false;
                 }
                 // wifi 已不可用
-
-                Log.i(TAG, "AP 已不可用状态...");
-
             } else if (WifiManager.WIFI_STATE_DISABLING == state % 10) {
                 flag = true;
                 // wifi 关闭中
-                Log.i(TAG, "AP 正在关闭状态...");
             }
         }
     }

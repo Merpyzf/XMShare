@@ -15,7 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.ApkFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
@@ -185,8 +185,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
     @NonNull
     @Override
     public String getSectionName(int position) {
-        FileInfo fileInfo = (FileInfo) mFileList.get(position);
-        return String.valueOf(fileInfo.getFirstCase());
+        BaseFileInfo fileInfo = (BaseFileInfo) mFileList.get(position);
+        return String.valueOf(fileInfo.getFirstLetter());
     }
 
 

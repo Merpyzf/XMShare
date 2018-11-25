@@ -1,8 +1,6 @@
 package com.merpyzf.transfermanager.send;
 
-import android.os.Message;
-
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 
 /**
  * Created by wangke on 2017/12/22.
@@ -23,7 +21,7 @@ public interface SendTask {
     /**
      * 发送文件的头信息
      */
-    void sendHeader(FileInfo fileInfo) throws Exception;
+    void sendHeader(BaseFileInfo fileInfo) throws Exception;
 
     /**
      *  发送待传输的文件列表
@@ -34,14 +32,14 @@ public interface SendTask {
      * 发送文件
      * @param fileInfo
      */
-    void sendFileBody(FileInfo fileInfo);
+    void sendFileBody(BaseFileInfo fileInfo);
 
     /**
      * 通过Handler将消息发送到主线程分发
      * @param fileInfo
      * @param transferStatus
      */
-    public void sendMessage(FileInfo fileInfo, int transferStatus);
+    public void sendMessage(BaseFileInfo fileInfo, int transferStatus);
 
     /**
      * 通过Handler将异常消息发送到到主线程分发

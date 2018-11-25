@@ -9,7 +9,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.ApkFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
@@ -43,7 +43,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     protected void convert(BaseViewHolder helper, final T item) {
         helper.addOnLongClickListener(R.id.ll_selected_files);
         helper.addOnClickListener(R.id.iv_remove);
-        FileInfo fileInfo = (FileInfo) item;
+        BaseFileInfo fileInfo = (BaseFileInfo) item;
         String[] fileSizeArray = FileUtils.getFileSizeArrayStr(fileInfo.getLength());
         helper.setText(R.id.tv_title, fileInfo.getName());
         helper.setText(R.id.tv_path, fileInfo.getPath());
@@ -102,20 +102,20 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
             //    设备内文件
-        } else if (item instanceof FileInfo) {
-            String suffix = ((FileInfo) item).getSuffix();
+        } else if (item instanceof BaseFileInfo) {
+            String suffix = ((BaseFileInfo) item).getSuffix();
             boolean photoType = FileTypeHelper.isPhotoType(suffix);
             if (photoType) {
                 if ("gif".equals(suffix)) {
                     try {
-                        GifDrawable gifDrawable = new GifDrawable(((FileInfo) item).getPath());
+                        GifDrawable gifDrawable = new GifDrawable(((BaseFileInfo) item).getPath());
                         imageView.setImageDrawable(gifDrawable);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
                     Glide.with(mContext)
-                            .load(((FileInfo) item).getPath())
+                            .load(((BaseFileInfo) item).getPath())
                             .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
                             .error(UiUtils.getPlaceHolder(fileInfo.getType()))
                             .crossFade()

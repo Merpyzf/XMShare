@@ -5,12 +5,10 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.util.SharedPreUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
 
 import org.litepal.LitePalApplication;
 
@@ -29,7 +27,7 @@ public class App extends LitePalApplication {
     /**
      * 待发送的文件集合
      */
-    private static List<FileInfo> mTransferFiles;
+    private static List<BaseFileInfo> mTransferFiles;
     private static String TAG = App.class.getSimpleName();
     private static WifiManager.LocalOnlyHotspotReservation mReservation = null;
 
@@ -51,7 +49,7 @@ public class App extends LitePalApplication {
      *
      * @param fileInfo
      */
-    public static void addTransferFile(FileInfo fileInfo) {
+    public static void addTransferFile(BaseFileInfo fileInfo) {
         if (fileInfo != null) {
             if (!mTransferFiles.contains(fileInfo)) {
                 mTransferFiles.add(fileInfo);
@@ -60,9 +58,9 @@ public class App extends LitePalApplication {
     }
 
 
-    public static void addTransferFiles(List<FileInfo> fileInfoList) {
+    public static void addTransferFiles(List<BaseFileInfo> fileInfoList) {
         if (fileInfoList != null) {
-            for (FileInfo fileInfo : fileInfoList) {
+            for (BaseFileInfo fileInfo : fileInfoList) {
                 if (!mTransferFiles.contains(fileInfo)) {
                     mTransferFiles.add(fileInfo);
                 }
@@ -70,9 +68,9 @@ public class App extends LitePalApplication {
         }
     }
 
-    public static void removeTransferFiles(List<FileInfo> fileInfoList) {
+    public static void removeTransferFiles(List<BaseFileInfo> fileInfoList) {
         if (fileInfoList != null) {
-            for (FileInfo fileInfo : fileInfoList) {
+            for (BaseFileInfo fileInfo : fileInfoList) {
                 if (mTransferFiles.contains(fileInfo)) {
                     mTransferFiles.remove(fileInfo);
                 }
@@ -85,7 +83,7 @@ public class App extends LitePalApplication {
      *
      * @param fileInfo
      */
-    public static void removeTransferFile(FileInfo fileInfo) {
+    public static void removeTransferFile(BaseFileInfo fileInfo) {
         if (fileInfo != null) {
             if (mTransferFiles.contains(fileInfo)) {
                 mTransferFiles.remove(fileInfo);
@@ -96,7 +94,7 @@ public class App extends LitePalApplication {
     public static void removeTransferFileByPath(String filePath) {
         if (filePath != null && !"".equals(filePath)) {
             for (int i = 0; i < mTransferFiles.size(); i++) {
-                FileInfo transferFile = mTransferFiles.get(i);
+                BaseFileInfo transferFile = mTransferFiles.get(i);
                 if (TextUtils.equals(filePath, transferFile.getPath())) {
                     mTransferFiles.remove(i);
                     break;
@@ -111,15 +109,8 @@ public class App extends LitePalApplication {
      * @param fileInfo
      * @return
      */
-    public static boolean isContain(com.merpyzf.xmshare.bean.FileInfo fileInfo) {
-        if (fileInfo != null) {
-            for (FileInfo transferFile : mTransferFiles) {
-                if (transferFile.getPath().equals(fileInfo.getPath())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public static boolean isContain(BaseFileInfo fileInfo) {
+        return mTransferFiles.contains(fileInfo);
     }
 
 
@@ -128,7 +119,7 @@ public class App extends LitePalApplication {
      *
      * @return
      */
-    public static List<FileInfo> getTransferFileList() {
+    public static List<BaseFileInfo> getTransferFileList() {
         return mTransferFiles;
 
     }
@@ -138,7 +129,7 @@ public class App extends LitePalApplication {
      */
     public static void resetSelectedFilesStatus() {
         for (int i = 0; i < mTransferFiles.size(); i++) {
-            FileInfo fileInfo = mTransferFiles.get(i);
+            BaseFileInfo fileInfo = mTransferFiles.get(i);
             fileInfo.reset();
         }
     }

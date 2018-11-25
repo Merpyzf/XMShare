@@ -11,6 +11,8 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.promeg.pinyinhelper.Pinyin;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
+import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.FileInfo;
@@ -39,6 +41,9 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.merpyzf.xmshare.util.UiUtils.getRecyclerViewLastPosition;
@@ -57,7 +62,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     @BindView(R.id.view_underline)
     View mViewUnderLine;
     private String mRootPath;
-    private List<FileInfo> mFileList;
+    private List<StorageFile> mFileList;
     private FileManagerAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private Indicator mCurrIndicator;
@@ -123,22 +128,22 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         });
         FilesStatusObservable.getInstance().register(TAG, new FilesStatusObserver() {
             @Override
-            public void onSelected(com.merpyzf.transfermanager.entity.FileInfo fileInfo) {
+            public void onSelected(BaseFileInfo fileInfo) {
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelSelected(com.merpyzf.transfermanager.entity.FileInfo fileInfo) {
+            public void onCancelSelected(BaseFileInfo fileInfo) {
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onSelectedAll(List<com.merpyzf.transfermanager.entity.FileInfo> fileInfoList) {
+            public void onSelectedAll(List<BaseFileInfo> fileInfoList) {
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelSelectedAll(List<com.merpyzf.transfermanager.entity.FileInfo> fileInfoList) {
+            public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList) {
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -152,49 +157,45 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
      */
     public void loadingDirectory(String dir) {
         File file = new File(dir);
-        ArrayList<FileInfo> tempDirs = new ArrayList();
-        ArrayList<FileInfo> tempFiles = new ArrayList();
-        mFileList.clear();
+        ArrayList<StorageFile> tempDirs = new ArrayList();
+        ArrayList<StorageFile> tempFiles = new ArrayList();
+        if (mFileList.size() != 0) {
+            mFileList.clear();
+        }
         Observable.fromArray(file.listFiles())
                 .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .filter(fileInfo -> {
+                .filter(storageFile -> {
+                    // 根据配置选择是否过滤隐藏文件
                     boolean isShow = SettingHelper.showHiddenFile(mContext);
                     if (!isShow) {
-                        if (fileInfo.getName().startsWith(".")) {
+                        if (storageFile.getName().startsWith(".")) {
                             return false;
                         }
                     }
                     return true;
                 })
-                .map(f -> {
-                    FileInfo fileInfo = new FileInfo();
-                    fileInfo.setDirectory(f.isDirectory());
-                    fileInfo.setName(f.getName());
-                    fileInfo.setPath(f.getPath());
-                    fileInfo.setPhoto(FileUtils.isPhoto(f));
-                    fileInfo.setSize(f.length());
-                    fileInfo.setFirstLetter(getFirstLetter(fileInfo.getName()));
+                .map(storageFile -> {
+                    StorageFile fileInfo = new StorageFile();
+                    fileInfo.setDirectory(storageFile.isDirectory());
+                    fileInfo.setName(storageFile.getName());
+                    fileInfo.setPath(storageFile.getPath());
                     String suffix = FileUtils.getFileSuffix(fileInfo.getPath()).toLowerCase();
-                    fileInfo.setSuffix(suffix);
                     fileInfo.setPhoto(FileTypeHelper.isPhotoType(suffix));
-                    Log.i("WW2k", "name-> " + fileInfo.getName());
+                    fileInfo.setLength(storageFile.length());
                     return fileInfo;
-                })
-
-                .subscribeOn(Schedulers.computation())
+                }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<FileInfo>() {
+                .subscribe(new Observer<StorageFile>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
 
                     @Override
-                    public void onNext(FileInfo fileInfo) {
-                        if (fileInfo.isDirectory()) {
-                            tempDirs.add(fileInfo);
+                    public void onNext(StorageFile storageFile) {
+                        if (storageFile.isDirectory()) {
+                            tempDirs.add(storageFile);
                         } else {
-                            tempFiles.add(fileInfo);
+                            tempFiles.add(storageFile);
                         }
                     }
 
@@ -232,28 +233,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                         }
                     }
                 });
-
     }
-
-    /**
-     * 根据文件名获取第一个字符所对应的首字母
-     *
-     * @param name
-     * @return
-     */
-    private char getFirstLetter(String name) {
-        char firstLetter;
-        // 判断是否是隐藏文件
-        if (name.startsWith(".")) {
-            // 如果是则取第二个字符
-            firstLetter = Character.toLowerCase(Pinyin.toPinyin(name.charAt(1)).charAt(0));
-        } else {
-            // 如果不是则直接取第一个字符
-            firstLetter = Character.toLowerCase(Pinyin.toPinyin(name.charAt(0)).charAt(0));
-        }
-        return firstLetter;
-    }
-
 
     @Override
     public void onIndicatorChanged(Indicator indicator) {
@@ -274,7 +254,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        FileInfo fileInfo = (FileInfo) adapter.getItem(position);
+        StorageFile fileInfo = (StorageFile) adapter.getItem(position);
         if (fileInfo.isDirectory()) {
             if (App.isContain(fileInfo)) {
                 App.removeTransferFileByPath(fileInfo.getPath());
@@ -292,15 +272,14 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
     @Override
     public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-        FileInfo fileInfo = (FileInfo) adapter.getItem(position);
+        BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
         if (App.isContain(fileInfo)) {
             App.removeTransferFileByPath(fileInfo.getPath());
-            FilesStatusObservable.getInstance().notifyObservers((com.merpyzf.transfermanager.entity.FileInfo) null, TAG, FilesStatusObservable.FILE_CANCEL_SELECTED);
+            FilesStatusObservable.getInstance().notifyObservers((BaseFileInfo) null, TAG, FilesStatusObservable.FILE_CANCEL_SELECTED);
         } else {
-            com.merpyzf.transfermanager.entity.FileInfo transferFileInfo = FileInfoFactory.toTransferFileInfo(fileInfo);
-            App.addTransferFile(transferFileInfo);
+            App.addTransferFile(fileInfo);
             // 将文件选择的事件回调给外部
-            FilesStatusObservable.getInstance().notifyObservers(transferFileInfo, TAG, FilesStatusObservable.FILE_SELECTED);
+            FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG, FilesStatusObservable.FILE_SELECTED);
         }
         mAdapter.notifyItemChanged(position);
     }

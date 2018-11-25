@@ -1,9 +1,9 @@
 package com.merpyzf.xmshare.bean.factory;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.CompactFile;
 import com.merpyzf.transfermanager.entity.DocFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.bean.model.LitepalFileInfo;
@@ -21,9 +21,9 @@ import java.util.List;
 public class FileInfoFactory {
 
 
-    public static FileInfo toTransferFileInfo(com.merpyzf.xmshare.bean.FileInfo f) {
-        FileInfo fileInfo = new FileInfo();
-        fileInfo.setType(FileInfo.FILE_TYPE_OTHER);
+    public static BaseFileInfo toTransferFileInfo(com.merpyzf.xmshare.bean.FileInfo f) {
+        BaseFileInfo fileInfo = new BaseFileInfo();
+        fileInfo.setType(BaseFileInfo.FILE_TYPE_STORAGE);
         fileInfo.setName(f.getName());
         fileInfo.setPath(f.getPath());
         fileInfo.setLength(f.getSize());
@@ -31,24 +31,24 @@ public class FileInfoFactory {
         return fileInfo;
     }
 
-    public static List<FileInfo> toFileInfoList(List<LitepalFileInfo> litepalFileInfos) {
-        List<FileInfo> fileInfoList = new ArrayList<>();
+    public static List<BaseFileInfo> toFileInfoList(List<LitepalFileInfo> litepalFileInfos) {
+        List<BaseFileInfo> fileInfoList = new ArrayList<>();
         for (LitepalFileInfo litepalFileInfo : litepalFileInfos) {
             fileInfoList.add(toFileInfoType(litepalFileInfo));
         }
         return fileInfoList;
     }
 
-    public static List<LitepalFileInfo> toLitepalFileInfoList(List<FileInfo> fileInfos) {
+    public static List<LitepalFileInfo> toLitepalFileInfoList(List<BaseFileInfo> fileInfos) {
         List<LitepalFileInfo> litepalFileInfoList = new ArrayList<>();
-        for (FileInfo fileInfo : fileInfos) {
+        for (BaseFileInfo fileInfo : fileInfos) {
             litepalFileInfoList.add(toLitepalFileInfoType(fileInfo));
         }
         return litepalFileInfoList;
     }
 
-    public static FileInfo toFileInfoType(LitepalFileInfo litepalFileInfo) {
-        FileInfo fileInfo = new FileInfo();
+    public static BaseFileInfo toFileInfoType(LitepalFileInfo litepalFileInfo) {
+        BaseFileInfo fileInfo = new BaseFileInfo();
         fileInfo.setName(litepalFileInfo.getName());
         fileInfo.setPath(litepalFileInfo.getPath());
         fileInfo.setSuffix(litepalFileInfo.getSuffix());
@@ -57,38 +57,38 @@ public class FileInfoFactory {
         return fileInfo;
     }
 
-    public static FileInfo toFileInfoType(File file, int fileType) {
-        FileInfo fileInfo = new FileInfo();
+    public static BaseFileInfo toFileInfoType(File file, int fileType) {
+        BaseFileInfo fileInfo = new BaseFileInfo();
         switch (fileType) {
-            case FileInfo.FILE_TYPE_APP:
+            case BaseFileInfo.FILE_TYPE_APP:
                 fileInfo.setName(file.getName());
                 fileInfo.setPath(file.getPath());
                 fileInfo.setLength((int) file.length());
-                fileInfo.setType(FileInfo.FILE_TYPE_APP);
+                fileInfo.setType(BaseFileInfo.FILE_TYPE_APP);
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
-            case FileInfo.FILE_TYPE_MUSIC:
+            case BaseFileInfo.FILE_TYPE_MUSIC:
                 fileInfo.setName(file.getName());
                 fileInfo.setPath(file.getPath());
                 fileInfo.setLength((int) file.length());
-                fileInfo.setType(FileInfo.FILE_TYPE_MUSIC);
+                fileInfo.setType(BaseFileInfo.FILE_TYPE_MUSIC);
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
-            case FileInfo.FILE_TYPE_VIDEO:
+            case BaseFileInfo.FILE_TYPE_VIDEO:
                 fileInfo.setName(file.getName());
                 fileInfo.setLength((int) file.length());
                 fileInfo.setPath(file.getPath());
-                fileInfo.setType(FileInfo.FILE_TYPE_VIDEO);
+                fileInfo.setType(BaseFileInfo.FILE_TYPE_VIDEO);
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
-            case FileInfo.FILE_TYPE_IMAGE:
+            case BaseFileInfo.FILE_TYPE_IMAGE:
                 fileInfo.setName(file.getName());
                 fileInfo.setPath(file.getPath());
                 fileInfo.setLength((int) file.length());
-                fileInfo.setType(FileInfo.FILE_TYPE_IMAGE);
+                fileInfo.setType(BaseFileInfo.FILE_TYPE_IMAGE);
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
-            case FileInfo.FILE_TYPE_OTHER:
+            case BaseFileInfo.FILE_TYPE_STORAGE:
 
                 break;
             default:
@@ -97,7 +97,7 @@ public class FileInfoFactory {
         return fileInfo;
     }
 
-    public static LitepalFileInfo toLitepalFileInfoType(FileInfo fileInfo) {
+    public static LitepalFileInfo toLitepalFileInfoType(BaseFileInfo fileInfo) {
         LitepalFileInfo litepalFileInfo = new LitepalFileInfo();
         litepalFileInfo.setName(fileInfo.getName());
         litepalFileInfo.setPath(fileInfo.getPath());
@@ -143,7 +143,7 @@ public class FileInfoFactory {
      * @param fileInfo app模块下的FileInfo对象
      * @return FileServer模块下的FileInfo对象
      */
-    public static com.merpyzf.fileserver.common.bean.FileInfo toFileServerType(FileInfo fileInfo) {
+    public static com.merpyzf.fileserver.common.bean.FileInfo toFileServerType(BaseFileInfo fileInfo) {
         com.merpyzf.fileserver.common.bean.FileInfo serverFileInfo = new com.merpyzf.fileserver.common.bean.FileInfo();
         if (fileInfo instanceof MusicFile) {
             serverFileInfo.setAlbumId(((MusicFile) fileInfo).getAlbumId());
@@ -160,9 +160,9 @@ public class FileInfoFactory {
         return serverFileInfo;
     }
 
-    public static List<com.merpyzf.fileserver.common.bean.FileInfo> toFileServerType(List<FileInfo> fileInfoList) {
+    public static List<com.merpyzf.fileserver.common.bean.FileInfo> toFileServerType(List<BaseFileInfo> fileInfoList) {
         List<com.merpyzf.fileserver.common.bean.FileInfo> serverFileInfoList = new ArrayList<>();
-        for (FileInfo fileInfo : fileInfoList) {
+        for (BaseFileInfo fileInfo : fileInfoList) {
             serverFileInfoList.add(toFileServerType(fileInfo));
         }
         return serverFileInfoList;

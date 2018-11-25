@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
@@ -92,7 +92,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private List<Fragment> mFragmentList;
     private String[] mTabTitles;
     private BottomSheetBehavior<View> mSheetBehavior;
-    private FileSelectAdapter<FileInfo> mFileSelectAdapter;
+    private FileSelectAdapter<BaseFileInfo> mFileSelectAdapter;
     private static int sFabState = Const.FAB_STATE_SEND;
     private static final String TAG = SelectFilesActivity.class.getSimpleName();
     private FragmentManager mFragmentManager;
@@ -137,28 +137,28 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private void initMainPageAndSetListener() {
         mFilesStatusObserver = new FilesStatusObserver() {
             @Override
-            public void onSelected(FileInfo fileInfo) {
+            public void onSelected(BaseFileInfo fileInfo) {
                 App.addTransferFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
 
             @Override
-            public void onCancelSelected(FileInfo fileInfo) {
+            public void onCancelSelected(BaseFileInfo fileInfo) {
                 App.removeTransferFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
 
             @Override
-            public void onSelectedAll(List<FileInfo> fileInfoList) {
+            public void onSelectedAll(List<BaseFileInfo> fileInfoList) {
                 App.addTransferFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
             }
 
             @Override
-            public void onCancelSelectedAll(List<FileInfo> fileInfoList) {
+            public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList) {
                 App.removeTransferFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
@@ -173,13 +173,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mTabTitles[3] = Const.PAGE_MUSIC_TITLE;
         mTabTitles[4] = Const.PAGE_VIDEO_TITLE;
         mFragmentList.add(new MainFragment());
-        FileListFragment appFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_APP);
+        FileListFragment appFragment = FileListFragment.newInstance(BaseFileInfo.FILE_TYPE_APP);
         mFragmentList.add(appFragment);
         Fragment picFragment = new PhotoFragment();
         mFragmentList.add(picFragment);
-        FileListFragment musicFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_MUSIC);
+        FileListFragment musicFragment = FileListFragment.newInstance(BaseFileInfo.FILE_TYPE_MUSIC);
         mFragmentList.add(musicFragment);
-        FileListFragment videoFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_VIDEO);
+        FileListFragment videoFragment = FileListFragment.newInstance(BaseFileInfo.FILE_TYPE_VIDEO);
         mFragmentList.add(videoFragment);
     }
 
@@ -212,7 +212,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         });
         mFileSelectAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             List data = adapter.getData();
-            FileInfo fileInfo = (FileInfo) adapter.getData().get(position);
+            BaseFileInfo fileInfo = (BaseFileInfo) adapter.getData().get(position);
             mFileSelectAdapter.notifyItemRemoved(position);
             App.removeTransferFile(fileInfo);
 
@@ -288,7 +288,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                     break;
                 // 电脑传
                 case R.id.nav_transfer2pc:
-                    TestFileServerActivity.start(mContext);
+                    //TestFileServerActivity.start(mContext);
                     break;
                 // 邀请安装
                 case R.id.nav_invite:
@@ -319,7 +319,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     }
 
     private void markLastFile() {
-        FileInfo fileInfo = App.getTransferFileList().get(App.getTransferFileList().size() - 1);
+        BaseFileInfo fileInfo = App.getTransferFileList().get(App.getTransferFileList().size() - 1);
         fileInfo.setIsLast(com.merpyzf.transfermanager.common.Const.IS_LAST);
     }
 
@@ -352,10 +352,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                         mViewPager.setOffscreenPageLimit(4);
                     } else if (permission.shouldShowRequestPermissionRationale) {
                         // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                        Log.d(TAG, permission.name + " is denied. More info should be provided.");
                     } else {
                         // 用户拒绝了该权限，并且选中『不再询问』
-                        Log.d(TAG, permission.name + " is denied.");
                     }
                 });
     }

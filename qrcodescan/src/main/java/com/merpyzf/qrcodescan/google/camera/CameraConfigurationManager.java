@@ -52,12 +52,9 @@ final class CameraConfigurationManager {
     Camera.Parameters parameters = camera.getParameters();
     previewFormat = parameters.getPreviewFormat();
     previewFormatString = parameters.get("preview-format");
-    Log.d(TAG, "Default preview format: " + previewFormat + '/' + previewFormatString);
     WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     Display display = manager.getDefaultDisplay();
     screenResolution = new Point(display.getWidth(), display.getHeight());
-    Log.d(TAG, "Screen resolution: " + screenResolution);
-
     //图片拉伸
     Point screenResolutionForCamera = new Point();
     screenResolutionForCamera.x = screenResolution.x;
@@ -67,10 +64,7 @@ final class CameraConfigurationManager {
       screenResolutionForCamera.x = screenResolution.y;
       screenResolutionForCamera.y = screenResolution.x;
     }
-
     cameraResolution = getCameraResolution(parameters, screenResolutionForCamera);
-    Log.d(TAG, "Camera resolution: " + screenResolution);
-
   }
 
   /**
@@ -81,7 +75,6 @@ final class CameraConfigurationManager {
    */
   void setDesiredCameraParameters(Camera camera) {
     Camera.Parameters parameters = camera.getParameters();
-    Log.d(TAG, "Setting preview size: " + cameraResolution);
     parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
     setFlash(parameters);
     setZoom(parameters);
@@ -118,7 +111,6 @@ final class CameraConfigurationManager {
     Point cameraResolution = null;
 
     if (previewSizeValueString != null) {
-      Log.d(TAG, "preview-size-values parameter: " + previewSizeValueString);
       cameraResolution = findBestPreviewSizeValue(previewSizeValueString, screenResolution);
     }
 
@@ -141,7 +133,6 @@ final class CameraConfigurationManager {
       previewSize = previewSize.trim();
       int dimPosition = previewSize.indexOf('x');
       if (dimPosition < 0) {
-        Log.w(TAG, "Bad preview-size: " + previewSize);
         continue;
       }
 

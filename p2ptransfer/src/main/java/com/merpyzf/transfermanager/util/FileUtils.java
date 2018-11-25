@@ -11,10 +11,11 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.merpyzf.transfermanager.R;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.ApkFile;
-import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 
@@ -149,7 +150,7 @@ public class FileUtils {
      * @param file
      * @return
      */
-    public static byte[] getFileThumbByteArray(Context context, FileInfo file) {
+    public static byte[] getFileThumbByteArray(Context context, BaseFileInfo file) {
         byte[] FileThumbArray = new byte[0];
         if (file instanceof ApkFile) {
             ApkFile appFile = (ApkFile) file;
@@ -242,28 +243,28 @@ public class FileUtils {
      * @param fileInfo
      * @return
      */
-    public static File getSaveFile(FileInfo fileInfo) {
+    public static File getSaveFile(BaseFileInfo fileInfo) {
         File parent;
         File file = null;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             switch (fileInfo.getType()) {
-                case FileInfo.FILE_TYPE_APP:
+                case BaseFileInfo.FILE_TYPE_APP:
                     parent = FilePathManager.getSaveAppDir();
                     file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     break;
-                case FileInfo.FILE_TYPE_IMAGE:
+                case BaseFileInfo.FILE_TYPE_IMAGE:
                     parent = FilePathManager.getSavePhotoDir();
                     file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
-                case FileInfo.FILE_TYPE_MUSIC:
+                case BaseFileInfo.FILE_TYPE_MUSIC:
                     parent = FilePathManager.getSaveMusicDir();
                     file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
-                case FileInfo.FILE_TYPE_VIDEO:
+                case BaseFileInfo.FILE_TYPE_VIDEO:
                     parent = FilePathManager.getSaveVideoDir();
                     file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
-                case FileInfo.FILE_TYPE_OTHER:
+                case BaseFileInfo.FILE_TYPE_STORAGE:
                     file = new File(fileInfo.getPath());
                 default:
                     break;
@@ -320,6 +321,7 @@ public class FileUtils {
 
     /**
      * 移除文件名中的非法字符并使用"-"替代
+     *
      * @param fileName
      * @return
      */
@@ -355,6 +357,25 @@ public class FileUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * 根据文件名获取第一个字符所对应的首字母
+     *
+     * @param name
+     * @return
+     */
+    public static char getFirstLetter(String name) {
+        char firstLetter;
+        // 判断是否是隐藏文件
+        if (name.startsWith(".")) {
+            // 如果是则取第二个字符
+            firstLetter = Character.toLowerCase(Pinyin.toPinyin(name.charAt(1)).charAt(0));
+        } else {
+            // 如果不是则直接取第一个字符
+            firstLetter = Character.toLowerCase(Pinyin.toPinyin(name.charAt(0)).charAt(0));
+        }
+        return firstLetter;
     }
 
 }
