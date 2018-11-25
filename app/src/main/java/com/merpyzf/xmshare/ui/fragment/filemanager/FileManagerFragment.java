@@ -49,8 +49,6 @@ import io.reactivex.schedulers.Schedulers;
 import static com.merpyzf.xmshare.util.UiUtils.getRecyclerViewLastPosition;
 
 /**
- * A simple {@link Fragment} subclass.
- *
  * @author wangke
  */
 public class FileManagerFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener, IndicatorChangedCallback, BaseQuickAdapter.OnItemChildClickListener {

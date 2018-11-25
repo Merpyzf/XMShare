@@ -1,9 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     tools:context="com.merpyzf.xmshare.ui.SplashActivity">
 
-</android.support.constraint.ConstraintLayout>
+
+
+
+    <View
+        android:id="@+id/view_holder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        />
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/ico_launcher"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/view_holder"
+        />
+
+
+
+
+    <TextView
+        android:id="@+id/tv_author_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
+        android:text="Design &amp; Develop by wangke"
+        android:layout_marginBottom="8dp"
+        android:textColor="#636060"
+        />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="XMShare"
+        android:textSize="28sp"
+        android:textColor="#2A2828"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@id/tv_author_info"
+        />
+
+</RelativeLayout>

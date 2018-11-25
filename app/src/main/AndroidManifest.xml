@@ -47,7 +47,15 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".ui.MainActivity" />
-        <activity android:name=".ui.SplashActivity" />
+        <activity
+            android:name=".ui.SplashActivity"
+            android:theme="@style/FullScreenTheme"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.activity.ReceiveActivity"
             android:label="接收文件" />
@@ -55,11 +63,7 @@
             android:name=".ui.activity.SendActivity"
             android:label="发送文件" />
         <activity android:name=".ui.activity.SelectFilesActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.activity.SettingActivity" />
 
@@ -80,8 +84,7 @@
         <activity android:name=".ui.activity.ReceivedFileActivity" />
         <activity
             android:name=".ui.activity.SearchActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-
+            android:windowSoftInputMode="stateAlwaysHidden">
 
 
         </activity>
