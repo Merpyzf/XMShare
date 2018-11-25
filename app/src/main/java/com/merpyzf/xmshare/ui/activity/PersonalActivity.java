@@ -19,8 +19,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
+import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.adapter.AvatarAdapter;
 import com.merpyzf.xmshare.observer.PersonalObservable;
+import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import butterknife.BindView;
@@ -34,7 +36,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  *
  * @author wangke
  */
-public class PersonalActivity extends AppCompatActivity {
+public class PersonalActivity extends BaseActivity {
     @BindView(R.id.civ_avatar)
     CircleImageView mCivAvatar;
     @BindView(R.id.rv_avatar_list)
@@ -47,28 +49,43 @@ public class PersonalActivity extends AppCompatActivity {
     Button mBtnSave;
     @BindView(R.id.edt_nickname)
     EditText mEdtNickname;
-
-    private Context mContext;
     private AvatarAdapter mAvatarAdapter;
     private Unbinder mUnbind;
     private int mAvatarPosition;
-    private static final String TAG = PersonalActivity.class.getSimpleName();
 
     public static void start(Context context) {
         context.startActivity(new Intent(context, PersonalActivity.class));
     }
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_personal);
-        mContext = this;
-        initUI();
-        initEvent();
+    protected int getContentLayoutId() {
+        return R.layout.activity_personal;
     }
 
-    private void initEvent() {
+    @Override
+    protected void initWidget(Bundle savedInstanceState) {
+        mUnbind = ButterKnife.bind(mContext, this);
+        // 设置昵称
+        mEdtNickname.setText(SharedPreUtils.getNickName(mContext));
+        int avatarPosition = SharedPreUtils.getAvatar(mContext);
+        // 设置头像
+        Glide.with(mContext)
+                .load(Const.AVATAR_LIST.get(avatarPosition))
+                .crossFade()
+                .centerCrop()
+                .into(mCivAvatar);
+        //setWidgetsBgColor(avatarPosition);
+        setSupportActionBar(mToolBar);
+        getSupportActionBar().setTitle("头像和昵称");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mRvAvatarList.setLayoutManager(new GridLayoutManager(mContext, 4));
+        mAvatarAdapter = new AvatarAdapter(R.layout.item_rv_avatar, Const.AVATAR_LIST);
+        mRvAvatarList.setAdapter(mAvatarAdapter);
+    }
 
+    @Override
+    protected void initEvents() {
         mAvatarAdapter.setOnItemClickListener((adapter, view, position) -> {
             mAvatarPosition = position;
             Glide.with(mContext)
@@ -76,9 +93,7 @@ public class PersonalActivity extends AppCompatActivity {
                     .crossFade()
                     .centerCrop()
                     .into(mCivAvatar);
-
-            setWidgetsBgColor(mAvatarPosition);
-
+            //setWidgetsBgColor(mAvatarPosition);
 
         });
 
@@ -90,6 +105,7 @@ public class PersonalActivity extends AppCompatActivity {
             PersonalObservable.getInstance().notifyAllObserver();
         });
     }
+
 
     private void setWidgetsBgColor(int mAvatarPosition) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Const.AVATAR_LIST.get(mAvatarPosition));
@@ -104,33 +120,9 @@ public class PersonalActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * 初始化UI
-     */
-    private void initUI() {
-        mUnbind = ButterKnife.bind(mContext, this);
-        // 设置昵称
-        mEdtNickname.setText(SharedPreUtils.getNickName(mContext));
-        int avatarPosition = SharedPreUtils.getAvatar(mContext);
-        // 设置头像
-        Glide.with(mContext)
-                .load(Const.AVATAR_LIST.get(avatarPosition))
-                .crossFade()
-                .centerCrop()
-                .into(mCivAvatar);
-        setWidgetsBgColor(avatarPosition);
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("头像和昵称");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mRvAvatarList.setLayoutManager(new GridLayoutManager(mContext, 4));
-        mAvatarAdapter = new AvatarAdapter(R.layout.item_rv_avatar, Const.AVATAR_LIST);
-        mRvAvatarList.setAdapter(mAvatarAdapter);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();

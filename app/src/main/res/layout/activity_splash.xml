@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="XMShare"
-        android:textSize="28sp"
+        android:textSize="24sp"
         android:textColor="#2A2828"
         android:layout_marginBottom="10dp"
         android:layout_above="@id/tv_author_info"

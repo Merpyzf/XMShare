@@ -43,6 +43,7 @@
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:padding="10dp"
+                    android:background="@null"
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/ic_header" />
 
@@ -53,6 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/civ_avatar"
                     android:layout_centerHorizontal="true"
+
                     android:text="SM801"
                     android:textColor="@color/white"
                     android:textSize="14sp"
