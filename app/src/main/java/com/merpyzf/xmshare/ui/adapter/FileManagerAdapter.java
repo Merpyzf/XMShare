@@ -15,13 +15,19 @@ import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.FileInfo;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
+import com.merpyzf.xmshare.util.SettingHelper;
 import com.merpyzf.xmshare.util.UiUtils;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.List;
 
 import static com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr;
 
+/**
+ * 文件管理列表的适配器
+ * @author wangke
+ */
 public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHolder> {
 
     public FileManagerAdapter(int layoutResId, @Nullable List<StorageFile> data) {
@@ -34,23 +40,11 @@ public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHo
         ImageView ivSelect = helper.getView(R.id.iv_select);
         helper.addOnClickListener(R.id.iv_select);
         StringBuffer fileInfo = new StringBuffer();
-        int folderCount = 0;
-        int fileCount = 0;
         if (item.isDirectory()) {
-            File file = new File(item.getPath());
-            File[] files = file.listFiles();
-            for (File f : files) {
-                if (f.isFile()) {
-                    ++fileCount;
-                }
-                if (f.isDirectory()) {
-                    ++folderCount;
-                }
-            }
             fileInfo.append("文件: ");
-            fileInfo.append(fileCount);
+            fileInfo.append(item.getFileNum());
             fileInfo.append(", 文件夹: ");
-            fileInfo.append(folderCount);
+            fileInfo.append(item.getFolderNum());
             ivIco.setImageResource(R.drawable.ic_folder);
         } else {
             fileInfo.append("文件大小: ");

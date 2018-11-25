@@ -32,6 +32,7 @@ import com.merpyzf.xmshare.util.SettingHelper;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -191,6 +192,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                     @Override
                     public void onNext(StorageFile storageFile) {
                         if (storageFile.isDirectory()) {
+                            setFileAndFolderNum(storageFile);
                             tempDirs.add(storageFile);
                         } else {
                             tempFiles.add(storageFile);
@@ -231,6 +233,40 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                         }
                     }
                 });
+    }
+
+    /**
+     * 统计一个目录下所包含的文件和文件夹的个数，并设置给StorageFile对象
+     *
+     * @param storageFile
+     */
+    private void setFileAndFolderNum(StorageFile storageFile) {
+        int fileNum = 0;
+        int folderNum = 0;
+        File file = new File(storageFile.getPath());
+        File[] files = file.listFiles(f -> {
+            boolean isShowHidden = SettingHelper.showHiddenFile(mContext);
+            if (isShowHidden) {
+                return true;
+            } else {
+                if (f.getName().startsWith(".")) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        });
+
+        for (File f : files) {
+            if (f.isFile()) {
+                ++fileNum;
+            }
+            if (f.isDirectory()) {
+                ++folderNum;
+            }
+        }
+        storageFile.setFileNum(fileNum);
+        storageFile.setFolderNum(folderNum);
     }
 
     @Override
