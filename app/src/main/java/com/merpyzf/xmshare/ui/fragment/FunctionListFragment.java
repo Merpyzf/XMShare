@@ -161,7 +161,6 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
                     if (litepalFileInfo.getType() == BaseFileInfo.FILE_TYPE_APP) {
                         if (!new File(litepalFileInfo.getPath()).exists()) {
                             deleteCache(litepalFileInfo);
-                            Log.i("w2k", "文件不存在删除-->" + litepalFileInfo.getPath());
                             return false;
                         }
                         return true;
@@ -179,7 +178,6 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
                     if (litepalFileInfo.getType() == BaseFileInfo.FILE_TYPE_DOCUMENT) {
                         if (!new File(litepalFileInfo.getPath()).exists()) {
                             deleteCache(litepalFileInfo);
-                            Log.i("w2k", "文件不存在删除-->" + litepalFileInfo.getPath());
                             return false;
                         }
                         return true;
@@ -197,7 +195,6 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
                     if (litepalFileInfo.getType() == BaseFileInfo.FILE_TYPE_COMPACT) {
                         if (!new File(litepalFileInfo.getPath()).exists()) {
                             deleteCache(litepalFileInfo);
-                            Log.i("w2k", "文件不存在删除-->" + litepalFileInfo.getPath());
                             return false;
                         }
                         return true;
@@ -302,6 +299,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
             FileManagerFragment fileManagerFragment = new FileManagerFragment();
             Bundle bundle = new Bundle();
             bundle.putCharSequence("rootPath", volume.getPath());
+            bundle.putCharSequence("volumeName", "SD卡");
             fileManagerFragment.setArguments(bundle);
             fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
             fragmentTransaction.commit();
@@ -311,6 +309,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
             FileManagerFragment fileManagerFragment = new FileManagerFragment();
             Bundle bundle = new Bundle();
             bundle.putCharSequence("rootPath", volume.getPath());
+            bundle.putCharSequence("volumeName", "手机存储");
             fileManagerFragment.setArguments(bundle);
             fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
             fragmentTransaction.commit();

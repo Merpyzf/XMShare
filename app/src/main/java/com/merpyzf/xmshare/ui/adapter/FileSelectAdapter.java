@@ -12,6 +12,7 @@ import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
@@ -26,17 +27,16 @@ import java.util.List;
 import pl.droidsonroids.gif.GifDrawable;
 
 /**
- * Created by wangke on 2017/12/24.
+ * @author wangke
+ * @date 2017/12/24
  */
 
 public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     private Context mContext;
-    private List<T> mFileInfoList;
 
     public FileSelectAdapter(Context context, int layoutResId, @Nullable List<T> data) {
         super(layoutResId, data);
         this.mContext = context;
-        this.mFileInfoList = data;
     }
 
     @Override
@@ -101,21 +101,22 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
-            //    设备内文件
-        } else if (item instanceof BaseFileInfo) {
-            String suffix = ((BaseFileInfo) item).getSuffix();
+            // 展示从存储器中选择的文件
+        } else if (item instanceof StorageFile) {
+            StorageFile storageFile = (StorageFile) item;
+            String suffix = storageFile.getSuffix();
             boolean photoType = FileTypeHelper.isPhotoType(suffix);
             if (photoType) {
                 if ("gif".equals(suffix)) {
                     try {
-                        GifDrawable gifDrawable = new GifDrawable(((BaseFileInfo) item).getPath());
+                        GifDrawable gifDrawable = new GifDrawable(storageFile.getPath());
                         imageView.setImageDrawable(gifDrawable);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
                     Glide.with(mContext)
-                            .load(((BaseFileInfo) item).getPath())
+                            .load(storageFile.getPath())
                             .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
                             .error(UiUtils.getPlaceHolder(fileInfo.getType()))
                             .crossFade()
@@ -123,6 +124,9 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageView);
                 }
+            } else if (storageFile.isDirectory()) {
+                imageView.setImageResource(R.drawable.ic_folder);
+                helper.setText(R.id.tv_size, "文件夹");
             } else {
                 imageView.setImageResource(FileTypeHelper.getIcoResBySuffix(suffix));
             }

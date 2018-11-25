@@ -71,13 +71,14 @@ public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHo
         }
         helper.setText(R.id.tv_title, item.getName());
         helper.setText(R.id.tv_info, fileInfo.toString());
-
-        if (App.isContain(item)) {
-            ivSelect.setImageResource(R.drawable.ic_cb_checked);
-            Log.i("WW2k", item.getPath()+" isContain: true");
+        if (!item.isDirectory()) {
+            if (App.isContain(item)) {
+                ivSelect.setImageResource(R.drawable.ic_cb_checked);
+            } else {
+                ivSelect.setImageResource(R.drawable.ic_cb_unchecked);
+            }
         } else {
-            ivSelect.setImageResource(R.drawable.ic_cb_unchecked);
-            Log.i("WW2k", item.getPath()+" isContain: false");
+            ivSelect.setImageResource(R.drawable.ic_arrow_right_p);
         }
     }
 }

@@ -62,6 +62,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     @BindView(R.id.view_underline)
     View mViewUnderLine;
     private String mRootPath;
+    private String mVolumeName;
     private List<StorageFile> mFileList;
     private FileManagerAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
@@ -72,6 +73,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     protected void initArgs(Bundle bundle) {
         super.initArgs(bundle);
         mRootPath = (String) bundle.getCharSequence("rootPath");
+        mVolumeName = (String) bundle.getCharSequence("volumeName");
     }
 
     @Override
@@ -82,7 +84,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     @Override
     protected void initWidget(View rootView) {
         super.initWidget(rootView);
-        mSelectIndicator.addIndicator(new Indicator("/", mRootPath));
+        mSelectIndicator.addIndicator(new Indicator(mVolumeName, mRootPath));
         mLayoutManager = new LinearLayoutManager(mContext);
         mRvFileList.setLayoutManager(mLayoutManager);
         mRvFileList.addItemDecoration(new DirItemDecotation());
@@ -91,7 +93,6 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         View emptyView = View.inflate(mContext, R.layout.view_rv_file_empty, null);
         mAdapter.setEmptyView(emptyView);
         mRvFileList.setAdapter(mAdapter);
-
     }
 
     @Override
@@ -148,7 +149,6 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
             }
         });
     }
-
 
     /**
      * 加载目录中的文件
@@ -267,19 +267,21 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                 mSelectIndicator.addIndicator(indicator);
             }
         }
-
     }
 
     @Override
     public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-        BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
-        if (App.isContain(fileInfo)) {
-            App.removeTransferFileByPath(fileInfo.getPath());
-            FilesStatusObservable.getInstance().notifyObservers((BaseFileInfo) null, TAG, FilesStatusObservable.FILE_CANCEL_SELECTED);
-        } else {
-            App.addTransferFile(fileInfo);
-            // 将文件选择的事件回调给外部
-            FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG, FilesStatusObservable.FILE_SELECTED);
+        StorageFile storageFile = (StorageFile) adapter.getItem(position);
+        // 暂且先把传输整个文件夹的功能移除！！！
+        if (!storageFile.isDirectory()) {
+            if (App.isContain(storageFile)) {
+                App.removeTransferFileByPath(storageFile.getPath());
+                FilesStatusObservable.getInstance().notifyObservers((StorageFile) null, TAG, FilesStatusObservable.FILE_CANCEL_SELECTED);
+            } else {
+                App.addTransferFile(storageFile);
+                // 将文件选择的事件回调给外部
+                FilesStatusObservable.getInstance().notifyObservers(storageFile, TAG, FilesStatusObservable.FILE_SELECTED);
+            }
         }
         mAdapter.notifyItemChanged(position);
     }

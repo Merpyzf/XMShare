@@ -48,11 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:paddingRight="10dp"
-            android:src="@drawable/ic_cb_unchecked"
             android:tint="@color/colorAccent" />
-
-
     </LinearLayout>
-
-
 </LinearLayout>
