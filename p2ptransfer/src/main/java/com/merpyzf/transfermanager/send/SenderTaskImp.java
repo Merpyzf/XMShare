@@ -100,9 +100,9 @@ public class SenderTaskImp implements SendTask, Runnable {
     @Override
     public void sendHeader(FileInfo fileInfo) throws Exception {
         String header = fileInfo.generateHeader(mContext);
-        Log.i("WW4k", "header->"+header);
         mOutputStream.write(header.getBytes());
-        if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE) {
+        // 如果是图片和从文件管理器中选择的文件的话不发送缩略图
+        if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE || fileInfo.getType() != FileInfo.FILE_TYPE_OTHER) {
             mOutputStream.write(fileInfo.getFileThumbArray());
         }
         mOutputStream.flush();
@@ -178,7 +178,7 @@ public class SenderTaskImp implements SendTask, Runnable {
             e.printStackTrace();
             sendError(e);
         } finally {
-             //传输完毕后的资源释放
+            //传输完毕后的资源释放
             //release();
         }
 
@@ -211,16 +211,7 @@ public class SenderTaskImp implements SendTask, Runnable {
      */
     @Override
     public void release() {
-        try {
-            if (mOutputStream != null) {
-                mOutputStream.close();
-            }
-            if (mSocket != null) {
-                mSocket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CloseUtils.close(mOutputStream, mSocket);
     }
 
 

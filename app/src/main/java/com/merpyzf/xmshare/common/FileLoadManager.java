@@ -113,18 +113,14 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (mLoadFileType == FILE_TYPE_MUSIC) {
-            Log.i("WW2k", "Music cursor-->"+data.hashCode());
             Observable<List<FileInfo>> observable = MusicUtils.asyncLoadingMusic(data);
             onLoadFinished(observable);
         } else if (mLoadFileType == FILE_TYPE_VIDEO) {
-            Log.i("WW2k", "VIDEO cursor-->"+data.hashCode());
             Observable<List<FileInfo>> observable = VideoUtils.asyncLoadingVideo(data);
             onLoadFinished(observable);
         } else if (mLoadFileType == FILE_TYPE_IMAGE) {
-            Log.i("WW2k", "IMAGE cursor-->"+data.hashCode());
             Observable<List<PhotoDirBean>> observable = PhotoUtils.AsyncLoadingFromCourse(data);
             onLoadFinished(observable);
-
         }
     }
 

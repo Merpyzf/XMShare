@@ -10,6 +10,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.FileInfoFactory;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.util.CacheUtils;
+import com.merpyzf.transfermanager.util.CloseUtils;
 import com.merpyzf.transfermanager.util.FileUtils;
 
 import java.io.BufferedOutputStream;
@@ -32,8 +33,8 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     private P2pTransferHandler mP2pTransferHandler;
     private List<FileInfo> mReceiveFileList;
     private Context mContext;
-    private static final String TAG = ReceiveTaskImp.class.getSimpleName();
     private boolean isStop = false;
+    private static final String TAG = ReceiveTaskImp.class.getSimpleName();
 
     public ReceiveTaskImp(Context context, Socket socket, P2pTransferHandler receiveHandler) {
         this.mContext = context;
@@ -61,6 +62,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
         while (true) {
             FileInfo fileInfo = decodeFileHeader(mInputStream);
             if (null != fileInfo) {
+                //接收缩略图到本地，当前设定只有图片不接受缩略图
                 receiveThumbToLocal(fileInfo);
                 mReceiveFileList.add(FileInfoFactory.convertFileType(fileInfo));
                 if (fileInfo.getIsLast() == Const.IS_LAST) {
@@ -75,11 +77,12 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     public synchronized void run() {
         try {
             init();
+            //接收待传输文件列表
             receiveTransferList();
-            receiveFileList();
+            //接收文件
+            receiveFiles();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.i("WW2K", "ReceiveTaskImp expection: " + e.getMessage());
             sendError(e);
             exit();
         } finally {
@@ -88,12 +91,12 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     }
 
     @Override
-    public void receiveFileList() throws Exception {
+    public void receiveFiles() throws Exception {
         int receiveIndex = 0;
         while (!isStop) {
             FileInfo fileInfo = mReceiveFileList.get(receiveIndex++);
             receiveBody(fileInfo);
-            if (fileInfo.getIsLast() == Const.IS_LAST) {
+            if (fileInfo.isLastFile()) {
                 break;
             }
         }
@@ -106,7 +109,9 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
      */
     private void receiveThumbToLocal(FileInfo fileInfo) throws IOException {
         // 照片不用缓存缩略图
-        if (fileInfo.getType() != FileInfo.FILE_TYPE_IMAGE) {
+        if (fileInfo.getType() == FileInfo.FILE_TYPE_IMAGE) {
+        } else if (fileInfo.getType() == FileInfo.FILE_TYPE_OTHER) {
+        } else {
             CacheUtils.cacheReceiveThumb(fileInfo, mInputStream);
         }
     }
@@ -159,7 +164,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     @Override
     public synchronized void receiveBody(FileInfo fileInfo) {
         // 读取文件的总长度
-        int totalLength = fileInfo.getLength();
+        long totalLength = fileInfo.getLength();
         int currentLength = 0;
         int readLength = -1;
         int perSecondReadLength = 0;
@@ -176,11 +181,11 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
         try {
             bos = new BufferedOutputStream(new FileOutputStream(saveFile));
             while (currentLength < totalLength) {
-                int leftLength = totalLength - currentLength;
+                long leftLength = totalLength - currentLength;
                 if (leftLength >= Const.BUFFER_LENGTH) {
                     readLength = mInputStream.read(buffer, 0, Const.BUFFER_LENGTH);
                 } else {
-                    readLength = mInputStream.read(buffer, 0, leftLength);
+                    readLength = mInputStream.read(buffer, 0, (int) leftLength);
                 }
                 bos.write(buffer, 0, readLength);
                 currentLength += readLength;
@@ -208,14 +213,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             exit();
             sendError(e);
         } finally {
-            try {
-                if (null != bos) {
-                    bos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            CloseUtils.close(bos);
         }
 
     }

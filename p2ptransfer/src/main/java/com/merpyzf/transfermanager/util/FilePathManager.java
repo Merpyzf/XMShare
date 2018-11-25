@@ -31,6 +31,11 @@ public class FilePathManager {
      */
     public static String SAVE_VIDEO_PATH = SAVE_ROOT_PATH + File.separator + "video";
 
+    /**
+     * 接收来自文件管理器中文件的保存路径
+     */
+    public static String SAVE_OTHER_PATH = SAVE_ROOT_PATH + File.separator + "other";
+
 
     public static String LOCAL_MUSIC_ALBUM_CACHE_PATH = CACHE_ROOT_PATH + File.separator + ".local" + File.separator + ".music_album";
 
@@ -160,5 +165,16 @@ public class FilePathManager {
             file.mkdirs();
         }
         return file;
+    }
+
+    public static File getSaveOtherDir() {
+
+        File file = new File(Environment.getExternalStorageDirectory(), SAVE_OTHER_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file;
+
+
     }
 }

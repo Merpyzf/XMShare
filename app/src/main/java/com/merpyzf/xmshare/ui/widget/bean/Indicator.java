@@ -1,11 +1,14 @@
 package com.merpyzf.xmshare.ui.widget.bean;
 
+import java.util.Objects;
+
 /**
  * @author wangke
  */
 public class Indicator {
     private String name;
     private String value;
+    private Object tag;
 
     public Indicator(String name, String value) {
         this.name = name;
@@ -28,6 +31,13 @@ public class Indicator {
         this.value = value;
     }
 
+    public Object getTag() {
+        return tag;
+    }
+
+    public void setTag(Object tag) {
+        this.tag = tag;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -41,13 +51,15 @@ public class Indicator {
         if (name != null ? !name.equals(indicator.name) : indicator.name != null) {
             return false;
         }
+        if (tag != null ? !tag.equals(indicator.tag) : indicator.tag != null) {
+            return false;
+        }
         return value != null ? value.equals(indicator.value) : indicator.value == null;
     }
 
+
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        return result;
+        return Objects.hash(name, value, tag);
     }
 }

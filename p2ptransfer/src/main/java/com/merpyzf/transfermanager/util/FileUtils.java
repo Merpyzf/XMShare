@@ -10,7 +10,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.R;
 import com.merpyzf.transfermanager.common.Const;
@@ -51,7 +50,6 @@ public class FileUtils {
             String suffix = filePath.substring(index + 1);
             return suffix;
         }
-
     }
 
 
@@ -99,7 +97,6 @@ public class FileUtils {
             return false;
         }
     }
-
 
     /**
      * Bitmap转ByteArray
@@ -252,20 +249,22 @@ public class FileUtils {
             switch (fileInfo.getType()) {
                 case FileInfo.FILE_TYPE_APP:
                     parent = FilePathManager.getSaveAppDir();
-                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
+                    file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     break;
                 case FileInfo.FILE_TYPE_IMAGE:
                     parent = FilePathManager.getSavePhotoDir();
-                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
+                    file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
                 case FileInfo.FILE_TYPE_MUSIC:
                     parent = FilePathManager.getSaveMusicDir();
-                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
+                    file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
                 case FileInfo.FILE_TYPE_VIDEO:
                     parent = FilePathManager.getSaveVideoDir();
-                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName() + "." + fileInfo.getSuffix()));
+                    file = new File(parent, FileUtils.removeIllegalCharacter(fileInfo.getName() + "." + fileInfo.getSuffix()));
                     return file;
+                case FileInfo.FILE_TYPE_OTHER:
+                    file = new File(fileInfo.getPath());
                 default:
                     break;
             }
@@ -320,21 +319,15 @@ public class FileUtils {
 
 
     /**
-     * 去除文件名中包含的文件分隔符。使用空格代替
-     *
+     * 移除文件名中的非法字符并使用"-"替代
      * @param fileName
      * @return
      */
-    private static String removeFileSeparator(String fileName) {
-
+    private static String removeIllegalCharacter(String fileName) {
         String newFileName = fileName;
-
         if (fileName.contains(File.separator)) {
-            newFileName = fileName.replaceAll(File.separator, " ");
-            Log.i(TAG, "去除分隔符后的文件名->" + newFileName);
-
+            newFileName = fileName.replaceAll(File.separator, "-");
         }
-
         return newFileName;
     }
 

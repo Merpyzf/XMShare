@@ -18,7 +18,7 @@ public interface ReceiveTask {
      */
     void receiveTransferList() throws Exception;
 
-    void receiveFileList() throws Exception;
+    void receiveFiles() throws Exception;
 
     /**
      * 读取文件

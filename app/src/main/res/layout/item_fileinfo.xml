@@ -10,8 +10,8 @@
 
         <ImageView
             android:id="@+id/iv_ico"
-            android:layout_width="60dp"
-            android:layout_height="80dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:padding="10dp"
             android:src="@drawable/ic_folder" />
 
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:paddingRight="10dp"
-            android:src="@drawable/ic_cb_checked"
+            android:src="@drawable/ic_cb_unchecked"
             android:tint="@color/colorAccent" />
 
 

@@ -220,19 +220,6 @@ public class FileListFragment extends BaseFragment {
 
     }
 
-    @Override
-    public void onDestroyView() {
-        mFileLoadManager.destroyLoader();
-        FilesStatusObservable.getInstance().remove(mFileStatusObserver);
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        mFileLoadManager.destroyLoader();
-        super.onDestroy();
-    }
-
     private void initRecyclerView() {
         switch (mLoadFileType) {
             case FILE_TYPE_APP:
@@ -298,6 +285,19 @@ public class FileListFragment extends BaseFragment {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        mFileLoadManager.destroyLoader();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        mFileLoadManager.destroyLoader();
+        FilesStatusObservable.getInstance().remove(mFileStatusObserver);
+        super.onDestroyView();
     }
 
     class MyAbsFileStatusObserver extends AbsFileStatusObserver {

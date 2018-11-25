@@ -16,6 +16,7 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.UiUtils;
 
 import java.io.File;
@@ -48,9 +49,11 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
         helper.setText(R.id.tv_path, fileInfo.getPath());
         helper.setText(R.id.tv_size, "文件大小:" + fileSizeArray[0] + fileSizeArray[1]);
         ImageView imageView = helper.getView(R.id.iv_file_thumb);
+        // 应用
         if (item instanceof ApkFile) {
             ApkFile apkFile = (ApkFile) item;
             imageView.setImageDrawable(apkFile.getApkDrawable());
+            //    音乐
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;
             File albumFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
@@ -65,6 +68,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
             }
+            //    照片
         } else if (item instanceof PicFile) {
             PicFile picFile = (PicFile) item;
             String suffix = FileUtils.getFileSuffix(picFile.getPath()).toLowerCase();
@@ -85,6 +89,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
             }
+            //    视频
         } else if (item instanceof VideoFile) {
             VideoFile videoFile = (VideoFile) item;
             File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(videoFile.getName());
@@ -96,7 +101,32 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
+            //    设备内文件
+        } else if (item instanceof FileInfo) {
+            String suffix = ((FileInfo) item).getSuffix();
+            boolean photoType = FileTypeHelper.isPhotoType(suffix);
+            if (photoType) {
+                if ("gif".equals(suffix)) {
+                    try {
+                        GifDrawable gifDrawable = new GifDrawable(((FileInfo) item).getPath());
+                        imageView.setImageDrawable(gifDrawable);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Glide.with(mContext)
+                            .load(((FileInfo) item).getPath())
+                            .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
+                            .error(UiUtils.getPlaceHolder(fileInfo.getType()))
+                            .crossFade()
+                            .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(imageView);
+                }
+            } else {
+                imageView.setImageResource(FileTypeHelper.getIcoResBySuffix(suffix));
+            }
         }
-        ImageView ivRemove = helper.getView(R.id.iv_remove);
+
     }
 }

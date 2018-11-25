@@ -48,13 +48,11 @@ public class CacheUtils {
 
             }
             if (isContain) {
+                // 等待有足够可读的字节流
                 while (inputStream.available() <= fileInfo.getThumbLength()) {
                 }
-                Log.i("WW2K", fileInfo.getName()+"专辑封面已存在，跳过");
-
                 inputStream.skip(fileInfo.getThumbLength());
             } else {
-                Log.i("WW2K", fileInfo.getName()+"专辑封面不存在，缓存");
                 FileUtils.writeStream2SdCard(destFile, inputStream, fileInfo.getThumbLength());
             }
         }

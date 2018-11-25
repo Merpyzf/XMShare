@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
@@ -126,6 +127,22 @@ public class UiUtils {
         }
         return placeHolder;
     }
+
+    public static int[] getRecyclerViewLastPosition(LinearLayoutManager layoutManager) {
+        int lastPosition = 0;
+        int lastOffset = 0;
+        int[] pos = new int[2];
+        //获取可视的第一个view
+        View topView = layoutManager.getChildAt(0);
+        //获取与该view的顶部的偏移量
+        lastOffset = topView.getTop();
+        //得到该View的数组位置
+        lastPosition = layoutManager.getPosition(topView);
+        pos[0] = lastPosition;
+        pos[1] = lastOffset;
+        return pos;
+    }
+
 
 }
 

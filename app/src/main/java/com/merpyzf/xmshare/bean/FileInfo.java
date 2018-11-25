@@ -9,6 +9,7 @@ public class FileInfo {
 
     private String name;
     private String path;
+    private String suffix;
     private char firstLetter;
     private long size;
     private boolean isDirectory = false;
@@ -21,6 +22,7 @@ public class FileInfo {
         this.isDirectory = isDirectory;
         this.isPhoto = isPhoto;
     }
+
 
     public FileInfo() {
     }
@@ -71,5 +73,13 @@ public class FileInfo {
 
     public void setFirstLetter(char firstLetter) {
         this.firstLetter = firstLetter;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 }

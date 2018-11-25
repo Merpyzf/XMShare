@@ -68,7 +68,7 @@ public class FileInfo implements Serializable {
     /**
      * 文件大小
      */
-    private int length;
+    private long length;
 
     private long albumId;
 
@@ -76,7 +76,7 @@ public class FileInfo implements Serializable {
     public FileInfo() {
     }
 
-    public FileInfo(String name, String path, int type, int length, String suffix) {
+    public FileInfo(String name, String path, int type, long length, String suffix) {
         this.name = name;
         this.path = path;
         this.type = type;
@@ -109,11 +109,11 @@ public class FileInfo implements Serializable {
         this.type = type;
     }
 
-    public int getLength() {
+    public long getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(long length) {
         this.length = length;
     }
 

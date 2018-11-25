@@ -14,7 +14,7 @@ public class LitepalFileInfo extends DataSupport {
 
     private String name;
     private String path;
-    private int length;
+    private long length;
     private String suffix;
     private int type;
 
@@ -46,11 +46,11 @@ public class LitepalFileInfo extends DataSupport {
         this.path = path;
     }
 
-    public int getLength() {
+    public long getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(long length) {
         this.length = length;
     }
 

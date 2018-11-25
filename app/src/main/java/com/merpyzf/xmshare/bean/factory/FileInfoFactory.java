@@ -20,6 +20,17 @@ import java.util.List;
 
 public class FileInfoFactory {
 
+
+    public static FileInfo toTransferFileInfo(com.merpyzf.xmshare.bean.FileInfo f) {
+        FileInfo fileInfo = new FileInfo();
+        fileInfo.setType(FileInfo.FILE_TYPE_OTHER);
+        fileInfo.setName(f.getName());
+        fileInfo.setPath(f.getPath());
+        fileInfo.setLength(f.getSize());
+        fileInfo.setSuffix(f.getSuffix());
+        return fileInfo;
+    }
+
     public static List<FileInfo> toFileInfoList(List<LitepalFileInfo> litepalFileInfos) {
         List<FileInfo> fileInfoList = new ArrayList<>();
         for (LitepalFileInfo litepalFileInfo : litepalFileInfos) {

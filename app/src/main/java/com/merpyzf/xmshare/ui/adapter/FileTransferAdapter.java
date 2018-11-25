@@ -20,6 +20,7 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.Md5Utils;
+import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.UiUtils;
 import com.merpyzf.xmshare.R;
 
@@ -63,6 +64,25 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         tvTitle.setText(fileInfo.getName());
         tvSize.setText(fileSizeArrayStr[0] + fileSizeArrayStr[1]);
         File thumbFile = getThumbFile(fileInfo);
+
+        if(fileInfo instanceof FileInfo){
+            String suffix = fileInfo.getSuffix();
+            Log.i("WW2k", "要加载的图片路径: "+fileInfo.getPath());
+            if (FileTypeHelper.isPhotoType(suffix)) {
+                Glide.with(mContext)
+                        .load(fileInfo.getPath())
+                        .placeholder(UiUtils.getPlaceHolder(FileInfo.FILE_TYPE_IMAGE))
+                        .crossFade()
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .error(UiUtils.getPlaceHolder(FileInfo.FILE_TYPE_IMAGE))
+                        .into(ivThumb);
+            } else {
+                ivThumb.setImageResource(FileTypeHelper.getIcoResBySuffix(suffix));
+            }
+        }
+
+
         Glide.with(mContext)
                 .load(thumbFile)
                 .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
@@ -111,7 +131,6 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
     private File getThumbFile(FileInfo fileInfo) {
         File thumbFile = null;
-
         if (fileInfo instanceof ApkFile) {
             ApkFile apkFile = (ApkFile) fileInfo;
             if (mType == TYPE_SEND) {
@@ -156,6 +175,9 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                 typeText = "点击播放";
                 break;
             case FileInfo.FILE_TYPE_IMAGE:
+                typeText = "点击查看";
+                break;
+            case FileInfo.FILE_TYPE_OTHER:
                 typeText = "点击查看";
                 break;
             default:

@@ -70,11 +70,8 @@ public class TransferReceiveFragment extends BaseFragment {
         ReceiverManager.getInstance(mContext).register(new TransferObserver() {
             @Override
             public void onTransferProgress(FileInfo fileInfo) {
-
                 notifyItemChanged(fileInfo);
                 updateTransferSpeed(fileInfo);
-
-
             }
 
             @Override

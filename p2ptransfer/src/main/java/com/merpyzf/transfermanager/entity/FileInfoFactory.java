@@ -49,7 +49,7 @@ public class FileInfoFactory {
                 musicFile.setPath(FilePathManager.getSaveMusicDir().getPath() + File.separator +
                         fileInfo.getName() + "." + fileInfo.getSuffix());
                 musicFile.setMd5(fileInfo.getMd5());
-                musicFile.setAlbumId(((MusicFile)fileInfo).getAlbumId());
+                musicFile.setAlbumId(((MusicFile) fileInfo).getAlbumId());
                 musicFile.setIsLast(fileInfo.getIsLast());
                 return musicFile;
 
@@ -66,7 +66,10 @@ public class FileInfoFactory {
                 videoFile.setIsLast(fileInfo.getIsLast());
                 return videoFile;
 
-
+            case FileInfo.FILE_TYPE_OTHER:
+                fileInfo.setPath(FilePathManager.getSaveOtherDir().getPath() + File.separator +
+                        fileInfo.getName());
+                return fileInfo;
             default:
                 break;
 

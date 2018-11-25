@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -21,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by wangke on 2018/3/17.
+ * @author wangke
+ * @date 2018/3/17
  * <p>
  * 选择层级指示器
  */
@@ -128,6 +130,7 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
 
         // 回调当前所在标签的值
     }
+
     @Override
     public void pop() {
         if (mIndicatorList.size() > 1) {
@@ -176,15 +179,17 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
         linearLayout.setLayoutParams(layoutParams);
         linearLayout.setGravity(Gravity.CENTER_VERTICAL);
         TextView textView = new TextView(mContext);
-
         // 需要对路径的进行分割，区最末尾的哪个文件目录
         textView.setText(indicator.getName());
+        textView.setTextColor(Color.parseColor("#6e6e6e"));
+        // 设置字体加粗
+        textView.getPaint().setFakeBoldText(true);
         linearLayout.addView(textView);
         LinearLayout.LayoutParams tvParams = (LinearLayout.LayoutParams) textView.getLayoutParams();
         tvParams.leftMargin = DisplayUtils.dip2px(mContext, 5);
 
         ImageView imageView = new ImageView(mContext);
-        imageView.setImageResource(R.drawable.ic_choice_file_folder_separator);
+        imageView.setImageResource(R.drawable.ic_path_separator);
         linearLayout.addView(imageView);
 
         LinearLayout.LayoutParams ivParams = (LinearLayout.LayoutParams) imageView.getLayoutParams();
@@ -228,6 +233,15 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
     public void setIndicatorClickCallBack(IndicatorChangedCallback mCallBack) {
         this.mCallBack = mCallBack;
     }
+
+    public void setScrollPosTag(Object tag) {
+        int pos = mIndicatorList.size() - 1;
+        Indicator indicator = mIndicatorList.get(pos);
+        if (indicator != null) {
+            indicator.setTag(tag);
+        }
+    }
+
 }
 
 

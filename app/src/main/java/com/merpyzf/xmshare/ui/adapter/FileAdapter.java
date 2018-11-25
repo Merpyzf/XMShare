@@ -58,9 +58,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
     @Override
     protected void convert(BaseViewHolder helper, final T item) {
 
-
         if (item instanceof ApkFile) {
-
             ApkFile apkFile = (ApkFile) item;
             ImageView imageView = helper.getView(R.id.iv_cover);
             TextView tvApkName = helper.getView(R.id.tv_apk_name);
@@ -69,7 +67,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                 tvApkName.setText(apkFile.getName());
             }
             imageView.setImageDrawable(apkFile.getApkDrawable());
-            int length = apkFile.getLength();
+            long length = apkFile.getLength();
             if (tvApkSize != null) {
                 tvApkSize.setText(FormatUtils.convert2Mb(length) + "MB");
             }
@@ -154,7 +152,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                 AnimationUtils.zoomInCover(iv, 0);
             }
         } else if (item instanceof VideoFile) {
-
             VideoFile videoFile = (VideoFile) item;
             String videoName = videoFile.getName();
             helper.setText(R.id.tv_title, videoName);
@@ -171,7 +168,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .dontAnimate()
                     .centerCrop()
                     .into(ivVideoThumb);
-
             llBottom.setBackgroundColor(Resource.Color.GREY);
         }
 
@@ -179,7 +175,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
         if (App.getTransferFileList().contains(item)) {
             ivSelect.setVisibility(View.VISIBLE);
-
         } else {
             ivSelect.setVisibility(View.INVISIBLE);
         }

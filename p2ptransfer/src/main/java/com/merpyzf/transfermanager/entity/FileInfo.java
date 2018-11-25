@@ -48,7 +48,7 @@ public class FileInfo extends DataSupport implements Serializable {
     public static final int FILE_TYPE_COMPACT = 0x06;
 
     /**
-     * 其他文件 (传输的文件夹之类的)
+     * 其他文件 (传输的是文件或文件夹之类的)
      */
     public static final int FILE_TYPE_OTHER = 0x07;
 
@@ -80,11 +80,11 @@ public class FileInfo extends DataSupport implements Serializable {
     /**
      * 文件大小
      */
-    private int length;
+    private long length;
     /**
      * 文件缩略图大小
      */
-    private int thumbLength;
+    private int thumbLength = 0;
 
     byte[] fileThumbArray;
     /**
@@ -109,7 +109,6 @@ public class FileInfo extends DataSupport implements Serializable {
     /**
      * 文件完整性校验
      */
-    // md5的值可能获取不到
     private String md5;
 
 
@@ -172,11 +171,11 @@ public class FileInfo extends DataSupport implements Serializable {
         this.type = type;
     }
 
-    public int getLength() {
+    public long getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(long length) {
         this.length = length;
     }
 
@@ -266,6 +265,10 @@ public class FileInfo extends DataSupport implements Serializable {
         this.lastModified = lastModified;
     }
 
+    public boolean isLastFile() {
+        return this.isLast == Const.IS_LAST;
+    }
+
     public String generateHeader(Context context) {
 
         StringBuilder Header = new StringBuilder();
@@ -286,7 +289,7 @@ public class FileInfo extends DataSupport implements Serializable {
         Header.append(Const.S_SEPARATOR);
 
         int fileThumbLength = 0;
-        if (this.getType() != FileInfo.FILE_TYPE_IMAGE) {
+        if (this.type != FileInfo.FILE_TYPE_IMAGE || this.type != FileInfo.FILE_TYPE_OTHER) {
             // 缩略图大小(耗时操作)
             fileThumbArray = FileUtils.getFileThumbByteArray(context, this);
             fileThumbLength = fileThumbArray.length;
@@ -328,6 +331,9 @@ public class FileInfo extends DataSupport implements Serializable {
         //通过文件所处的路径和文件的带下来判断两者是否是同一个对象
         if (obj instanceof FileInfo) {
             FileInfo fileInfo = (FileInfo) obj;
+            System.out.println("path" + fileInfo.getPath());
+            System.out.println("length" + fileInfo.getLength());
+
             if (fileInfo.getPath().equals(this.path) && fileInfo.getLength() == this.getLength()) {
                 return true;
             } else {

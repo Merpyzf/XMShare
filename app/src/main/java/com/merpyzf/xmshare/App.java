@@ -5,10 +5,12 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.StrictMode;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.util.ToastUtils;
 
 import org.litepal.LitePalApplication;
 
@@ -50,25 +52,30 @@ public class App extends LitePalApplication {
      * @param fileInfo
      */
     public static void addTransferFile(FileInfo fileInfo) {
-
-        if (!mTransferFiles.contains(fileInfo)) {
-            mTransferFiles.add(fileInfo);
-        }
-    }
-
-
-    public static void addTransferFiles(List<FileInfo> fileInfoList) {
-        for (FileInfo fileInfo : fileInfoList) {
+        if (fileInfo != null) {
             if (!mTransferFiles.contains(fileInfo)) {
                 mTransferFiles.add(fileInfo);
             }
         }
     }
 
+
+    public static void addTransferFiles(List<FileInfo> fileInfoList) {
+        if (fileInfoList != null) {
+            for (FileInfo fileInfo : fileInfoList) {
+                if (!mTransferFiles.contains(fileInfo)) {
+                    mTransferFiles.add(fileInfo);
+                }
+            }
+        }
+    }
+
     public static void removeTransferFiles(List<FileInfo> fileInfoList) {
-        for (FileInfo fileInfo : fileInfoList) {
-            if (mTransferFiles.contains(fileInfo)) {
-                mTransferFiles.remove(fileInfo);
+        if (fileInfoList != null) {
+            for (FileInfo fileInfo : fileInfoList) {
+                if (mTransferFiles.contains(fileInfo)) {
+                    mTransferFiles.remove(fileInfo);
+                }
             }
         }
     }
@@ -79,21 +86,42 @@ public class App extends LitePalApplication {
      * @param fileInfo
      */
     public static void removeTransferFile(FileInfo fileInfo) {
-        if (mTransferFiles.contains(fileInfo)) {
-            mTransferFiles.remove(fileInfo);
-            //
+        if (fileInfo != null) {
+            if (mTransferFiles.contains(fileInfo)) {
+                mTransferFiles.remove(fileInfo);
+            }
         }
     }
 
     public static void removeTransferFileByPath(String filePath) {
-        for (int i = 0; i < mTransferFiles.size(); i++) {
-            FileInfo transferFile = mTransferFiles.get(i);
-            if (TextUtils.equals(filePath, transferFile.getPath())) {
-                mTransferFiles.remove(i);
-                break;
+        if (filePath != null && !"".equals(filePath)) {
+            for (int i = 0; i < mTransferFiles.size(); i++) {
+                FileInfo transferFile = mTransferFiles.get(i);
+                if (TextUtils.equals(filePath, transferFile.getPath())) {
+                    mTransferFiles.remove(i);
+                    break;
+                }
             }
         }
     }
+
+    /**
+     * 判断从设备存储中选择的文件或文件夹是否在待传输文件列表中
+     *
+     * @param fileInfo
+     * @return
+     */
+    public static boolean isContain(com.merpyzf.xmshare.bean.FileInfo fileInfo) {
+        if (fileInfo != null) {
+            for (FileInfo transferFile : mTransferFiles) {
+                if (transferFile.getPath().equals(fileInfo.getPath())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 返回待发送的文件集合
@@ -101,7 +129,6 @@ public class App extends LitePalApplication {
      * @return
      */
     public static List<FileInfo> getTransferFileList() {
-
         return mTransferFiles;
 
     }

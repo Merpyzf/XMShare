@@ -11,9 +11,13 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.promeg.pinyinhelper.Pinyin;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.FileInfo;
+import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
 import com.merpyzf.xmshare.common.base.BaseFragment;
+import com.merpyzf.xmshare.observer.FilesStatusObservable;
+import com.merpyzf.xmshare.observer.FilesStatusObserver;
 import com.merpyzf.xmshare.ui.adapter.FileManagerAdapter;
 import com.merpyzf.xmshare.ui.fragment.FunctionListFragment;
 import com.merpyzf.xmshare.ui.widget.DirItemDecotation;
@@ -28,7 +32,6 @@ import com.trello.rxlifecycle2.android.FragmentEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,21 +39,29 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.merpyzf.xmshare.util.UiUtils.getRecyclerViewLastPosition;
 
 /**
  * A simple {@link Fragment} subclass.
+ *
+ * @author wangke
  */
-public class FileManagerFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener, IndicatorChangedCallback {
+public class FileManagerFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener, IndicatorChangedCallback, BaseQuickAdapter.OnItemChildClickListener {
 
     @BindView(R.id.rv_file_list)
     RecyclerView mRvFileList;
     @BindView(R.id.select_indicator)
     SelectIndicatorView mSelectIndicator;
+    @BindView(R.id.view_underline)
+    View mViewUnderLine;
     private String mRootPath;
     private List<FileInfo> mFileList;
     private FileManagerAdapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
+    private Indicator mCurrIndicator;
+    private static String TAG = FileManagerFragment.class.getSimpleName();
 
     @Override
     protected void initArgs(Bundle bundle) {
@@ -67,24 +78,70 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     protected void initWidget(View rootView) {
         super.initWidget(rootView);
         mSelectIndicator.addIndicator(new Indicator("/", mRootPath));
-        mRvFileList.setLayoutManager(new LinearLayoutManager(mContext));
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRvFileList.setLayoutManager(mLayoutManager);
         mRvFileList.addItemDecoration(new DirItemDecotation());
         mFileList = new ArrayList<>();
         mAdapter = new FileManagerAdapter(R.layout.item_fileinfo, mFileList);
+        View emptyView = View.inflate(mContext, R.layout.view_rv_file_empty, null);
+        mAdapter.setEmptyView(emptyView);
         mRvFileList.setAdapter(mAdapter);
+
     }
 
     @Override
     protected void initData() {
         super.initData();
-        loadDir(mRootPath);
+        loadingDirectory(mRootPath);
     }
 
     @Override
     protected void initEvent() {
         super.initEvent();
         mAdapter.setOnItemClickListener(this);
+        mAdapter.setOnItemChildClickListener(this);
         mSelectIndicator.setIndicatorClickCallBack(this);
+        mRvFileList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (mRvFileList.canScrollVertically(-1)) {
+                    if (mViewUnderLine.getVisibility() == View.INVISIBLE) {
+                        mViewUnderLine.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mViewUnderLine.setVisibility(View.INVISIBLE);
+                }
+
+            }
+        });
+        FilesStatusObservable.getInstance().register(TAG, new FilesStatusObserver() {
+            @Override
+            public void onSelected(com.merpyzf.transfermanager.entity.FileInfo fileInfo) {
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelSelected(com.merpyzf.transfermanager.entity.FileInfo fileInfo) {
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onSelectedAll(List<com.merpyzf.transfermanager.entity.FileInfo> fileInfoList) {
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelSelectedAll(List<com.merpyzf.transfermanager.entity.FileInfo> fileInfoList) {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
 
@@ -93,7 +150,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
      *
      * @param dir
      */
-    public void loadDir(String dir) {
+    public void loadingDirectory(String dir) {
         File file = new File(dir);
         ArrayList<FileInfo> tempDirs = new ArrayList();
         ArrayList<FileInfo> tempFiles = new ArrayList();
@@ -117,7 +174,10 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                     fileInfo.setPhoto(FileUtils.isPhoto(f));
                     fileInfo.setSize(f.length());
                     fileInfo.setFirstLetter(getFirstLetter(fileInfo.getName()));
-                    fileInfo.setPhoto(FileTypeHelper.isPhotoType(FileUtils.getFileSuffix(fileInfo.getPath())));
+                    String suffix = FileUtils.getFileSuffix(fileInfo.getPath()).toLowerCase();
+                    fileInfo.setSuffix(suffix);
+                    fileInfo.setPhoto(FileTypeHelper.isPhotoType(suffix));
+                    Log.i("WW2k", "name-> " + fileInfo.getName());
                     return fileInfo;
                 })
 
@@ -136,7 +196,6 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                         } else {
                             tempFiles.add(fileInfo);
                         }
-                        Log.i("WW2k", fileInfo.getFirstLetter() + "");
                     }
 
                     @Override
@@ -157,6 +216,8 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                         Collections.sort(tempFiles, (o1, o2) -> {
                             if (o1.getFirstLetter() > o2.getFirstLetter()) {
                                 return 1;
+                            } else if (o1.getFirstLetter() == o2.getFirstLetter()) {
+                                return 0;
                             } else {
                                 return -1;
                             }
@@ -165,6 +226,10 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                         mFileList.addAll(tempDirs);
                         mFileList.addAll(tempFiles);
                         mAdapter.notifyDataSetChanged();
+                        if (mCurrIndicator != null) {
+                            int[] lastPos = (int[]) mCurrIndicator.getTag();
+                            mLayoutManager.scrollToPositionWithOffset(lastPos[0], lastPos[1]);
+                        }
                     }
                 });
 
@@ -191,18 +256,10 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
 
     @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        FileInfo fileInfo = (FileInfo) adapter.getItem(position);
-        if (fileInfo.isDirectory()) {
-            loadDir(fileInfo.getPath());
-            Indicator indicator = new Indicator(fileInfo.getName(), fileInfo.getPath());
-            mSelectIndicator.addIndicator(indicator);
-        }
-    }
-
-    @Override
     public void onIndicatorChanged(Indicator indicator) {
-        loadDir(indicator.getValue());
+        loadingDirectory(indicator.getValue());
+        mCurrIndicator = indicator;
+
     }
 
     public void onBackPressed() {
@@ -213,5 +270,44 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         } else {
             mSelectIndicator.pop();
         }
+    }
+
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        FileInfo fileInfo = (FileInfo) adapter.getItem(position);
+        if (fileInfo.isDirectory()) {
+            if (App.isContain(fileInfo)) {
+                App.removeTransferFileByPath(fileInfo.getPath());
+                mAdapter.notifyItemChanged(position);
+            } else {
+                loadingDirectory(fileInfo.getPath());
+                Indicator indicator = new Indicator(fileInfo.getName(), fileInfo.getPath());
+                int[] lastPosition = getRecyclerViewLastPosition(mLayoutManager);
+                mSelectIndicator.setScrollPosTag(lastPosition);
+                mSelectIndicator.addIndicator(indicator);
+            }
+        }
+
+    }
+
+    @Override
+    public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+        FileInfo fileInfo = (FileInfo) adapter.getItem(position);
+        if (App.isContain(fileInfo)) {
+            App.removeTransferFileByPath(fileInfo.getPath());
+            FilesStatusObservable.getInstance().notifyObservers((com.merpyzf.transfermanager.entity.FileInfo) null, TAG, FilesStatusObservable.FILE_CANCEL_SELECTED);
+        } else {
+            com.merpyzf.transfermanager.entity.FileInfo transferFileInfo = FileInfoFactory.toTransferFileInfo(fileInfo);
+            App.addTransferFile(transferFileInfo);
+            // 将文件选择的事件回调给外部
+            FilesStatusObservable.getInstance().notifyObservers(transferFileInfo, TAG, FilesStatusObservable.FILE_SELECTED);
+        }
+        mAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onDestroy() {
+        FilesStatusObservable.getInstance().remove(TAG);
+        super.onDestroy();
     }
 }

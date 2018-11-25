@@ -1,5 +1,7 @@
 package com.merpyzf.xmshare.util;
 
+import android.text.TextUtils;
+
 import com.merpyzf.xmshare.R;
 
 import java.util.ArrayList;
@@ -11,6 +13,10 @@ public class FileTypeHelper {
     static ArrayList<String> sDocumentTypes;
     static ArrayList<String> sCompactTypes;
     static ArrayList<String> sPhotoTypes;
+    static ArrayList<String> sMusicTypes;
+    static ArrayList<String> sVideoTypes;
+
+
     static Map<String, Integer> sIcoResMap;
 
     static {
@@ -56,28 +62,75 @@ public class FileTypeHelper {
         sPhotoTypes.add("bmp");
         sPhotoTypes.add("webp");
 
+        //音乐文件类型
+        sMusicTypes = new ArrayList<>();
+        sMusicTypes.add("mp3");
+        sMusicTypes.add("amr");
+        sMusicTypes.add("wav");
+        sMusicTypes.add("midi");
+        sMusicTypes.add("wma");
+        sMusicTypes.add("aac");
+        sMusicTypes.add("flac");
+        sMusicTypes.add("ac3");
+        sMusicTypes.add("mmf");
+
+        // 视频文件类型
+        sVideoTypes = new ArrayList<>();
+        sVideoTypes.add("avi");
+        sVideoTypes.add("wmv");
+        sVideoTypes.add("mpeg");
+        sVideoTypes.add("mp4");
+        sVideoTypes.add("mov");
+        sVideoTypes.add("mkv");
+        sVideoTypes.add("flv");
+        sVideoTypes.add("f4v");
+        sVideoTypes.add("m4v");
+        sVideoTypes.add("rmvb");
+        sVideoTypes.add("rm");
+        sVideoTypes.add("3gp");
+        sVideoTypes.add("dat");
+        sVideoTypes.add("ts");
+        sVideoTypes.add("mts");
+        sVideoTypes.add("vob");
+
+
     }
 
     /**
      * 通过文件的后缀名获取ico的资源id
+     *
      * @param suffix
      * @return
      */
-    public static int getIcoResBySuffix(String suffix){
-        int otherFileIcoRes = R.drawable.ic_other;
-        Integer fileIcoRes = sIcoResMap.get(suffix);
-        if(fileIcoRes == null){
-            return otherFileIcoRes;
+    public static int getIcoResBySuffix(String suffix) {
+
+        if (TextUtils.equals("", suffix)) {
+            return R.drawable.ic_fm_other;
+        }
+        Integer fileIcoRes;
+        if (sDocumentTypes.contains(suffix)) {
+            fileIcoRes = R.drawable.ic_fm_document;
+        } else if (sCompactTypes.contains(suffix)) {
+            fileIcoRes = R.drawable.ic_fm_compact;
+        } else if (sVideoTypes.contains(suffix)) {
+            fileIcoRes = R.drawable.ic_fm_video;
+        } else if (sMusicTypes.contains(suffix)) {
+            fileIcoRes = R.drawable.ic_fm_music;
+        } else if ("ttf".equals(suffix)) {
+            fileIcoRes = R.drawable.ic_fm_ttf;
+        } else {
+            fileIcoRes = R.drawable.ic_fm_other;
         }
         return fileIcoRes;
     }
 
     /**
      * 根据文件的后缀判断是否是图片类型的文件
+     *
      * @param suffix
      * @return
      */
-    public static boolean isPhotoType(String suffix){
+    public static boolean isPhotoType(String suffix) {
         return sPhotoTypes.contains(suffix);
     }
 }
