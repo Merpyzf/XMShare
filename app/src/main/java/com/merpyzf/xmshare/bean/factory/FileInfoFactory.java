@@ -1,12 +1,17 @@
 package com.merpyzf.xmshare.bean.factory;
 
+import android.util.Log;
+
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.CompactFile;
 import com.merpyzf.transfermanager.entity.DocFile;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.StorageFile;
+import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.bean.model.LitepalFileInfo;
+import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
 
 import java.io.File;
@@ -58,9 +63,10 @@ public class FileInfoFactory {
     }
 
     public static BaseFileInfo toFileInfoType(File file, int fileType) {
-        BaseFileInfo fileInfo = new BaseFileInfo();
+        BaseFileInfo fileInfo = null;
         switch (fileType) {
             case BaseFileInfo.FILE_TYPE_APP:
+                fileInfo = new ApkFile();
                 fileInfo.setName(file.getName());
                 fileInfo.setPath(file.getPath());
                 fileInfo.setLength((int) file.length());
@@ -68,6 +74,7 @@ public class FileInfoFactory {
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
             case BaseFileInfo.FILE_TYPE_MUSIC:
+                fileInfo = new MusicFile();
                 fileInfo.setName(file.getName());
                 fileInfo.setPath(file.getPath());
                 fileInfo.setLength((int) file.length());
@@ -75,6 +82,7 @@ public class FileInfoFactory {
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
             case BaseFileInfo.FILE_TYPE_VIDEO:
+                fileInfo = new VideoFile();
                 fileInfo.setName(file.getName());
                 fileInfo.setLength((int) file.length());
                 fileInfo.setPath(file.getPath());
@@ -82,6 +90,7 @@ public class FileInfoFactory {
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
             case BaseFileInfo.FILE_TYPE_IMAGE:
+                fileInfo = new PicFile();
                 fileInfo.setName(file.getName());
                 fileInfo.setPath(file.getPath());
                 fileInfo.setLength((int) file.length());
@@ -89,6 +98,14 @@ public class FileInfoFactory {
                 fileInfo.setSuffix(FileUtils.getFileSuffix(file));
                 break;
             case BaseFileInfo.FILE_TYPE_STORAGE:
+                fileInfo = new StorageFile();
+                fileInfo.setName(file.getName());
+                fileInfo.setLength(file.length());
+                ((StorageFile) fileInfo).setPath(file.getPath());
+                String suffix = ((StorageFile) fileInfo).getSuffix();
+                Log.i("ww2k", "suffix: " + suffix);
+                ((StorageFile) fileInfo).setPhoto(FileTypeHelper.isPhotoType(suffix));
+                fileInfo.setType(BaseFileInfo.FILE_TYPE_STORAGE);
 
                 break;
             default:

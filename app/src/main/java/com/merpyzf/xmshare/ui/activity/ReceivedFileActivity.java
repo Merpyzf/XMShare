@@ -1,19 +1,13 @@
 package com.merpyzf.xmshare.ui.activity;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.xmshare.R;
@@ -22,10 +16,9 @@ import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
 import com.merpyzf.xmshare.ui.adapter.ReceivedFileAdapter;
-import com.merpyzf.xmshare.util.ApkUtils;
 import com.merpyzf.xmshare.util.AppUtils;
+import com.merpyzf.xmshare.util.FileUtils;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-import com.oushangfeng.pinnedsectionitemdecoration.callback.OnHeaderClickListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -97,7 +90,6 @@ public class ReceivedFileActivity extends BaseActivity {
     @Override
     protected void initRecyclerView() {
         super.initRecyclerView();
-
         mRecyclerView.addItemDecoration(new PinnedHeaderItemDecoration.Builder(BaseHeaderAdapter.TYPE_HEADER)
                 .setDividerId(R.drawable.divider).enableDivider(true).create());
         if (mFileType == BaseFileInfo.FILE_TYPE_IMAGE) {
@@ -111,10 +103,12 @@ public class ReceivedFileActivity extends BaseActivity {
     protected void initEvents() {
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
             PinnedHeaderEntity<BaseFileInfo> entity = (PinnedHeaderEntity<BaseFileInfo>) adapter.getItem(position);
-            BaseFileInfo fileInfo = entity.getData();
-            String path = fileInfo.getPath();
-            File file = new File(path);
-            AppUtils.installApk(mContext, file);
+            if (entity.getItemType() == BaseHeaderAdapter.TYPE_DATA) {
+                BaseFileInfo fileInfo = entity.getData();
+                String path = fileInfo.getPath();
+                File file = new File(path);
+                FileUtils.openFile(mContext, file);
+            }
         });
     }
 
@@ -141,16 +135,15 @@ public class ReceivedFileActivity extends BaseActivity {
                 receiveDir = FilePathManager.getSaveVideoDir();
                 break;
             case BaseFileInfo.FILE_TYPE_STORAGE:
+                receiveDir = FilePathManager.getSaveStorageDir();
                 break;
             default:
                 break;
-
 
         }
 
         Map<String, List<BaseFileInfo>> map = null;
         if (receiveDir != null) {
-
             File[] files = receiveDir.listFiles();
             map = new HashMap<>();
             for (File file : files) {
@@ -162,30 +155,23 @@ public class ReceivedFileActivity extends BaseActivity {
                     fileInfoList = new ArrayList<>();
                     fileInfoList.add(FileInfoFactory.toFileInfoType(file, mFileType));
                     map.put(strModifiedDate, fileInfoList);
-
                 } else {
                     fileInfoList.add(FileInfoFactory.toFileInfoType(file, mFileType));
                 }
             }
-
             List<String> tempKeyList = new ArrayList();
-
             for (String key : map.keySet()) {
                 tempKeyList.add(key.replace("-", "/"));
             }
-
             // 对map中的key的时间按照降序排列
             Collections.sort(tempKeyList, (o1, o2) -> {
-
                 long t1 = new Date(o1).getTime();
                 long t2 = new Date(o2).getTime();
-
                 if (t1 > t2) {
                     return -1;
                 } else {
                     return 1;
                 }
-
             });
             for (String key : tempKeyList) {
                 mFileInfoList.add(new PinnedHeaderEntity<>(null, BaseHeaderAdapter.TYPE_HEADER, key.replace("/", "-")));
@@ -193,15 +179,9 @@ public class ReceivedFileActivity extends BaseActivity {
                     // 可能需要按照时间顺序进行排序
                     mFileInfoList.add(new PinnedHeaderEntity<>(fileInfo, BaseHeaderAdapter.TYPE_DATA, key));
                 }
-
-
             }
-
-
         }
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

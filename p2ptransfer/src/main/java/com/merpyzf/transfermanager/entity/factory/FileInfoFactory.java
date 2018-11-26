@@ -81,7 +81,7 @@ public class FileInfoFactory {
                 storageFile.setType(BaseFileInfo.FILE_TYPE_STORAGE);
                 storageFile.setLength(fileInfo.getLength());
                 storageFile.setSuffix(fileInfo.getSuffix());
-                storageFile.setPath(FilePathManager.getSaveOtherDir().getPath() + File.separator +
+                storageFile.setPath(FilePathManager.getSaveStorageDir().getPath() + File.separator +
                         fileInfo.getName());
                 storageFile.setIsLast(fileInfo.getIsLast());
                 return storageFile;

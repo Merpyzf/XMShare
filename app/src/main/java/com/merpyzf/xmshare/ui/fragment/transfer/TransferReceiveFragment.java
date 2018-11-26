@@ -29,6 +29,9 @@ import java.util.List;
 import butterknife.BindView;
 
 
+/**
+ * @author wangke
+ */
 @SuppressLint("ValidFragment")
 public class TransferReceiveFragment extends BaseFragment {
 
@@ -93,31 +96,7 @@ public class TransferReceiveFragment extends BaseFragment {
         });
         mFileTransferAdapter.setOnItemClickListener((adapter, view, position) -> {
             BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
-            // -> 调用系统的组件播放
-            switch (fileInfo.getType()) {
-                case BaseFileInfo.FILE_TYPE_APP:
-                    if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
-                        File apkFile = new File(fileInfo.getPath());
-                        AppUtils.installApk(mContext, apkFile);
-                    } else {
-                        Toast.makeText(mContext, "请等待文件传输完毕后再点击安装", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                // 点击查看图片
-                case BaseFileInfo.FILE_TYPE_IMAGE:
-
-
-
-                    break;
-                // 点击播放音乐
-                case BaseFileInfo.FILE_TYPE_MUSIC:
-                    break;
-                // 点击播放视频
-                case BaseFileInfo.FILE_TYPE_VIDEO:
-                    break;
-                default:
-                    break;
-            }
+            com.merpyzf.xmshare.util.FileUtils.openFile(mContext, new File(fileInfo.getPath()));
         });
     }
 

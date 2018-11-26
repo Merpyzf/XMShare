@@ -131,6 +131,6 @@ public class FileTypeHelper {
      * @return
      */
     public static boolean isPhotoType(String suffix) {
-        return sPhotoTypes.contains(suffix);
+        return sPhotoTypes.contains(suffix.toLowerCase());
     }
 }
