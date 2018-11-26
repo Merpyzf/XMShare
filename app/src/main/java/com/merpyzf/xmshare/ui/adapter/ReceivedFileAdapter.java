@@ -1,6 +1,5 @@
 package com.merpyzf.xmshare.ui.adapter;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,7 +20,9 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Created by wangke on 2018/4/22.
+ *
+ * @author wangke
+ * @date 2018/4/22
  */
 
 public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<BaseFileInfo>> {

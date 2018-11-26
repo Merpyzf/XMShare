@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center_horizontal"
+        android:textSize="10sp"
         android:text="Design &amp; Develop by wangke"
         android:layout_marginBottom="8dp"
         android:textColor="#636060"

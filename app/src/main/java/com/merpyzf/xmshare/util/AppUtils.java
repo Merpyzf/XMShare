@@ -21,6 +21,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 
 import java.io.File;
 
@@ -44,7 +45,7 @@ public final class AppUtils {
      * @param context 上下文
      * @return 当前版本Code
      */
-    public static int getVerCode(Context context) {
+    public static int getVersionCode(Context context) {
         int verCode = -1;
         try {
             String packageName = context.getPackageName();
@@ -61,7 +62,7 @@ public final class AppUtils {
      * @param context 上下文
      * @return 当前版本信息
      */
-    public static String getVerName(Context context) {
+    public static String getVersionName(Context context) {
         String verName = "";
         try {
             String packageName = context.getPackageName();
@@ -79,19 +80,24 @@ public final class AppUtils {
      * @param file    APK文件
      */
     public static void installApk(Context context, File file) {
+        if (context == null || file == null) {
+            return;
+        }
         Intent intent = new Intent();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName()+".fileprovider", file);
+            String authority = "com.merpyzf.xmshare.receiver_provider";
+            Uri contentUri = FileProvider.getUriForFile(context, authority, file);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
         } else {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file),
                     "application/vnd.android.package-archive");
-            context.startActivity(intent);
+
         }
+        context.startActivity(intent);
     }
 
     /**
@@ -101,10 +107,22 @@ public final class AppUtils {
      * @param file    APK文件uri
      */
     public static void installApk(Context context, Uri file) {
+        if (context == null || file == null) {
+            return;
+        }
         Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(file, "application/vnd.android.package-archive");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            String authority = "com.merpyzf.xmshare.receiver_provider";
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(file, "application/vnd.android.package-archive");
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(file,
+                    "application/vnd.android.package-archive");
+
+        }
         context.startActivity(intent);
     }
 

@@ -1,6 +1,8 @@
 package com.merpyzf.xmshare.ui.activity;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.xmshare.R;
@@ -18,6 +22,8 @@ import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
 import com.merpyzf.xmshare.ui.adapter.ReceivedFileAdapter;
+import com.merpyzf.xmshare.util.ApkUtils;
+import com.merpyzf.xmshare.util.AppUtils;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 import com.oushangfeng.pinnedsectionitemdecoration.callback.OnHeaderClickListener;
 
@@ -34,6 +40,8 @@ import butterknife.BindView;
 
 /**
  * 浏览已接收到的文件
+ *
+ * @author wangke
  */
 public class ReceivedFileActivity extends BaseActivity {
 
@@ -91,41 +99,23 @@ public class ReceivedFileActivity extends BaseActivity {
         super.initRecyclerView();
 
         mRecyclerView.addItemDecoration(new PinnedHeaderItemDecoration.Builder(BaseHeaderAdapter.TYPE_HEADER)
-                .setDividerId(R.drawable.divider).enableDivider(true)
-                .setHeaderClickListener(new OnHeaderClickListener() {
-                    @Override
-                    public void onHeaderClick(View view, int id, int position) {
-
-                    }
-
-                    @Override
-                    public void onHeaderLongClick(View view, int id, int position) {
-
-                    }
-
-                    @Override
-                    public void onHeaderDoubleClick(View view, int id, int position) {
-
-                    }
-
-                }).create());
-
+                .setDividerId(R.drawable.divider).enableDivider(true).create());
         if (mFileType == BaseFileInfo.FILE_TYPE_IMAGE) {
-
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-
         } else {
-
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
         }
-
-
     }
 
     @Override
     protected void initEvents() {
-
+        mAdapter.setOnItemClickListener((adapter, view, position) -> {
+            PinnedHeaderEntity<BaseFileInfo> entity = (PinnedHeaderEntity<BaseFileInfo>) adapter.getItem(position);
+            BaseFileInfo fileInfo = entity.getData();
+            String path = fileInfo.getPath();
+            File file = new File(path);
+            AppUtils.installApk(mContext, file);
+        });
     }
 
     // TODO: 2018/8/7 fix: 缩短代码行数

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -84,6 +85,7 @@ public class TransferReceiveFragment extends BaseFragment {
                     showTransferDataSize();
                 }
             }
+
             @Override
             public void onTransferError(String error) {
 
@@ -95,13 +97,17 @@ public class TransferReceiveFragment extends BaseFragment {
             switch (fileInfo.getType()) {
                 case BaseFileInfo.FILE_TYPE_APP:
                     if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
-                        AppUtils.installApk(mContext, new File(Environment.getExternalStorageDirectory() + fileInfo.getPath()));
+                        File apkFile = new File(fileInfo.getPath());
+                        AppUtils.installApk(mContext, apkFile);
                     } else {
                         Toast.makeText(mContext, "请等待文件传输完毕后再点击安装", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 // 点击查看图片
                 case BaseFileInfo.FILE_TYPE_IMAGE:
+
+
+
                     break;
                 // 点击播放音乐
                 case BaseFileInfo.FILE_TYPE_MUSIC:
