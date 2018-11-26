@@ -1,5 +1,6 @@
 package com.merpyzf.xmshare.ui.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.SettingHelper;
 import com.merpyzf.xmshare.util.UiUtils;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -28,7 +30,7 @@ import static com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr;
  * 文件管理列表的适配器
  * @author wangke
  */
-public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHolder> {
+public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
 
     public FileManagerAdapter(int layoutResId, @Nullable List<StorageFile> data) {
         super(layoutResId, data);
@@ -74,5 +76,11 @@ public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHo
         } else {
             ivSelect.setImageResource(R.drawable.ic_arrow_right_p);
         }
+    }
+
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+        return String.valueOf(mData.get(position).getFirstLetter());
     }
 }
