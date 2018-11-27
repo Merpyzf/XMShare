@@ -26,6 +26,8 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
+import com.merpyzf.xmshare.db.AppDatabase;
+import com.merpyzf.xmshare.db.entity.FileCache;
 import com.merpyzf.xmshare.ui.adapter.SearchAdapter;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
 import com.merpyzf.xmshare.util.FileTypeHelper;
@@ -37,8 +39,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -114,6 +119,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
      */
     @SuppressLint("CheckResult")
     private void search(String searchContent) {
+
+        searchApp(searchContent);
         mSwipeRefresh.setRefreshing(true);
         clearLastSearchResults();
         Observable<List<BaseFileInfo>> searchObservable = searchFileInMediaStore(searchContent);
@@ -147,6 +154,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     String searchContent = mEdtSearch.getText().toString();
                     if (TextUtils.isEmpty(searchContent)) {
                         ToastUtils.showShort(mContext, "请输入要查找的文件名称！");
+
                     } else {
                         search(searchContent);
                     }
@@ -292,28 +300,22 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private List<BaseFileInfo> getAllApk() {
+    @SuppressLint("CheckResult")
+    private List<BaseFileInfo> searchApp(String queryKey) {
 
-        String[] projection = new String[]{MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.MIME_TYPE};
-        // 查询语句的条件
-        String selection = MediaStore.Files.FileColumns.MIME_TYPE + "= ? ";
+        Observable.create((ObservableOnSubscribe<List<FileCache>>) emitter -> {
+            List<FileCache> apps = AppDatabase
+                    .getInstance(mContext)
+                    .getFileCacheDao()
+                    .queryLike(queryKey);
+            emitter.onNext(apps);
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(fileCaches -> {
 
-        // 查询语句的参数值
-        String[] selectionArgs = new String[]{
-                //doc
-                "application/vnd.android.package-archive",
-        };
+                });
 
-        ContentResolver mContentResolver = mContext.getContentResolver();
-        // 第二个参数为要查询的属性
-        // 第三个参数为查询条件
-        //
-        Cursor cursor = mContentResolver.query(MediaStore.Files.getContentUri("external"), projection, selection, selectionArgs, null);
-        while (cursor.moveToNext()) {
-            String title = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.TITLE));
-            String data = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-            Log.i("WW2k", "data: " + data);
-        }
 
         return null;
 

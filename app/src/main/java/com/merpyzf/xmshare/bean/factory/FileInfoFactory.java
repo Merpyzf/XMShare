@@ -4,13 +4,10 @@ import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
-import com.merpyzf.transfermanager.entity.CompactFile;
-import com.merpyzf.transfermanager.entity.DocFile;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
-import com.merpyzf.xmshare.bean.model.LitepalFileInfo;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
 
@@ -25,42 +22,6 @@ import java.util.List;
 
 public class FileInfoFactory {
 
-
-    public static BaseFileInfo toTransferFileInfo(com.merpyzf.xmshare.bean.FileInfo f) {
-        BaseFileInfo fileInfo = new BaseFileInfo();
-        fileInfo.setType(BaseFileInfo.FILE_TYPE_STORAGE);
-        fileInfo.setName(f.getName());
-        fileInfo.setPath(f.getPath());
-        fileInfo.setLength(f.getSize());
-        fileInfo.setSuffix(f.getSuffix());
-        return fileInfo;
-    }
-
-    public static List<BaseFileInfo> toFileInfoList(List<LitepalFileInfo> litepalFileInfos) {
-        List<BaseFileInfo> fileInfoList = new ArrayList<>();
-        for (LitepalFileInfo litepalFileInfo : litepalFileInfos) {
-            fileInfoList.add(toFileInfoType(litepalFileInfo));
-        }
-        return fileInfoList;
-    }
-
-    public static List<LitepalFileInfo> toLitepalFileInfoList(List<BaseFileInfo> fileInfos) {
-        List<LitepalFileInfo> litepalFileInfoList = new ArrayList<>();
-        for (BaseFileInfo fileInfo : fileInfos) {
-            litepalFileInfoList.add(toLitepalFileInfoType(fileInfo));
-        }
-        return litepalFileInfoList;
-    }
-
-    public static BaseFileInfo toFileInfoType(LitepalFileInfo litepalFileInfo) {
-        BaseFileInfo fileInfo = new BaseFileInfo();
-        fileInfo.setName(litepalFileInfo.getName());
-        fileInfo.setPath(litepalFileInfo.getPath());
-        fileInfo.setSuffix(litepalFileInfo.getSuffix());
-        fileInfo.setLength(litepalFileInfo.getLength());
-        fileInfo.setType(litepalFileInfo.getType());
-        return fileInfo;
-    }
 
     public static BaseFileInfo toFileInfoType(File file, int fileType) {
         BaseFileInfo fileInfo = null;
@@ -112,46 +73,6 @@ public class FileInfoFactory {
                 break;
         }
         return fileInfo;
-    }
-
-    public static LitepalFileInfo toLitepalFileInfoType(BaseFileInfo fileInfo) {
-        LitepalFileInfo litepalFileInfo = new LitepalFileInfo();
-        litepalFileInfo.setName(fileInfo.getName());
-        litepalFileInfo.setPath(fileInfo.getPath());
-        litepalFileInfo.setLength(fileInfo.getLength());
-        litepalFileInfo.setSuffix(fileInfo.getSuffix());
-        litepalFileInfo.setType(fileInfo.getType());
-        return litepalFileInfo;
-    }
-
-    public static ApkFile toApkFileType(LitepalFileInfo litepalFileInfo) {
-        ApkFile apkFile = new ApkFile();
-        apkFile.setName(litepalFileInfo.getName());
-        apkFile.setPath(litepalFileInfo.getPath());
-        apkFile.setSuffix(litepalFileInfo.getSuffix());
-        apkFile.setLength(litepalFileInfo.getLength());
-        apkFile.setType(litepalFileInfo.getType());
-        return apkFile;
-    }
-
-    public static CompactFile toCompactFileType(LitepalFileInfo litepalFileInfo) {
-        CompactFile compactFile = new CompactFile();
-        compactFile.setName(litepalFileInfo.getName());
-        compactFile.setPath(litepalFileInfo.getPath());
-        compactFile.setSuffix(litepalFileInfo.getSuffix());
-        compactFile.setLength(litepalFileInfo.getLength());
-        compactFile.setType(litepalFileInfo.getType());
-        return compactFile;
-    }
-
-    public static DocFile toDocFileType(LitepalFileInfo litepalFileInfo) {
-        DocFile docFile = new DocFile();
-        docFile.setName(litepalFileInfo.getName());
-        docFile.setPath(litepalFileInfo.getPath());
-        docFile.setSuffix(litepalFileInfo.getSuffix());
-        docFile.setLength(litepalFileInfo.getLength());
-        docFile.setType(litepalFileInfo.getType());
-        return docFile;
     }
 
     /**

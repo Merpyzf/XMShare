@@ -23,6 +23,7 @@ import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.ApkUtils;
+import com.merpyzf.xmshare.util.CacheUtils;
 import com.merpyzf.xmshare.util.CollectionUtils;
 import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
@@ -175,6 +176,8 @@ public class FileListFragment extends BaseFragment {
                 observable = observable.compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW));
                 if (mLoadFileType == FILE_TYPE_APP) {
                     observable.subscribe((Consumer<List<ApkFile>>) appFiles -> {
+                        // 缓存设备中的应用信息到本地数据库，以便于用户查询
+                        CacheUtils.cacheAppInfo(mContext, appFiles);
                         mFileLists.addAll(appFiles);
                         CollectionUtils.shortingByFirstCase(mFileLists);
                         updateTitle(Const.PAGE_APP_TITLE);

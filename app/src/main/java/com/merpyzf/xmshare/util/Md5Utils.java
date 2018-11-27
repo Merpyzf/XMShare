@@ -123,28 +123,25 @@ public class Md5Utils {
      */
     public static void asyncGenerateFileMd5(List<BaseFileInfo> fileList) {
 
-
         List<BaseFileInfo> copyFileInfos = new ArrayList<>();
-
         copyFileInfos.addAll(fileList);
 
-
-        Observable.fromIterable(copyFileInfos)
-                .filter(fileInfo -> {
-                    int count = FileMd5Model.where("filename = ?", fileInfo.getPath()).count(FileMd5Model.class);
-                    if (count == 1) {
-                        return false;
-                    }
-                    return true;
-                }).subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(fileInfo -> {
-                    String md5 = Md5Utils.getMd5(new File(fileInfo.getPath()));
-                    FileMd5Model fileMd5Model = new FileMd5Model();
-                    fileMd5Model.setFileName(fileInfo.getPath());
-                    fileMd5Model.setMd5(md5);
-                    fileMd5Model.save();
-                });
+        //Observable.fromIterable(copyFileInfos)
+        //        .filter(fileInfo -> {
+        //            int count = FileMd5Model.where("filename = ?", fileInfo.getPath()).count(FileMd5Model.class);
+        //            if (count == 1) {
+        //                return false;
+        //            }
+        //            return true;
+        //        }).subscribeOn(Schedulers.io())
+        //        .observeOn(Schedulers.io())
+        //        .subscribe(fileInfo -> {
+        //            String md5 = Md5Utils.getMd5(new File(fileInfo.getPath()));
+        //            FileMd5Model fileMd5Model = new FileMd5Model();
+        //            fileMd5Model.setFileName(fileInfo.getPath());
+        //            fileMd5Model.setMd5(md5);
+        //            fileMd5Model.save();
+        //        });
 
 
     }

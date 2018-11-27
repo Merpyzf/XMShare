@@ -19,6 +19,8 @@ import com.merpyzf.transfermanager.util.CloseUtils;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.db.AppDatabase;
+import com.merpyzf.xmshare.db.entity.FileCache;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -148,7 +150,6 @@ public class ApkUtils {
      */
     @SuppressLint("CheckResult")
     public static void asyncCacheApkIco(Context context, List<ApkFile> apkList) {
-
 
 
         Observable.fromIterable(apkList)

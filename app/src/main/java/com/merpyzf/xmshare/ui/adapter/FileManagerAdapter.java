@@ -2,8 +2,6 @@ package com.merpyzf.xmshare.ui.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -13,15 +11,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.bean.FileInfo;
 import com.merpyzf.xmshare.util.FileTypeHelper;
-import com.merpyzf.xmshare.util.FileUtils;
-import com.merpyzf.xmshare.util.SettingHelper;
-import com.merpyzf.xmshare.util.UiUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.util.List;
 
 import static com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr;

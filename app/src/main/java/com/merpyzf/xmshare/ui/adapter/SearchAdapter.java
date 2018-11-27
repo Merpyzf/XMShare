@@ -17,6 +17,7 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FilePathManager;
 import com.merpyzf.transfermanager.util.FormatUtils;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.UiUtils;
@@ -46,6 +47,7 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
     protected void convert(BaseViewHolder helper, BaseFileInfo item) {
         helper.setText(R.id.tv_title, item.getName());
         ImageView ivFileType = helper.getView(R.id.iv_file_type);
+        ImageView ivSelect = helper.getView(R.id.iv_select);
         ImageView iv = helper.getView(R.id.iv_file_thumb);
         if (item instanceof PicFile) {
             GifImageView gifIv = helper.getView(R.id.gif_file_thumb);
@@ -102,5 +104,11 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
         helper.setText(R.id.tv_title, item.getName() + "." + item.getSuffix());
         String[] sizeStrArray = com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr(item.getLength());
         helper.setText(R.id.tv_size, sizeStrArray[0] + "" + sizeStrArray[1]);
+        if (App.isContain(item)) {
+            ivSelect.setVisibility(View.VISIBLE);
+        } else {
+            ivSelect.setVisibility(View.INVISIBLE);
+        }
+
     }
 }
