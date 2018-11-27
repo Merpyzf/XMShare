@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
@@ -39,11 +40,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -61,7 +59,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     EditText mEdtSearch;
     @BindView(R.id.rv_filelist)
     RecyclerView mRvFileList;
-    private final List<BaseFileInfo> mSearchFiles = new ArrayList<>();
+    private volatile List<BaseFileInfo> mSearchFiles = new ArrayList<>();
     private SearchAdapter mSearchAdapter;
 
     @Override
@@ -119,11 +117,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
      */
     @SuppressLint("CheckResult")
     private void search(String searchContent) {
-
-        searchApp(searchContent);
         mSwipeRefresh.setRefreshing(true);
         clearLastSearchResults();
-        Observable<List<BaseFileInfo>> searchObservable = searchFileInMediaStore(searchContent);
+        Observable<List<BaseFileInfo>> searchObservable = searchMultipleTypeFile(searchContent);
         searchObservable.subscribe(files -> {
             if (files.size() == 0) {
                 ToastUtils.showShort(mContext, "主人,没能找到您要查找的文件!");
@@ -169,16 +165,15 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
 
     @SuppressLint("CheckResult")
-    private Observable<List<BaseFileInfo>> searchFileInMediaStore(String key) {
+    private Observable<List<BaseFileInfo>> searchMultipleTypeFile(String key) {
         String selection = buildSelectionByArgs(Const.MIME_TYPES);
         selection += "and (" + MediaStore.Files.FileColumns.TITLE + " like " + "\"%" + key + "%\" )";
         List<BaseFileInfo> searchFiles = new ArrayList<>();
-
-        // 从本地数据库缓存中搜索Apk文件，同步执行
-
-
         Observable<List<BaseFileInfo>> searchObservable = Observable.just(selection)
                 .flatMap((Function<String, ObservableSource<List<BaseFileInfo>>>) selection1 -> {
+                    // 搜索应用
+                    List<ApkFile> apps = searchApp(key);
+                    searchFiles.addAll(apps);
                     ContentResolver mContentResolver = mContext.getContentResolver();
                     Cursor cursor = mContentResolver.query(MediaStore.Files.getContentUri("external"), null, selection1, Const.MIME_TYPES, null);
                     while (cursor.moveToNext()) {
@@ -301,24 +296,20 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @SuppressLint("CheckResult")
-    private List<BaseFileInfo> searchApp(String queryKey) {
-
-        Observable.create((ObservableOnSubscribe<List<FileCache>>) emitter -> {
-            List<FileCache> apps = AppDatabase
-                    .getInstance(mContext)
-                    .getFileCacheDao()
-                    .queryLike(queryKey);
-            emitter.onNext(apps);
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(fileCaches -> {
-
-                });
-
-
-        return null;
-
-
+    private List<ApkFile> searchApp(String queryKey) {
+        final List<ApkFile> appList = new ArrayList<>();
+        List<FileCache> apps = AppDatabase
+                .getInstance(mContext)
+                .getFileCacheDao()
+                .queryLike(queryKey);
+        for (FileCache app : apps) {
+            ApkFile appFile = new ApkFile();
+            appFile.setName(app.getName());
+            appFile.setPath(app.getPath());
+            appFile.setLength(new File(app.getPath()).length());
+            appFile.setType(BaseFileInfo.FILE_TYPE_APP);
+            appList.add(appFile);
+        }
+        return appList;
     }
 }

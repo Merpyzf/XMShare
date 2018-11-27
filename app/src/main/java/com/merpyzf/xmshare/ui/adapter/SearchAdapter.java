@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
@@ -69,7 +70,6 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
                         .load(picFile.getPath())
                         .error(UiUtils.getPlaceHolder(picFile.getType()))
                         .placeholder(UiUtils.getPlaceHolder(picFile.getType()))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .centerCrop()
                         .into(iv);
             }
@@ -79,9 +79,8 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
             File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(videoFile.getName());
             Glide.with(mContext)
                     .load(videoThumb)
-                    .placeholder(R.drawable.ic_holder_video)
-                    .error(R.drawable.ic_holder_video)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .error(UiUtils.getPlaceHolder(videoFile.getType()))
+                    .placeholder(UiUtils.getPlaceHolder(videoFile.getType()))
                     .dontAnimate()
                     .centerCrop()
                     .into(iv);
@@ -89,16 +88,25 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;
             File albumFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
-            //设置封面图片
             Glide.with(mContext)
                     .load(albumFile)
                     .dontAnimate()
                     .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .placeholder(R.drawable.ic_holder_album_art)
-                    .error(R.drawable.ic_holder_album_art)
+                    .error(UiUtils.getPlaceHolder(musicFile.getType()))
+                    .placeholder(UiUtils.getPlaceHolder(musicFile.getType()))
                     .into(iv);
             ivFileType.setImageResource(R.drawable.ic_type_audio);
+        } else if (item instanceof ApkFile) {
+            ApkFile apkFile = (ApkFile) item;
+            File thumbFile = FilePathManager.getLocalAppThumbCacheFile(apkFile.getName());
+            Glide.with(mContext)
+                    .load(thumbFile)
+                    .dontAnimate()
+                    .centerCrop()
+                    .error(UiUtils.getPlaceHolder(apkFile.getType()))
+                    .placeholder(UiUtils.getPlaceHolder(apkFile.getType()))
+                    .into(iv);
+            ivFileType.setImageResource(R.drawable.ic_type_app);
         }
 
         helper.setText(R.id.tv_title, item.getName() + "." + item.getSuffix());

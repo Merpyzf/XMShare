@@ -44,7 +44,7 @@ public class FileUtils {
      * @return 当获取不到时返回 ""
      */
     public static String getFileSuffix(String filePath) {
-        int index = filePath.indexOf('.');
+        int index = filePath.lastIndexOf(".");
         if (index == -1) {
             return "";
         } else {
