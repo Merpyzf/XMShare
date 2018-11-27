@@ -41,8 +41,6 @@ public class ExampleInstrumentedTest {
             String fileItem = fileItemTemplate.replace("{file_name}", "这是一个文件名")
                     .replace("{file_path}", "这是一个文件路径")
                     .replace("{file_size}", "文件大小");
-            System.out.println(fileItem);
-
         } catch (IOException e) {
             e.printStackTrace();
         }

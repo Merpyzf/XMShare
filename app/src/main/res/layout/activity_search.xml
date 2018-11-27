@@ -33,13 +33,16 @@
                 android:layout_width="0dp"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:hint="输入要查找的文件名称"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:singleLine="true"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
                 android:textSize="14dp"
-
+                android:theme="@style/SearchEditTextTheme"
                 />
 
         </LinearLayout>
@@ -47,8 +50,14 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_filelist"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_filelist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

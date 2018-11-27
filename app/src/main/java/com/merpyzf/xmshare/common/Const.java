@@ -127,10 +127,37 @@ public class Const {
         FILE_COMPACT_TYPES.add("iso");
 
         // 图片文件类型
-
-
-
     }
 
+    public static String[] MIME_TYPES = new String[]{
+            // image
+            "image/png",
+            "image/gif",
+            "image/jpeg",
+            "image/jpeg",
+            "image/bmp",
+            // audio
+            "audio/x-mpeg",
+            "audio/mp3",
+            "audio/wav",
+            "audio/x-ogg",
+            "audio/mid",
+            "audio/midi",
+            "audio/x-mpegurl",
+            "audio/mp4a-latm",
+            "audio/mpeg",
+            "audio/x-ms-wma",
+            //video
+            "video/mpeg",
+            "video/3gpp",
+            "video/x-ms-asf",
+            "video/x-msvideo",
+            "video/vnd.mpegurl",
+            "video/x-m4v",
+            "video/quicktime",
+            "video/mp4",
+            "video/*",
+
+    };
 
 }

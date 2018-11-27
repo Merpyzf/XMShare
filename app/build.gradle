@@ -109,5 +109,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     // 文字转拼音工具
     implementation 'com.github.promeg:tinypinyin:2.0.3'
-
+    // room
+    implementation 'android.arch.persistence.room:runtime:1.0.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
 }

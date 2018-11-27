@@ -312,9 +312,6 @@ public class BaseFileInfo extends DataSupport implements Serializable {
         //通过文件所处的路径和文件的带下来判断两者是否是同一个对象
         if (obj instanceof BaseFileInfo) {
             BaseFileInfo fileInfo = (BaseFileInfo) obj;
-            System.out.println("path" + fileInfo.getPath());
-            System.out.println("length" + fileInfo.getLength());
-
             if (fileInfo.getPath().equals(this.path) && fileInfo.getLength() == this.getLength()) {
                 return true;
             } else {

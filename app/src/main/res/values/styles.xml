@@ -13,9 +13,15 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+    
+    <style name="SearchEditTextTheme" parent="Theme.AppCompat.Light">
 
+        <item name="colorControlActivated">@color/white_alpha_80</item>
+
+    </style>
+    
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
+    
 </resources>

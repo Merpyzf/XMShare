@@ -22,9 +22,9 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * description: 照片操作相关的工具类
- * author: wangke
  * date: 2018/8/18.
  * version: 1.0.0
+ * @author wangke
  */
 public class PhotoUtils {
 

@@ -2,28 +2,23 @@ package com.merpyzf.xmshare.ui.fragment.filemanager;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.github.promeg.pinyinhelper.Pinyin;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.bean.FileInfo;
-import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
 import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.observer.FilesStatusObserver;
 import com.merpyzf.xmshare.ui.adapter.FileManagerAdapter;
 import com.merpyzf.xmshare.ui.fragment.FunctionListFragment;
-import com.merpyzf.xmshare.ui.widget.DirItemDecotation;
 import com.merpyzf.xmshare.ui.widget.IndicatorChangedCallback;
+import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
 import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 import com.merpyzf.xmshare.util.FileTypeHelper;
@@ -32,7 +27,6 @@ import com.merpyzf.xmshare.util.SettingHelper;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,9 +36,6 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.merpyzf.xmshare.util.UiUtils.getRecyclerViewLastPosition;
@@ -86,7 +77,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         mSelectIndicator.addIndicator(new Indicator(mVolumeName, mRootPath));
         mLayoutManager = new LinearLayoutManager(mContext);
         mRvFileList.setLayoutManager(mLayoutManager);
-        mRvFileList.addItemDecoration(new DirItemDecotation());
+        mRvFileList.addItemDecoration(new RecyclerViewDivider(mContext, LinearLayoutManager.VERTICAL));
         mFileList = new ArrayList<>();
         mAdapter = new FileManagerAdapter(R.layout.item_fileinfo, mFileList);
         View emptyView = View.inflate(mContext, R.layout.view_rv_file_empty, null);

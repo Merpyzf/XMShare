@@ -79,7 +79,7 @@ public class ShowPhotosFragment extends BaseFragment {
             if (tempMap.keySet().contains(date)) {
                 tempMap.get(date).add(fileInfo);
             } else {
-                ArrayList<BaseFileInfo> fileInfos = new ArrayList<>();
+                    ArrayList<BaseFileInfo> fileInfos = new ArrayList<>();
                 fileInfos.add(fileInfo);
                 tempMap.put(date, fileInfos);
             }

@@ -37,6 +37,7 @@ public class FileUtils {
         sMimeTypeMap.put("asf", "video/x-ms-asf");
         sMimeTypeMap.put("avi", "video/x-msvideo");
         sMimeTypeMap.put("bin", "application/octet-stream");
+        sMimeTypeMap.put("bin", "application/octet-stream");
         sMimeTypeMap.put("bmp", "image/bmp");
         sMimeTypeMap.put("c", "text/plain");
         sMimeTypeMap.put("conf", "text/plain");

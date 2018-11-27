@@ -93,7 +93,7 @@ public class VideoUtils {
                     try {
                         File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(fileName);
                         boolean isContain = FileUtils.isContain(videoThumb.getParentFile(), videoThumb.getName());
-                        if(!isContain) {
+                        if (!isContain) {
                             bos = new BufferedOutputStream(new FileOutputStream(videoThumb));
                             if (bitmap == null) {
                                 bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_holder_video);
@@ -131,16 +131,17 @@ public class VideoUtils {
                     data.moveToFirst();
                     while (data.moveToNext()) {
                         VideoFile videoFile = new VideoFile();
-                        int length = (int) data.getLong(data.getColumnIndex(MediaStore.Video.Media.SIZE));
+                        long length = data.getLong(data.getColumnIndex(MediaStore.Video.Media.SIZE));
                         String path = data.getString(data.getColumnIndex(MediaStore.Video.Media.DATA));
-                        videoFile.setAlbumId(data.getString(data.getColumnIndex(MediaStore.Video.Media._ID)));
-                        videoFile.setName(data.getString(data.getColumnIndex(MediaStore.Video.Media.TITLE)));
+                        String albumId = data.getString(data.getColumnIndex(MediaStore.Video.Media._ID));
+                        String title = data.getString(data.getColumnIndex(MediaStore.Video.Media.TITLE));
+                        long duration = data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION));
+                        videoFile.setDuration(duration);
+                        videoFile.setName(title);
+                        videoFile.setAlbumId(albumId);
                         videoFile.setPath(path);
                         videoFile.setLength(length);
-                        videoFile.setDuration(data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION)));
                         // 设置文件后缀
-                        videoFile.setSuffix(FileUtils.getFileSuffix(path));
-                        // 设置文件类型
                         videoFile.setType(FILE_TYPE_VIDEO);
                         // 筛选大于1MB的文件
                         if (length > 1024 * 1024) {

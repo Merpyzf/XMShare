@@ -56,16 +56,11 @@ public abstract class FileLoadManager implements LoaderManager.LoaderCallbacks<C
         if (id == FILE_TYPE_MUSIC) {
             uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             projections = new String[]{
-                    //音乐名
                     MediaStore.Audio.Media.TITLE,
-                    // 艺术家
                     MediaStore.Audio.Media.ARTIST,
-                    //音乐文件所在路径
                     MediaStore.Audio.Media.DATA,
-                    // 音乐封面Id
                     MediaStore.Audio.Media.ALBUM_ID,
                     MediaStore.Audio.Media.SIZE,
-                    //音乐时长
                     MediaStore.Audio.Media.DURATION
             };
             return new CursorLoader(mContext, uri, projections, null, null, MediaStore.Audio.Media.DATE_ADDED + " DESC");

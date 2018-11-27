@@ -10,9 +10,9 @@ import com.merpyzf.xmshare.R;
 
 /**
  * description: 自定义带搜索和清除图标的EditText
- * author: wangke
  * date: 2018/8/21.
  * version:1.0
+ * @author wangke
  */
 public class SearchEditText extends AppCompatEditText {
 
@@ -74,12 +74,10 @@ public class SearchEditText extends AppCompatEditText {
     }
 
 
-
     private void setClearIcoVisible(boolean visible) {
         mClearIsVisible = visible;
         setCompoundDrawables(mSearchDrawable, null, visible ? mClearDrawable : null, null);
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

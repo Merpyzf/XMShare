@@ -76,8 +76,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             long albumId = musicFile.getAlbumId();
 
             helper.setText(R.id.tv_title, musicFile.getName());
-            helper.setText(R.id.tv_artist, musicFile.getArtist());
-            helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
+            helper.setText(R.id.tv_info, musicFile.getArtist() + " " + FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
             LinearLayout llBottom = helper.getView(R.id.ll_music_bottom);
             File albumFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
             ImageView imageView = helper.getView(R.id.iv_cover);
@@ -112,25 +111,20 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
 
         } else if (item instanceof PicFile) {
-
             ImageView iv = helper.getView(R.id.iv_cover);
             GifImageView gifIv = helper.getView(R.id.gif_iv);
 
             PicFile picFile = (PicFile) item;
-
             String suffix = picFile.getSuffix();
             if ("gif".equals(suffix.toLowerCase())) {
-
                 iv.setVisibility(View.INVISIBLE);
                 gifIv.setVisibility(View.VISIBLE);
-
                 try {
                     GifDrawable gifDrawable = new GifDrawable(picFile.getPath());
                     gifIv.setImageDrawable(gifDrawable);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             } else {
                 iv.setVisibility(View.VISIBLE);
                 gifIv.setVisibility(View.INVISIBLE);
@@ -152,11 +146,12 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                 AnimationUtils.zoomInCover(iv, 0);
             }
         } else if (item instanceof VideoFile) {
+
             VideoFile videoFile = (VideoFile) item;
             String videoName = videoFile.getName();
             helper.setText(R.id.tv_title, videoName);
-            helper.setText(R.id.tv_size, " " + FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
-            helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
+            helper.setText(R.id.tv_info, FormatUtils.convertMS2Str(videoFile.getDuration()) + " " + FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
+
             LinearLayout llBottom = helper.getView(R.id.ll_video_bottom);
             ImageView ivVideoThumb = helper.getView(R.id.iv_cover);
             File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(videoName);
