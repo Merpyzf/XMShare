@@ -110,7 +110,6 @@ public class VideoUtils {
 
     private static synchronized boolean isContain(File parent, VideoFile videoFile) {
         String[] thumbs = parent.list();
-
         for (int i = 0; i < thumbs.length; i++) {
             if (Md5Utils.getMd5(videoFile.getPath()).equals(thumbs[i])) {
                 return true;

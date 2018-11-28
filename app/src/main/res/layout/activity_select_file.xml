@@ -78,8 +78,8 @@
                         android:layout_height="38dp"
                         android:padding="5dp"
                         android:src="@drawable/ic_action_search"
+                        android:background="@drawable/card_foreground"
                         android:tint="@color/white" />
-
 
                 </LinearLayout>
 

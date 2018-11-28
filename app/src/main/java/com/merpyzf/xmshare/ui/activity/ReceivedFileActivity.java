@@ -169,6 +169,8 @@ public class ReceivedFileActivity extends BaseActivity {
                 long t2 = new Date(o2).getTime();
                 if (t1 > t2) {
                     return -1;
+                } else if (t1 == t2) {
+                    return 0;
                 } else {
                     return 1;
                 }

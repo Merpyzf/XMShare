@@ -26,6 +26,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"
                 android:src="@drawable/ic_arrow_back"
+                android:background="@drawable/card_foreground"
                 android:tint="@color/white" />
 
             <com.merpyzf.xmshare.ui.widget.SearchEditText

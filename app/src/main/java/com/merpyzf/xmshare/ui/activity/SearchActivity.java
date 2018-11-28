@@ -33,6 +33,8 @@ import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.db.AppDatabase;
 import com.merpyzf.xmshare.db.entity.FileCache;
+import com.merpyzf.xmshare.observer.FilesStatusObservable;
+import com.merpyzf.xmshare.observer.FilesStatusObserver;
 import com.merpyzf.xmshare.ui.adapter.SearchAdapter;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
 import com.merpyzf.xmshare.util.FileTypeHelper;
@@ -67,6 +69,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     RecyclerView mRvFileList;
     private volatile List<BaseFileInfo> mSearchFiles = new ArrayList<>();
     private SearchAdapter mSearchAdapter;
+    private static final String TAG = SearchActivity.class.getSimpleName();
 
     @Override
     protected int getContentLayoutId() {
@@ -325,5 +328,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
         App.addTransferFile(fileInfo);
         mSearchAdapter.notifyItemChanged(position);
+        FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG,
+                FilesStatusObservable.FILE_SELECTED);
     }
 }

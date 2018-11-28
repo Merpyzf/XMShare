@@ -20,16 +20,15 @@
 
             <FrameLayout
                 android:id="@+id/fl_container"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="5dp"
-
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 >
 
                 <ImageView
                     android:id="@+id/iv_file_thumb"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:padding="10dp"
                     android:layout_gravity="center"
                     android:scaleType="centerInside"
                     />
@@ -37,10 +36,11 @@
 
                 <pl.droidsonroids.gif.GifImageView
                     android:id="@+id/gif_file_thumb"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:padding="10dp"
                     android:layout_gravity="center"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerInside" />
 
             </FrameLayout>
 

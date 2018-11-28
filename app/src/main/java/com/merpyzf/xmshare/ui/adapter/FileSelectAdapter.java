@@ -52,7 +52,14 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
         // 应用
         if (item instanceof ApkFile) {
             ApkFile apkFile = (ApkFile) item;
-            imageView.setImageDrawable(apkFile.getApkDrawable());
+            File appThumb = FilePathManager.getLocalAppThumbCacheFile(apkFile.getName());
+            Glide.with(mContext)
+                    .load(appThumb)
+                    .placeholder(UiUtils.getPlaceHolder(apkFile.getType()))
+                    .error(UiUtils.getPlaceHolder(apkFile.getType()))
+                    .crossFade()
+                    .centerCrop()
+                    .into(imageView);
             //    音乐
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;

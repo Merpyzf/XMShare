@@ -83,7 +83,6 @@ public class PhotoDirBean implements Serializable {
 
         List<BaseFileInfo> imageList = new ArrayList<>();
         for (File image : images) {
-
             PicFile picFile = new PicFile();
             picFile.setPath(image.getPath());
             picFile.setName(image.getName());
@@ -94,15 +93,14 @@ public class PhotoDirBean implements Serializable {
         }
 
         Collections.sort(imageList, (o1, o2) -> {
-
             File file1 = new File(o1.getPath());
             File file2 = new File(o2.getPath());
-
             if (file1.lastModified() > file2.lastModified()) {
-
                 return -1;
-            } else {
+            } else if (file1.lastModified() < file2.lastModified()) {
                 return 1;
+            } else {
+                return 0;
             }
         });
 

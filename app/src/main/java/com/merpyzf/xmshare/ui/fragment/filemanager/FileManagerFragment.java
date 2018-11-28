@@ -202,16 +202,17 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                                 return 1;
                             } else if (o1.getFirstLetter() < o2.getFirstLetter()) {
                                 return -1;
+                            } else {
+                                return 0;
                             }
-                            return 0;
                         });
                         Collections.sort(tempFiles, (o1, o2) -> {
                             if (o1.getFirstLetter() > o2.getFirstLetter()) {
                                 return 1;
-                            } else if (o1.getFirstLetter() == o2.getFirstLetter()) {
-                                return 0;
-                            } else {
+                            } else if (o1.getFirstLetter() < o2.getFirstLetter()) {
                                 return -1;
+                            } else {
+                                return 0;
                             }
                         });
                         // 按照文件夹在前文件在后的顺序添加到集合中去
