@@ -2,7 +2,9 @@ package com.merpyzf.xmshare.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
@@ -33,6 +36,8 @@ import com.merpyzf.xmshare.ui.adapter.SearchAdapter;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.ToastUtils;
+
+import net.qiujuer.genius.res.Resource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +55,7 @@ import io.reactivex.schedulers.Schedulers;
  *
  * @author wangke
  */
-public class SearchActivity extends BaseActivity implements View.OnClickListener, TextView.OnEditorActionListener {
+public class SearchActivity extends BaseActivity implements View.OnClickListener, TextView.OnEditorActionListener, BaseQuickAdapter.OnItemClickListener {
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.iv_back)
@@ -77,13 +82,14 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         mSearchAdapter = new SearchAdapter(R.layout.item_rv_search, mSearchFiles);
         mRvFileList.setAdapter(mSearchAdapter);
         mSwipeRefresh.setEnabled(false);
+        mSwipeRefresh.setColorSchemeColors(Resource.Color.ORANGE, Resource.Color.BLUE, Resource.Color.GREY);
     }
 
     @Override
     protected void initEvents() {
         mIvBack.setOnClickListener(this);
         mEdtSearch.setOnEditorActionListener(this);
-
+        mSearchAdapter.setOnItemClickListener(this);
     }
 
     @Override
@@ -311,5 +317,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             appList.add(appFile);
         }
         return appList;
+    }
+
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+
+
+
     }
 }

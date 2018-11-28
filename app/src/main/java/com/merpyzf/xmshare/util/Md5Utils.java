@@ -146,22 +146,22 @@ public class Md5Utils {
 
     }
 
-    /**
-     * 从数据库中获取根据文件计算出的md5值
-     *
-     * @param fileInfo
-     * @return
-     */
-    public static String getFileMd5(BaseFileInfo fileInfo) {
-        Cursor cursor = FileMd5Model.findBySQL("select *from filemd5model where filename = ?", fileInfo.getPath());
-        if (cursor.getCount() == 1) {
-            cursor.moveToNext();
-            String md5 = cursor.getString(cursor.getColumnIndex("md5"));
-            return md5;
-        } else {
-            return "";
-        }
-
-
-    }
+    ///**
+    // * 从数据库中获取根据文件计算出的md5值
+    // *
+    // * @param fileInfo
+    // * @return
+    // */
+    //public static String getFileMd5(BaseFileInfo fileInfo) {
+    //    Cursor cursor = FileMd5Model.findBySQL("select *from filemd5model where filename = ?", fileInfo.getPath());
+    //    if (cursor.getCount() == 1) {
+    //        cursor.moveToNext();
+    //        String md5 = cursor.getString(cursor.getColumnIndex("md5"));
+    //        return md5;
+    //    } else {
+    //        return "";
+    //    }
+    //
+    //
+    //}
 }

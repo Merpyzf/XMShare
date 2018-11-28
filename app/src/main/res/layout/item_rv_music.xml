@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:src="@drawable/ic_holder_album_art"
-            android:scaleType="centerInside" />
+            android:scaleType="fitCenter" />
 
         <ImageView
             android:id="@+id/iv_select"

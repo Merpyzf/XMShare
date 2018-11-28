@@ -50,11 +50,12 @@
 
                 <EditText
                     android:id="@+id/edt_nickname"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/civ_avatar"
                     android:layout_centerHorizontal="true"
-
+                    android:singleLine="true"
+                    android:gravity="center_horizontal"
                     android:text="SM801"
                     android:textColor="@color/white"
                     android:textSize="14sp"

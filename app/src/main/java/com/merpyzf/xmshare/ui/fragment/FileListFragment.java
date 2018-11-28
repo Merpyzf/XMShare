@@ -110,7 +110,7 @@ public class FileListFragment extends BaseFragment {
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
                 App.addTransferFile(fileInfo);
-                fileInfo.setMd5(Md5Utils.getFileMd5(fileInfo));
+                //fileInfo.setMd5(Md5Utils.getFileMd5(fileInfo));
                 // 将文件选择的事件回调给外部
                 FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG,
                         FilesStatusObservable.FILE_SELECTED);
