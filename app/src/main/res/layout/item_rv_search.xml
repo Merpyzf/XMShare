@@ -3,7 +3,9 @@
     android:id="@+id/ll_selected_files"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:foreground="@drawable/card_foreground"
+    >
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"

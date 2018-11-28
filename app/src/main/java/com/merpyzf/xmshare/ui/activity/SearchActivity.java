@@ -27,6 +27,7 @@ import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
@@ -321,9 +322,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-
-
-
+        BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
+        App.addTransferFile(fileInfo);
+        mSearchAdapter.notifyItemChanged(position);
     }
 }

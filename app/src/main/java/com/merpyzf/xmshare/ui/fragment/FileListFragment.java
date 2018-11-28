@@ -184,8 +184,6 @@ public class FileListFragment extends BaseFragment {
                         notifyRvDataChanged();
                         ApkUtils.asyncCacheApkIco(mContext, appFiles);
                     });
-
-
                 } else if (mLoadFileType == FILE_TYPE_MUSIC) {
                     observable.subscribe((Consumer<List<BaseFileInfo>>) musicFiles -> {
                         if (musicFiles.size() == 0) {

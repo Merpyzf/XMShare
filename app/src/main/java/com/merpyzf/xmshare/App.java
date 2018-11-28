@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.litepal.LitePalApplication;
 
@@ -35,6 +36,7 @@ public class App extends LitePalApplication {
     public void onCreate() {
         super.onCreate();
 //        LeakCanary.install(this);
+        CrashReport.initCrashReport(getApplicationContext(), "85b38acd34", true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());

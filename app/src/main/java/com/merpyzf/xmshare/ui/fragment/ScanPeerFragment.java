@@ -37,6 +37,7 @@ import com.merpyzf.xmshare.util.SingleThreadPool;
 import com.merpyzf.xmshare.util.ToastUtils;
 import com.merpyzf.xmshare.util.UiUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -393,13 +394,12 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
         this.mOnPairActionListener = onPairActionListener;
     }
 
+    // TODO: 2018/11/28 存在内存泄露从而导致的空指针异常
     private static class ScanPeerHandler extends Handler {
         private final WeakReference<ScanPeerFragment> mFragment;
-
         ScanPeerHandler(ScanPeerFragment fragment) {
             mFragment = new WeakReference<>(fragment);
         }
-
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -450,7 +450,6 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
                                 public void onError(Throwable e) {
 
                                 }
-
                                 @Override
                                 public void onComplete() {
 
