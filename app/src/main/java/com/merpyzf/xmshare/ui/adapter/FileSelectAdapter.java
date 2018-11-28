@@ -64,17 +64,15 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;
             File albumFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));
-            if (albumFile.exists()) {
-                //设置封面图片
-                Glide.with(mContext)
-                        .load(albumFile)
-                        .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
-                        .error(UiUtils.getPlaceHolder(fileInfo.getType()))
-                        .crossFade()
-                        .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(imageView);
-            }
+            //设置封面图片
+            Glide.with(mContext)
+                    .load(albumFile)
+                    .placeholder(UiUtils.getPlaceHolder(musicFile.getType()))
+                    .error(UiUtils.getPlaceHolder(musicFile.getType()))
+                    .crossFade()
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(imageView);
             //    照片
         } else if (item instanceof PicFile) {
             PicFile picFile = (PicFile) item;
@@ -89,8 +87,8 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             } else {
                 Glide.with(mContext)
                         .load(picFile.getPath())
-                        .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
-                        .error(UiUtils.getPlaceHolder(fileInfo.getType()))
+                        .placeholder(UiUtils.getPlaceHolder(picFile.getType()))
+                        .error(UiUtils.getPlaceHolder(picFile.getType()))
                         .crossFade()
                         .centerCrop()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -102,8 +100,8 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             File videoThumb = FilePathManager.getLocalVideoThumbCacheFile(videoFile.getName());
             Glide.with(mContext)
                     .load(videoThumb)
-                    .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
-                    .error(UiUtils.getPlaceHolder(fileInfo.getType()))
+                    .placeholder(UiUtils.getPlaceHolder(videoFile.getType()))
+                    .error(UiUtils.getPlaceHolder(videoFile.getType()))
                     .crossFade()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -113,6 +111,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             StorageFile storageFile = (StorageFile) item;
             String suffix = storageFile.getSuffix();
             boolean photoType = FileTypeHelper.isPhotoType(suffix);
+
             if (photoType) {
                 if ("gif".equals(suffix)) {
                     try {
@@ -124,11 +123,10 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                 } else {
                     Glide.with(mContext)
                             .load(storageFile.getPath())
-                            .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
-                            .error(UiUtils.getPlaceHolder(fileInfo.getType()))
+                            .placeholder(UiUtils.getPlaceHolder(BaseFileInfo.FILE_TYPE_IMAGE))
+                            .error(UiUtils.getPlaceHolder(BaseFileInfo.FILE_TYPE_IMAGE))
                             .crossFade()
                             .centerCrop()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageView);
                 }
             } else if (storageFile.isDirectory()) {

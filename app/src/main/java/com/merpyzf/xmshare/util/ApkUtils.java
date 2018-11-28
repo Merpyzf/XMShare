@@ -39,7 +39,9 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by wangke on 2017/12/25.
+ *
+ * @author wangke
+ * @date 2017/12/25
  */
 
 public class ApkUtils {
@@ -150,24 +152,13 @@ public class ApkUtils {
      */
     @SuppressLint("CheckResult")
     public static void asyncCacheApkIco(Context context, List<ApkFile> apkList) {
-
-
         Observable.fromIterable(apkList)
                 .filter(fileInfo -> {
                     if (FilePathManager.getLocalAppThumbCacheDir().canWrite() && !isContain(FilePathManager.getLocalAppThumbCacheDir(), fileInfo)) {
                         return true;
                     }
                     return false;
-                }).flatMap(new Function<ApkFile, ObservableSource<ApkFile>>() {
-            @Override
-            public Observable<ApkFile> apply(ApkFile apkFile) throws Exception {
-                //Drawable apkDrawable = apkFile.getApkDrawable();
-                //if(apkDrawable == null){
-                //    Log.i("WW2k", apkFile.getName()+"drawable 为null");
-                //}
-                return Observable.just(apkFile);
-            }
-        })
+                }).flatMap((Function<ApkFile, ObservableSource<ApkFile>>) apkFile -> Observable.just(apkFile))
                 .subscribeOn(Schedulers.io())
                 .subscribe(apkFile -> {
                     Bitmap bitmap = FileUtils.drawableToBitmap(apkFile.getApkDrawable());
@@ -209,9 +200,5 @@ public class ApkUtils {
             List<ApkFile> appList = ApkUtils.getApp(activity, Objects.requireNonNull(activity).getPackageManager());
             e.onNext(appList);
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-
-
     }
-
-
 }

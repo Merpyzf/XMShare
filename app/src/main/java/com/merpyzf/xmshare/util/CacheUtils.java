@@ -31,6 +31,7 @@ public class CacheUtils {
     public static void cacheAppInfo(Context context, List<ApkFile> appList) {
         AppDatabase appDatabase = AppDatabase.getInstance(context);
         FileCacheDao fileCacheDao = appDatabase.getFileCacheDao();
+        // 遍历
         Observable.fromIterable(appList)
                 .filter(apkFile -> {
                     FileCache fileCache = fileCacheDao.queryByPath(apkFile.getPath());

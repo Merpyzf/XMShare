@@ -326,9 +326,17 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
-        App.addTransferFile(fileInfo);
+
+        if (App.isContain(fileInfo)) {
+            App.removeTransferFile(fileInfo);
+            FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG,
+                    FilesStatusObservable.FILE_CANCEL_SELECTED);
+        } else {
+            App.addTransferFile(fileInfo);
+            FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG,
+                    FilesStatusObservable.FILE_SELECTED);
+        }
         mSearchAdapter.notifyItemChanged(position);
-        FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG,
-                FilesStatusObservable.FILE_SELECTED);
+
     }
 }
