@@ -15,6 +15,7 @@ public class FileTypeHelper {
     static ArrayList<String> sPhotoTypes;
     static ArrayList<String> sMusicTypes;
     static ArrayList<String> sVideoTypes;
+    static ArrayList<String> sCodeTypes;
 
 
     static Map<String, Integer> sIcoResMap;
@@ -30,8 +31,6 @@ public class FileTypeHelper {
         sDocumentTypes.add("docx");
         sDocumentTypes.add("xls");
         sDocumentTypes.add("xlsx");
-        sDocumentTypes.add("wps");
-        sDocumentTypes.add("pdf");
         sDocumentTypes.add("pdf");
         sDocumentTypes.add("mobi");
         sDocumentTypes.add("azw");
@@ -42,6 +41,10 @@ public class FileTypeHelper {
         sDocumentTypes.add(".html");
         sDocumentTypes.add(".tif");
         sDocumentTypes.add(".caj");
+        sDocumentTypes.add("torrent");
+        sDocumentTypes.add("pages");
+        sDocumentTypes.add("key");
+        sDocumentTypes.add("numbers");
 
         // 压缩文件类型
         sCompactTypes = new ArrayList<>();
@@ -93,7 +96,20 @@ public class FileTypeHelper {
         sVideoTypes.add("mts");
         sVideoTypes.add("vob");
 
-
+        // 编程语言的源文件后缀
+        sCodeTypes = new ArrayList<>();
+        sCodeTypes.add("java");
+        sCodeTypes.add("jsp");
+        sCodeTypes.add("c");
+        sCodeTypes.add("cpp");
+        sCodeTypes.add("py");
+        sCodeTypes.add("php");
+        sCodeTypes.add("json");
+        sCodeTypes.add("xml");
+        sCodeTypes.add("kt");
+        sCodeTypes.add("js");
+        sCodeTypes.add("h");
+        sCodeTypes.add("cs");
     }
 
     /**
@@ -102,26 +118,52 @@ public class FileTypeHelper {
      * @param suffix
      * @return
      */
-    public static int getIcoResBySuffix(String suffix) {
-
+    public static Integer getIcoResBySuffix(String suffix) {
         if (TextUtils.equals("", suffix)) {
-            return R.drawable.ic_fm_other;
+            return R.drawable.ic_fileitem_blank;
         }
-        Integer fileIcoRes;
         if (sDocumentTypes.contains(suffix)) {
-            fileIcoRes = R.drawable.ic_fm_document;
+            if ("doc".equals(suffix) || "docx".equals(suffix) || "pages".equals(suffix)) {
+                return R.drawable.ic_fileitem_word;
+            }
+            if ("xls".equals(suffix) || "xlsx".equals(suffix) || "numbers".equals(suffix)) {
+                return R.drawable.ic_fileitem_excel;
+            }
+            if ("pdf".equals(suffix) || "key".equals(suffix)) {
+                if ("pdf".equals(suffix)) {
+                    return R.drawable.ic_fileitem_pdf;
+                }
+            }
+            if ("html".equals(suffix)) {
+                return R.drawable.ic_fileitem_html;
+            }
+
+            if ("psd".equals(suffix)) {
+                return R.drawable.ic_fileitem_psd;
+            }
+            if ("txt".equals(suffix)) {
+                return R.drawable.ic_fileitem_txt;
+            }
+            if ("torrent".equals(suffix)) {
+                return R.drawable.ic_fileitem_bt;
+            }
+            return R.drawable.ic_fileitem_document;
         } else if (sCompactTypes.contains(suffix)) {
-            fileIcoRes = R.drawable.ic_fm_compact;
+            if ("iso".equals(suffix)) {
+                return R.drawable.ic_fileitem_iso;
+            }
+            return R.drawable.ic_fileitem_zip;
         } else if (sVideoTypes.contains(suffix)) {
-            fileIcoRes = R.drawable.ic_fm_video;
+            return R.drawable.ic_fileitem_video;
         } else if (sMusicTypes.contains(suffix)) {
-            fileIcoRes = R.drawable.ic_fm_music;
+            return R.drawable.ic_fileitem_music;
         } else if ("ttf".equals(suffix)) {
-            fileIcoRes = R.drawable.ic_fm_ttf;
+            return R.drawable.ic_fileitem_ttf;
+        } else if (sCodeTypes.contains(suffix)) {
+            return R.drawable.ic_fileitem_code;
         } else {
-            fileIcoRes = R.drawable.ic_fm_other;
+            return R.drawable.ic_fileitem_other;
         }
-        return fileIcoRes;
     }
 
     /**

@@ -15,23 +15,40 @@
         android:background="@color/colorBackground"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="50dp"
+            app:cardElevation="4dp">
 
-            <TextView
-                android:id="@+id/tv_bottom_title"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorPrimary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:padding="10dp"
-                android:text="这是一个标题"
-                android:textColor="#ffffff" />
+                android:layout_height="match_parent">
 
-        </android.support.design.widget.AppBarLayout>
+                <TextView
+                    android:id="@+id/tv_bottom_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="这是一个标题"
+                    android:textColor="@color/black_alpha_128" />
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="5dp"
+
+                    android:background="@drawable/slide_indicator_shape"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    />
+
+            </RelativeLayout>
+
+
+
+        </android.support.v7.widget.CardView>
 
 
         <android.support.v7.widget.RecyclerView
@@ -39,9 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="360dp"
             android:scrollIndicators="right"
-            android:scrollbars="vertical"
-            >
-        </android.support.v7.widget.RecyclerView>
+            android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
 
 
     </LinearLayout>

@@ -94,6 +94,11 @@ public class Const {
         AVATAR_LIST.add(R.drawable.ic_avatar_14);
         AVATAR_LIST.add(R.drawable.ic_avatar_15);
         AVATAR_LIST.add(R.drawable.ic_avatar_16_o);
+        AVATAR_LIST.add(R.drawable.ic_avatar_17);
+        AVATAR_LIST.add(R.drawable.ic_avatar_18);
+        AVATAR_LIST.add(R.drawable.ic_avatar_19);
+        AVATAR_LIST.add(R.drawable.ic_avatar_20);
+        AVATAR_LIST.add(R.drawable.ic_avatar_21);
 
         // 文档文件类型
         FILE_DOCUMENT_TYPES = new ArrayList<>();

@@ -91,23 +91,23 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .into(imageView);
 
 
-            if (mMusicBottomColorMap == null) {
-                mMusicBottomColorMap = new HashMap<>();
-            }
+            //if (mMusicBottomColorMap == null) {
+            //    mMusicBottomColorMap = new HashMap<>();
+            //}
 
-            if (mMusicBottomColorMap.containsKey(albumId)) {
-                Integer color = mMusicBottomColorMap.get(albumId);
-                llBottom.setBackgroundColor(color);
-            } else {
-                try {
-                    Palette palette = Palette.from(BitmapFactory.decodeFile(albumFile.getPath())).generate();
-                    int vibrantColor = palette.getVibrantColor(Resource.Color.BROWN);
-                    llBottom.setBackgroundColor(vibrantColor);
-                    mMusicBottomColorMap.put(albumId, vibrantColor);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                }
-            }
+            //if (mMusicBottomColorMap.containsKey(albumId)) {
+            //    Integer color = mMusicBottomColorMap.get(albumId);
+            //    llBottom.setBackgroundColor(color);
+            //} else {
+            //    try {
+            //        Palette palette = Palette.from(BitmapFactory.decodeFile(albumFile.getPath())).generate();
+            //        int vibrantColor = palette.getVibrantColor(Resource.Color.BROWN);
+            //        llBottom.setBackgroundColor(vibrantColor);
+            //        mMusicBottomColorMap.put(albumId, vibrantColor);
+            //    } catch (IllegalArgumentException e) {
+            //        e.printStackTrace();
+            //    }
+            //}
 
 
         } else if (item instanceof PicFile) {
@@ -163,7 +163,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .dontAnimate()
                     .centerCrop()
                     .into(ivVideoThumb);
-            llBottom.setBackgroundColor(Resource.Color.GREY);
         }
 
         ImageView ivSelect = helper.getView(R.id.iv_select);

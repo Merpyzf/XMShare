@@ -139,6 +139,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                 thumbFile = FilePathManager.getPeerAppThumbCacheFile(apkFile.getName());
             }
         } else if (fileInfo instanceof MusicFile) {
+            // TODO: 2018/11/28 音乐没有封面的时候不会显示系统默认的，修改，当没有封面时则不发送缩略图，直接显示默认提供的图片
             MusicFile musicFile = (MusicFile) fileInfo;
             if (mType == TYPE_SEND) {
                 thumbFile = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(musicFile.getAlbumId()));

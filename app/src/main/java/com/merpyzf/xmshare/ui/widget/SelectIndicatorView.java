@@ -183,7 +183,7 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
         textView.setText(indicator.getName());
         textView.setTextColor(Color.parseColor("#6e6e6e"));
         // 设置字体加粗
-        textView.getPaint().setFakeBoldText(true);
+        //textView.getPaint().setFakeBoldText(true);
         linearLayout.addView(textView);
         LinearLayout.LayoutParams tvParams = (LinearLayout.LayoutParams) textView.getLayoutParams();
         tvParams.leftMargin = DisplayUtils.dip2px(mContext, 5);

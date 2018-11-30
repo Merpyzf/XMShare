@@ -40,6 +40,8 @@ import com.merpyzf.xmshare.ui.fragment.PhotoFragment;
 import com.merpyzf.xmshare.observer.PersonalObservable;
 import com.merpyzf.xmshare.observer.PersonalObserver;
 import com.merpyzf.xmshare.ui.fragment.filemanager.FileManagerFragment;
+import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
+import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.merpyzf.xmshare.util.ToastUtils;
@@ -106,6 +108,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     @Override
     public void initRecyclerView() {
         mRvSelectedFiles.setLayoutManager(new LinearLayoutManager(mContext));
+        mRvSelectedFiles.addItemDecoration(new RecyclerViewDivider(mContext, LinearLayoutManager.VERTICAL));
         mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getTransferFileList());
         mRvSelectedFiles.setAdapter(mFileSelectAdapter);
     }
@@ -379,10 +382,10 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             if (mTvBottomTitle == null) {
                 return;
             }
-            mTvBottomTitle.setText("请选择要传输的文件");
+            mTvBottomTitle.setText("");
             return;
         }
-        mTvBottomTitle.setText("已选文件个数: " + App.getTransferFileList().size());
+        mTvBottomTitle.setText("已选: " + App.getTransferFileList().size());
     }
 
     /**

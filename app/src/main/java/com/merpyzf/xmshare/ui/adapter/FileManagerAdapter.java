@@ -39,7 +39,7 @@ public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHo
             fileInfo.append(item.getFileNum());
             fileInfo.append(", 文件夹: ");
             fileInfo.append(item.getFolderNum());
-            ivIco.setImageResource(R.drawable.ic_folder);
+            ivIco.setImageResource(R.drawable.ic_fileitem_folder);
         } else {
             fileInfo.append("文件大小: ");
             String[] fileSizeArray = getFileSizeArrayStr(item.getLength());

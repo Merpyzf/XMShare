@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/md_material_blue_600"
+    android:background="@color/colorPrimary"
     tools:context=".ui.activity.SendActivity">
 
     <TextView
