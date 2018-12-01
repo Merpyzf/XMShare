@@ -23,6 +23,7 @@ import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.ui.activity.ReceivedFileActivity;
 import com.merpyzf.xmshare.ui.adapter.VolumeAdapter;
 import com.merpyzf.xmshare.ui.fragment.filemanager.FileManagerFragment;
+import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.StorageUtils;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
     private List<CompactFile> mCompactFileList = new ArrayList<>();
     private ArrayList<Volume> mVolumes = new ArrayList<>();
     private VolumeAdapter mVolumeAdapter;
+    private CustomRecyclerScrollViewListener mScrollListener;
 
     @Override
     protected int getContentLayoutId() {
@@ -128,26 +130,25 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         Volume volume = (Volume) adapter.getItem(position);
+        FragmentTransaction fragmentTransaction = Objects.requireNonNull(getActivity())
+                .getSupportFragmentManager().beginTransaction();
+        FileManagerFragment fileManagerFragment = new FileManagerFragment();
+        fileManagerFragment.setScrollListener(mScrollListener);
+        String volumeName;
         if (volume.isRemovable()) {
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(getActivity())
-                    .getSupportFragmentManager().beginTransaction();
-            FileManagerFragment fileManagerFragment = new FileManagerFragment();
-            Bundle bundle = new Bundle();
-            bundle.putCharSequence("rootPath", volume.getPath());
-            bundle.putCharSequence("volumeName", "SD卡");
-            fileManagerFragment.setArguments(bundle);
-            fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
-            fragmentTransaction.commit();
+            volumeName = "SD卡";
         } else {
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(getActivity())
-                    .getSupportFragmentManager().beginTransaction();
-            FileManagerFragment fileManagerFragment = new FileManagerFragment();
-            Bundle bundle = new Bundle();
-            bundle.putCharSequence("rootPath", volume.getPath());
-            bundle.putCharSequence("volumeName", "手机存储");
-            fileManagerFragment.setArguments(bundle);
-            fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
-            fragmentTransaction.commit();
+            volumeName = "手机存储";
         }
+        Bundle bundle = new Bundle();
+        bundle.putCharSequence("rootPath", volume.getPath());
+        bundle.putCharSequence("volumeName", volumeName);
+        fileManagerFragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.fl_main_container, fileManagerFragment, Const.TAG_FILE_MANAGER);
+        fragmentTransaction.commit();
+    }
+
+    public void setScrollListener(CustomRecyclerScrollViewListener scrollListener) {
+        this.mScrollListener = scrollListener;
     }
 }

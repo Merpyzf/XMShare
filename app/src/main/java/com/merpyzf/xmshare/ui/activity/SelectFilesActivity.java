@@ -1,6 +1,8 @@
 package com.merpyzf.xmshare.ui.activity;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,9 +17,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,7 +43,7 @@ import com.merpyzf.xmshare.observer.PersonalObservable;
 import com.merpyzf.xmshare.observer.PersonalObserver;
 import com.merpyzf.xmshare.ui.fragment.filemanager.FileManagerFragment;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
-import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
+import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.merpyzf.xmshare.util.ToastUtils;
@@ -99,6 +101,9 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private static final String TAG = SelectFilesActivity.class.getSimpleName();
     private FragmentManager mFragmentManager;
     private FilesStatusObserver mFilesStatusObserver;
+    private CustomRecyclerScrollViewListener mScrollListener;
+    private FabShowAnimatorListener mFabShowAnimatorListener = new FabShowAnimatorListener();
+    private FabHideAnimatorListener mFabHideAnimatorListener = new FabHideAnimatorListener();
 
     @Override
     public int getContentLayoutId() {
@@ -119,7 +124,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         View headerView = mNavigationView.getHeaderView(0);
         mNavCivAvatar = headerView.findViewById(R.id.civ_avatar);
         mNavTvNickname = headerView.findViewById(R.id.tv_nickname);
-
+        fabHide(0);
         updateUserInfo();
         updateBottomTitle();
         // 初始并显示SheetBottom中的Recycler
@@ -144,6 +149,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 App.addTransferFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
+                fabShow(150);
             }
 
             @Override
@@ -151,6 +157,11 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 App.removeTransferFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
+                if (App.getTransferFileList().size() == 0) {
+                    if (mFabBtn.getVisibility() == View.VISIBLE) {
+                        fabHide(150);
+                    }
+                }
             }
 
             @Override
@@ -158,6 +169,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 App.addTransferFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
+                fabShow(150);
             }
 
             @Override
@@ -165,6 +177,28 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 App.removeTransferFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
+                if (App.getTransferFileList().size() == 0) {
+                    fabShow(150);
+                }
+            }
+        };
+        mScrollListener = new CustomRecyclerScrollViewListener() {
+            @Override
+            public void show() {
+                if (mSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                    return;
+                }
+                if (App.getTransferFileList().size() != 0) {
+                    fabShow(150);
+                }
+            }
+
+            @Override
+            public void hide() {
+                if (mSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                    return;
+                }
+                fabHide(150);
             }
         };
         FilesStatusObservable.getInstance().register(HOME_OBSERVER_NAME, mFilesStatusObserver);
@@ -175,15 +209,21 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mTabTitles[2] = Const.PAGE_IMAGE_TITLE;
         mTabTitles[3] = Const.PAGE_MUSIC_TITLE;
         mTabTitles[4] = Const.PAGE_VIDEO_TITLE;
-        mFragmentList.add(new MainFragment());
+        MainFragment mainFragment = new MainFragment();
+        mainFragment.setScrollListener(mScrollListener);
+        mFragmentList.add(mainFragment);
         FileListFragment appFragment = FileListFragment.newInstance(BaseFileInfo.FILE_TYPE_APP);
+        appFragment.setScrollListener(mScrollListener);
         mFragmentList.add(appFragment);
-        Fragment picFragment = new PhotoFragment();
-        mFragmentList.add(picFragment);
+        PhotoFragment photoFragment = new PhotoFragment();
+        photoFragment.setScrollListener(mScrollListener);
+        mFragmentList.add(photoFragment);
         FileListFragment musicFragment = FileListFragment.newInstance(BaseFileInfo.FILE_TYPE_MUSIC);
         mFragmentList.add(musicFragment);
+        musicFragment.setScrollListener(mScrollListener);
         FileListFragment videoFragment = FileListFragment.newInstance(BaseFileInfo.FILE_TYPE_VIDEO);
         mFragmentList.add(videoFragment);
+        videoFragment.setScrollListener(mScrollListener);
     }
 
     @Override
@@ -200,12 +240,23 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 if (App.getTransferFileList().size() == 0) {
                     mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    if (sFabState == Const.FAB_STATE_CLEAR) {
-                        AnimationUtils.showFabSend(mContext, mFabBtn);
-                        sFabState = Const.FAB_STATE_SEND;
-                    }
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        if (sFabState == Const.FAB_STATE_CLEAR) {
+                            AnimationUtils.showFabSend(mContext, mFabBtn);
+                            sFabState = Const.FAB_STATE_SEND;
+                        }
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        fabShow(150);
+                        break;
+                    default:
+                        break;
+
                 }
+
+
+
             }
 
             @Override
@@ -214,15 +265,15 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             }
         });
         mFileSelectAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            List data = adapter.getData();
             BaseFileInfo fileInfo = (BaseFileInfo) adapter.getData().get(position);
             mFileSelectAdapter.notifyItemRemoved(position);
             App.removeTransferFile(fileInfo);
-
             FilesStatusObservable.getInstance().notifyObservers(fileInfo, HOME_OBSERVER_NAME,
                     FilesStatusObservable.FILE_CANCEL_SELECTED);
-
             updateBottomTitle();
+            if (App.getTransferFileList().size() == 0) {
+                fabHide(150);
+            }
         });
         mFileSelectAdapter.setOnItemChildLongClickListener((adapter, view, position) -> {
             if (sFabState == Const.FAB_STATE_SEND) {
@@ -271,6 +322,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 mFileSelectAdapter.notifyDataSetChanged();
                 FilesStatusObservable.getInstance().notifyObservers(App.getTransferFileList(), HOME_OBSERVER_NAME,
                         FilesStatusObservable.FILE_CANCEL_SELECTED_ALL);
+                fabHide(150);
             }
         });
         // 顶部menu按钮
@@ -319,6 +371,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mIvActionSearch.setOnClickListener(v -> {
             SearchActivity.start(mContext, SearchActivity.class);
         });
+
+
     }
 
     private void markLastFile() {
@@ -326,10 +380,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         fileInfo.setIsLast(com.merpyzf.transfermanager.common.Const.IS_LAST);
     }
 
-    @Override
-    protected void initToolBar() {
-
-    }
 
     @Override
     protected void onResume() {
@@ -341,6 +391,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     /**
      * 申请文件读写权限
      */
+    @SuppressLint("CheckResult")
     private void requestPermission() {
         new RxPermissions(SelectFilesActivity.this)
                 .requestEach(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -474,4 +525,49 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         App.getTransferFileList().clear();
         super.onDestroy();
     }
+
+    class FabShowAnimatorListener extends AnimatorListenerAdapter {
+        @Override
+        public void onAnimationStart(Animator animation) {
+            super.onAnimationStart(animation);
+            if (mFabBtn.getVisibility() == View.INVISIBLE) {
+                mFabBtn.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    class FabHideAnimatorListener extends AnimatorListenerAdapter {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            super.onAnimationStart(animation);
+            if (mFabBtn.getVisibility() == View.VISIBLE) {
+                mFabBtn.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
+    public void fabShow(int duration) {
+        if (mFabBtn.getVisibility() == View.INVISIBLE) {
+            mFabBtn.animate()
+                    .scaleX(1)
+                    .scaleY(1)
+                    .setDuration(duration)
+                    .setListener(mFabShowAnimatorListener)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .start();
+        }
+    }
+
+    public void fabHide(int duration) {
+        if (mFabBtn.getVisibility() == View.VISIBLE) {
+            mFabBtn.animate()
+                    .scaleX(0)
+                    .scaleY(0)
+                    .setDuration(duration)
+                    .setListener(mFabHideAnimatorListener)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .start();
+        }
+    }
+
 }

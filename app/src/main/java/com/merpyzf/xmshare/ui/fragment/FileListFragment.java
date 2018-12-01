@@ -21,6 +21,7 @@ import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
+import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.ApkUtils;
 import com.merpyzf.xmshare.util.CacheUtils;
@@ -69,6 +70,7 @@ public class FileListFragment extends BaseFragment {
     private FileLoadManager mFileLoadManager;
     private String TAG = FileListFragment.class.getSimpleName();
     private MyAbsFileStatusObserver mFileStatusObserver;
+    private CustomRecyclerScrollViewListener mScrollListener;
 
     public static FileListFragment newInstance(int type) {
         return new FileListFragment(type);
@@ -102,6 +104,9 @@ public class FileListFragment extends BaseFragment {
     protected void initEvent() {
         if (mFileListAdapter == null) {
             return;
+        }
+        if (mScrollListener != null) {
+            mRvFileList.addOnScrollListener(mScrollListener);
         }
         mFileListAdapter.setOnItemClickListener((adapter, view, position) -> {
             ImageView ivSelect = view.findViewById(R.id.iv_select);
@@ -286,6 +291,10 @@ public class FileListFragment extends BaseFragment {
             }
         }
         return true;
+    }
+
+    public void setScrollListener(CustomRecyclerScrollViewListener scrollListener) {
+        this.mScrollListener = scrollListener;
     }
 
     @Override

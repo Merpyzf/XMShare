@@ -188,8 +188,10 @@ public class AnimationUtils {
         animatorSet.setDuration(150);
         animatorSet.start();
         animatorSet.addListener(new AnimatorListenerAdapter() {
+
             @Override
             public void onAnimationEnd(Animator animation) {
+
                 super.onAnimationEnd(animation);
                 fab.setBackgroundTintList(UiUtils.getColorStateListTest(context, color));
                 fab.setImageResource(R.drawable.ic_clear_all);
@@ -223,6 +225,11 @@ public class AnimationUtils {
         animatorSet.setDuration(150);
         animatorSet.start();
         animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+            }
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);

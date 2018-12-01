@@ -23,6 +23,7 @@ import com.merpyzf.xmshare.observer.AbsFileStatusObserver;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.ui.adapter.PhotoDirsAdapter;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
+import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.PhotoUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
@@ -59,6 +60,7 @@ public class PhotoDirsFragment extends BaseFragment implements
     private TextView mTvTip;
     private AbsFileStatusObserver mFileStatusObservable;
     private FileLoadManager mFileLoadManager;
+    private CustomRecyclerScrollViewListener mScrollListener;
 
     public PhotoDirsFragment() {
     }
@@ -70,6 +72,9 @@ public class PhotoDirsFragment extends BaseFragment implements
 
     @Override
     protected void initEvent() {
+        if(mScrollListener!=null){
+            mRvDirsList.addOnScrollListener(mScrollListener);
+        }
         mAdapter.setOnItemClickListener(this);
         mAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             PhotoDirBean item = (PhotoDirBean) adapter.getItem(position);
@@ -125,7 +130,6 @@ public class PhotoDirsFragment extends BaseFragment implements
         FilesStatusObservable.getInstance().register(TAG, mFileStatusObservable);
     }
 
-
     private boolean isCheckAllDirs() {
         for (PhotoDirBean photoDirBean : mPhotoDirs) {
             if (!photoDirBean.isChecked()) {
@@ -134,7 +138,6 @@ public class PhotoDirsFragment extends BaseFragment implements
         }
         return true;
     }
-
 
     @Override
     protected void initWidget(View rootView) {
@@ -164,7 +167,6 @@ public class PhotoDirsFragment extends BaseFragment implements
             mRvDirsList.removeItemDecorationAt(i);
         }
     }
-
 
     @Override
     protected void initData() {
@@ -206,7 +208,9 @@ public class PhotoDirsFragment extends BaseFragment implements
         PhotoDirBean item = (PhotoDirBean) adapter.getItem(position);
         Bundle bundle = new Bundle();
         bundle.putSerializable("photos", item);
-        fragmentTransaction.replace(R.id.fl_container, ShowPhotosFragment.getInstance(bundle));
+        ShowPhotosFragment photosFragment = ShowPhotosFragment.getInstance(bundle);
+        photosFragment.setScrollListener(mScrollListener);
+        fragmentTransaction.replace(R.id.fl_container, photosFragment);
         fragmentTransaction.commit();
         mPhotoFragment.getFileSelectIndicator().addIndicator(new Indicator(item.getName(), ""));
     }
@@ -223,9 +227,6 @@ public class PhotoDirsFragment extends BaseFragment implements
         mCheckBoxAll.setChecked(isSelectedAllAlbum());
     }
 
-    /**
-     * 判断所有相册是否被选中
-     */
     private boolean isSelectedAllAlbum() {
         if (null == mPhotoDirs || mPhotoDirs.size() == 0) {
             return false;
@@ -238,9 +239,6 @@ public class PhotoDirsFragment extends BaseFragment implements
         return true;
     }
 
-    /**
-     * 从父Fragment中获取CheckBox控件
-     */
     private CheckBox getCbxFromParentFrg() {
         CheckBox checkBox = null;
         if (null == mPhotoFragment) {
@@ -253,9 +251,6 @@ public class PhotoDirsFragment extends BaseFragment implements
         return checkBox;
     }
 
-    /**
-     * 获取父Fragment
-     */
     private PhotoFragment getMyParentFragment() {
         PhotoFragment photoFragment = null;
         List<Fragment> fragments = getActivity().getSupportFragmentManager().getFragments();
@@ -272,6 +267,10 @@ public class PhotoDirsFragment extends BaseFragment implements
             return null;
         }
         return mPhotoFragment.getTvTitle();
+    }
+
+    public void setScrollListener(CustomRecyclerScrollViewListener scrollListener) {
+        this.mScrollListener = scrollListener;
     }
 
     @Override

@@ -125,7 +125,9 @@
             android:src="@drawable/ic_send"
             android:tint="@color/white"
             app:layout_anchor="@+id/bottom_sheet"
-            app:layout_anchorGravity="right|top"
+            android:layout_marginBottom="130dp"
+            android:layout_marginRight="15dp"
+            app:layout_anchorGravity="right"
           >
 
         </android.support.design.widget.FloatingActionButton>

@@ -5,14 +5,14 @@
     android:layout_height="match_parent">
 
 
-    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_photo_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/rl_top"
         app:fastScrollPopupBgColor="@color/colorAccent"
         app:fastScrollPopupTextColor="@color/white"
-        app:fastScrollThumbColor="@color/colorAccent"></com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
+        app:fastScrollThumbColor="@color/colorAccent" />
 
 
 </FrameLayout>

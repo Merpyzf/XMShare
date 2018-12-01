@@ -37,27 +37,19 @@
 
                 <View
                     android:layout_width="50dp"
-                    android:layout_height="5dp"
-
-                    android:background="@drawable/slide_indicator_shape"
+                    android:layout_height="4dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    />
-
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/slide_indicator_shape" />
             </RelativeLayout>
-
-
-
         </android.support.v7.widget.CardView>
-
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_selected"
             android:layout_width="match_parent"
             android:layout_height="360dp"
+            android:layout_marginTop="2dp"
             android:scrollIndicators="right"
-            android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
-
-
+            android:scrollbars="vertical" />
     </LinearLayout>
 </LinearLayout>

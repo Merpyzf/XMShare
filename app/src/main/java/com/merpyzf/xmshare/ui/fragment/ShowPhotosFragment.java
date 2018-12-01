@@ -21,6 +21,7 @@ import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.ui.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.ui.adapter.PhotoSectionAdapter;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
+import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.DateUtils;
 import com.merpyzf.xmshare.util.DisplayUtils;
@@ -52,6 +53,7 @@ public class ShowPhotosFragment extends BaseFragment {
     private AbsFileStatusObserver mFileStatusObserver;
     private List<Section> mDatas;
     private final String TAG = ShowPhotosFragment.class.getSimpleName();
+    private CustomRecyclerScrollViewListener mScrollListener;
 
     public static ShowPhotosFragment getInstance(Bundle args) {
         ShowPhotosFragment showPhotosFragment = new ShowPhotosFragment();
@@ -79,7 +81,7 @@ public class ShowPhotosFragment extends BaseFragment {
             if (tempMap.keySet().contains(date)) {
                 tempMap.get(date).add(fileInfo);
             } else {
-                    ArrayList<BaseFileInfo> fileInfos = new ArrayList<>();
+                ArrayList<BaseFileInfo> fileInfos = new ArrayList<>();
                 fileInfos.add(fileInfo);
                 tempMap.put(date, fileInfos);
             }
@@ -127,6 +129,9 @@ public class ShowPhotosFragment extends BaseFragment {
 
     @Override
     protected void initEvent() {
+        if (mScrollListener != null) {
+            mRvPhotoList.addOnScrollListener(mScrollListener);
+        }
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
             Section section = (Section) adapter.getData().get(position);
             if (!section.isHeader) {
@@ -230,6 +235,7 @@ public class ShowPhotosFragment extends BaseFragment {
         });
         FilesStatusObservable.getInstance().register(TAG, mFileStatusObserver);
     }
+
     /**
      * 根据所选照片的变化更新相册是否全选的状态
      */
@@ -370,5 +376,11 @@ public class ShowPhotosFragment extends BaseFragment {
 
 
     }
+
+
+    public void setScrollListener(CustomRecyclerScrollViewListener scrollListener) {
+        this.mScrollListener = scrollListener;
+    }
+
 
 }

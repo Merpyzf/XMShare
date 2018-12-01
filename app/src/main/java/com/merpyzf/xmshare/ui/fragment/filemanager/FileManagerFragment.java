@@ -21,6 +21,7 @@ import com.merpyzf.xmshare.ui.widget.IndicatorChangedCallback;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
 import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
+import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.SettingHelper;
@@ -57,6 +58,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     private FileManagerAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private Indicator mCurrIndicator;
+    private CustomRecyclerScrollViewListener mScrollListener;
     private static String TAG = FileManagerFragment.class.getSimpleName();
 
     @Override
@@ -94,6 +96,9 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     @Override
     protected void initEvent() {
         super.initEvent();
+        if (mScrollListener != null) {
+            mRvFileList.addOnScrollListener(mScrollListener);
+        }
         mAdapter.setOnItemClickListener(this);
         mAdapter.setOnItemChildClickListener(this);
         mSelectIndicator.setIndicatorClickCallBack(this);
@@ -310,6 +315,10 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
             }
         }
         mAdapter.notifyItemChanged(position);
+    }
+
+    public void setScrollListener(CustomRecyclerScrollViewListener scrollListener) {
+        this.mScrollListener = scrollListener;
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.ui.widget.SelectIndicatorView;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
+import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 
 import butterknife.BindView;
 
@@ -24,6 +25,7 @@ public class PhotoFragment extends BaseFragment {
     CheckBox mCheckbox;
     @BindView(R.id.fileSelectIndicator)
     SelectIndicatorView mSelectIndicator;
+    private CustomRecyclerScrollViewListener mScrollListener;
 
     @Override
     protected int getContentLayoutId() {
@@ -35,7 +37,9 @@ public class PhotoFragment extends BaseFragment {
         super.initWidget(rootView);
         mSelectIndicator.addIndicator(new Indicator("相册", ""));
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_container, new PhotoDirsFragment());
+        PhotoDirsFragment photoDirsFragment = new PhotoDirsFragment();
+        photoDirsFragment.setScrollListener(mScrollListener);
+        fragmentTransaction.replace(R.id.fl_container, photoDirsFragment);
         fragmentTransaction.commit();
         mCheckbox.setChecked(false);
     }
@@ -54,6 +58,10 @@ public class PhotoFragment extends BaseFragment {
 
     public SelectIndicatorView getFileSelectIndicator() {
         return mSelectIndicator;
+    }
+
+    public void setScrollListener(CustomRecyclerScrollViewListener scrollListener) {
+        this.mScrollListener = scrollListener;
     }
 
     @Override
