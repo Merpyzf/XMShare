@@ -71,6 +71,7 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
                         .error(UiUtils.getPlaceHolder(picFile.getType()))
                         .placeholder(UiUtils.getPlaceHolder(picFile.getType()))
                         .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(iv);
             }
             ivFileType.setImageResource(R.drawable.ic_type_image);
@@ -83,6 +84,7 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
                     .placeholder(UiUtils.getPlaceHolder(videoFile.getType()))
                     .dontAnimate()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(iv);
             ivFileType.setImageResource(R.drawable.ic_type_video);
         } else if (item instanceof MusicFile) {
@@ -94,6 +96,7 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
                     .centerCrop()
                     .error(UiUtils.getPlaceHolder(musicFile.getType()))
                     .placeholder(UiUtils.getPlaceHolder(musicFile.getType()))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(iv);
             ivFileType.setImageResource(R.drawable.ic_type_audio);
         } else if (item instanceof ApkFile) {
@@ -105,6 +108,7 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
                     .centerCrop()
                     .error(UiUtils.getPlaceHolder(apkFile.getType()))
                     .placeholder(UiUtils.getPlaceHolder(apkFile.getType()))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(iv);
             ivFileType.setImageResource(R.drawable.ic_type_app);
         }

@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * 监听已选文件传输列表发生变化的被观察者
+ * @author wangke
  */
 public class FilesStatusObservable {
 
@@ -100,10 +101,8 @@ public class FilesStatusObservable {
     }
 
     public void notifyObservers(List<BaseFileInfo> changedFiles, String observerName, int notifyType) {
-
         // 文件传输列表的文件发生改变后才需要将改动通知给所有的文件展示页面
         // 而文件展示页面将文件的改变通知给主页面的文件传输列表的文件是一对一的
-
         for (Map.Entry<String, FilesStatusObserver> observerEntry : mObserverMap.entrySet()) {
             FilesStatusObserver observer = observerEntry.getValue();
             String name = observerEntry.getKey();

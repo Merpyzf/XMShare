@@ -85,9 +85,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .load(albumFile)
                     .dontAnimate()
                     .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.ic_holder_album_art)
                     .error(R.drawable.ic_holder_album_art)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
 
 
@@ -132,8 +132,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                         .load(picFile.getPath())
                         .error(UiUtils.getPlaceHolder(picFile.getType()))
                         .placeholder(UiUtils.getPlaceHolder(picFile.getType()))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(iv);
             }
             /**
@@ -159,9 +159,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .load(videoThumb)
                     .placeholder(R.drawable.ic_holder_video)
                     .error(R.drawable.ic_holder_video)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .dontAnimate()
+                    .crossFade()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(ivVideoThumb);
         }
 

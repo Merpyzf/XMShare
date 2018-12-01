@@ -98,8 +98,8 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Ba
                                 .load(storageFile.getPath())
                                 .error(errorImgRes)
                                 .placeholder(placeHolderImgRes)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .centerCrop()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .into(iv);
                     } else {
                         iv.setImageResource(FileTypeHelper.getIcoResBySuffix(storageFile.getSuffix()));
@@ -111,8 +111,8 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Ba
                             .load(loadImgPath)
                             .error(errorImgRes)
                             .placeholder(placeHolderImgRes)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(iv);
                 }
                 break;

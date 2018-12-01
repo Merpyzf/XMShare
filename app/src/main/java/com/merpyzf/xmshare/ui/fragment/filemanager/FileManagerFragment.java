@@ -1,11 +1,14 @@
 package com.merpyzf.xmshare.ui.fragment.filemanager;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
@@ -25,6 +28,7 @@ import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.SettingHelper;
+import com.merpyzf.xmshare.util.ToastUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
@@ -52,6 +56,10 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     SelectIndicatorView mSelectIndicator;
     @BindView(R.id.view_underline)
     View mViewUnderLine;
+    @BindView(R.id.checkbox_all)
+    CheckBox mCheckAll;
+    @BindView(R.id.tv_checked)
+    TextView mTvChecked;
     private String mRootPath;
     private String mVolumeName;
     private List<StorageFile> mFileList;
@@ -93,6 +101,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         loadingDirectory(mRootPath);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initEvent() {
         super.initEvent();
@@ -122,27 +131,56 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
             }
         });
+        mCheckAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                mTvChecked.setText("取消全选");
+                Observable.fromIterable(mFileList)
+                        .filter(storageFile -> !storageFile.isDirectory())
+                        .subscribe(storageFile -> {
+                            FilesStatusObservable.getInstance()
+                                    .notifyObservers(storageFile, TAG, FilesStatusObservable.FILE_SELECTED);
+                        });
+            } else {
+                mTvChecked.setText("全选");
+                if (isSelectedAllFile()) {
+                    Observable.fromIterable(mFileList)
+                            .filter(storageFile -> !storageFile.isDirectory())
+                            .subscribe(storageFile -> {
+                                if (App.isContain(storageFile)) {
+                                    FilesStatusObservable.getInstance()
+                                            .notifyObservers(storageFile, TAG, FilesStatusObservable.FILE_CANCEL_SELECTED);
+                                }
+                            });
+                }
+            }
+            mAdapter.notifyDataSetChanged();
+        });
         FilesStatusObservable.getInstance().register(TAG, new FilesStatusObserver() {
             @Override
             public void onSelected(BaseFileInfo fileInfo) {
+                mCheckAll.setChecked(isSelectedAllFile());
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelSelected(BaseFileInfo fileInfo) {
+                mCheckAll.setChecked(isSelectedAllFile());
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onSelectedAll(List<BaseFileInfo> fileInfoList) {
+                mCheckAll.setChecked(isSelectedAllFile());
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelSelectedAll(List<BaseFileInfo> fileInfoList) {
+                mCheckAll.setChecked(isSelectedAllFile());
                 mAdapter.notifyDataSetChanged();
             }
         });
+
     }
 
     /**
@@ -157,7 +195,8 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         if (mFileList.size() != 0) {
             mFileList.clear();
         }
-        Observable.fromArray(file.listFiles())
+        File[] files = file.listFiles();
+        Observable.fromArray(files)
                 .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .filter(storageFile -> {
                     // 根据配置选择是否过滤隐藏文件
@@ -223,11 +262,13 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                         // 按照文件夹在前文件在后的顺序添加到集合中去
                         mFileList.addAll(tempDirs);
                         mFileList.addAll(tempFiles);
+                        mCheckAll.setChecked(isSelectedAllFile());
                         mAdapter.notifyDataSetChanged();
                         if (mCurrIndicator != null) {
                             int[] lastPos = (int[]) mCurrIndicator.getTag();
                             mLayoutManager.scrollToPositionWithOffset(lastPos[0], lastPos[1]);
                         }
+
                     }
                 });
     }
@@ -313,12 +354,39 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                 // 将文件选择的事件回调给外部
                 FilesStatusObservable.getInstance().notifyObservers(storageFile, TAG, FilesStatusObservable.FILE_SELECTED);
             }
+            mCheckAll.setChecked(isSelectedAllFile());
         }
         mAdapter.notifyItemChanged(position);
     }
 
     public void setScrollListener(CustomRecyclerScrollViewListener scrollListener) {
         this.mScrollListener = scrollListener;
+    }
+
+    public boolean isSelectedAllFile() {
+        if (mFileList.size() == 0) {
+            mCheckAll.setEnabled(false);
+            return false;
+        }
+        List<BaseFileInfo> tempList = new ArrayList<>();
+        for (StorageFile storageFile : mFileList) {
+            if (!storageFile.isDirectory()) {
+                tempList.add(storageFile);
+            }
+        }
+
+        if (tempList.size() == 0) {
+            mCheckAll.setEnabled(false);
+            return false;
+        }
+        mCheckAll.setEnabled(true);
+        for (BaseFileInfo f : tempList) {
+            if (!App.isContain(f)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

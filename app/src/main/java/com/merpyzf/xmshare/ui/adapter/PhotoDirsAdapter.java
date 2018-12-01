@@ -61,8 +61,9 @@ public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHol
             gifIv.setVisibility(View.GONE);
             Glide.with(mContext)
                     .load(item.getCoverImg())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .crossFade()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(ivCover);
         }
     }

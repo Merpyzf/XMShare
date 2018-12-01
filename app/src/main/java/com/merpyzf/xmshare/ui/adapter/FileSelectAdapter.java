@@ -59,6 +59,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                     .error(UiUtils.getPlaceHolder(apkFile.getType()))
                     .crossFade()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
             //    音乐
         } else if (item instanceof MusicFile) {
@@ -127,6 +128,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                             .error(UiUtils.getPlaceHolder(BaseFileInfo.FILE_TYPE_IMAGE))
                             .crossFade()
                             .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageView);
                 }
             } else if (storageFile.isDirectory()) {

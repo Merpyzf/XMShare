@@ -65,8 +65,8 @@ public class PhotoSectionAdapter extends BaseSectionQuickAdapter<Section, BaseVi
                     .load(picFile.getPath())
                     .error(UiUtils.getPlaceHolder(picFile.getType()))
                     .placeholder(UiUtils.getPlaceHolder(picFile.getType()))
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(iv);
         }
 

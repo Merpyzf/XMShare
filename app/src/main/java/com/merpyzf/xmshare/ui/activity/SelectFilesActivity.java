@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
@@ -451,6 +452,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 .load(avatar)
                 .crossFade()
                 .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(view);
     }
 

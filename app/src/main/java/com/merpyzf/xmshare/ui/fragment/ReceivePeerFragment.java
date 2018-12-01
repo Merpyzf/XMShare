@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.qrcodescan.google.encoding.EncodingHandler;
 import com.merpyzf.radarview.RadarLayout;
@@ -370,6 +371,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                 .load(Const.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)))
                 .crossFade()
                 .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mCivAvatar);
 
         if (NetworkUtil.isWifi(mContext)) {

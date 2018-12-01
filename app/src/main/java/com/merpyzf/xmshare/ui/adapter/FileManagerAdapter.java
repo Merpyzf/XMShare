@@ -50,8 +50,9 @@ public class FileManagerAdapter extends BaseQuickAdapter<StorageFile, BaseViewHo
                         .load(item.getPath())
                         .error(R.drawable.ic_holder_image)
                         .placeholder(R.drawable.ic_holder_image)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .crossFade()
                         .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(ivIco);
             } else {
                 ivIco.setImageResource(FileTypeHelper.getIcoResBySuffix(item.getSuffix()));

@@ -196,7 +196,6 @@ public class ShowPhotosFragment extends BaseFragment {
             }
         };
         mAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-
             Section section = (Section) adapter.getItem(position);
             if (section.isHeader) {
                 section.setCheckedAllChild(!section.isCheckedAllChild());

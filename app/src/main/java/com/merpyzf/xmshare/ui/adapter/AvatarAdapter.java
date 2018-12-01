@@ -25,7 +25,6 @@ public class AvatarAdapter extends BaseQuickAdapter<Integer, BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, Integer item) {
-
         Glide.with(mContext)
                 .load(item)
                 .crossFade()

@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
@@ -74,6 +75,7 @@ public class PersonalActivity extends BaseActivity {
                 .load(Const.AVATAR_LIST.get(avatarPosition))
                 .crossFade()
                 .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mCivAvatar);
         //setWidgetsBgColor(avatarPosition);
         setSupportActionBar(mToolBar);
@@ -92,6 +94,7 @@ public class PersonalActivity extends BaseActivity {
                     .load(Const.AVATAR_LIST.get(position))
                     .crossFade()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(mCivAvatar);
             //setWidgetsBgColor(mAvatarPosition);
 

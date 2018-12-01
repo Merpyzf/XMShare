@@ -29,6 +29,7 @@ import com.merpyzf.xmshare.util.CollectionUtils;
 import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.merpyzf.xmshare.util.MusicUtils;
+import com.merpyzf.xmshare.util.ToastUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.trello.rxlifecycle2.android.FragmentEvent;
@@ -157,9 +158,8 @@ public class FileListFragment extends BaseFragment {
                                 FilesStatusObservable.FILE_SELECTED_ALL);
                 mFileListAdapter.notifyDataSetChanged();
             } else {
-                //将取消全选的事件回调给外部
+                mTvChecked.setText("全选");
                 if (isSelectedAllFile()) {
-                    mTvChecked.setText("全选");
                     FilesStatusObservable.getInstance()
                             .notifyObservers(mFileLists, TAG,
                                     FilesStatusObservable.FILE_CANCEL_SELECTED_ALL);
