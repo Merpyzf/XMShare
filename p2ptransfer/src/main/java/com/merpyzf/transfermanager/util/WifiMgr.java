@@ -193,6 +193,11 @@ public class WifiMgr {
     }
 
 
+    public String getCurrConnWifiSsid() {
+        WifiInfo currConnWifiInfo = getCurrConnWifiInfo();
+        return currConnWifiInfo.getSSID();
+    }
+
     /**
      * 获取当前Wifi所分配的Ip地址
      *

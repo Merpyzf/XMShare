@@ -38,6 +38,11 @@ public class FilePathManager {
 
     public static String LOCAL_MUSIC_ALBUM_CACHE_PATH = CACHE_ROOT_PATH + File.separator + ".local" + File.separator + ".music_album";
 
+    public static String ASSETS_IMAGE_PATH = CACHE_ROOT_PATH + File.separator + ".assets_temp"+File.separator+".img";
+
+    public static String ASSETS_FILE_TYPE_PATH = CACHE_ROOT_PATH + File.separator + "assets_temp"+File.separator+".filetype";
+
+
     public static String LOCAL_VIDEO_THUMB_CACHE_PATH = CACHE_ROOT_PATH + File.separator + ".local" + File.separator + ".video_album";
 
     public static String LOCAL_APP_THUMB_CACHE_PATH = CACHE_ROOT_PATH + File.separator + ".local" + File.separator + ".app_album";
@@ -52,6 +57,29 @@ public class FilePathManager {
     private FilePathManager() {
 
     }
+
+    /**
+     * 存放从assets目录下拷贝的图片压缩后的文件
+     * @return
+     */
+    public static File getAssentImgPath() {
+        File file = new File(Environment.getExternalStorageDirectory(), ASSETS_IMAGE_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file;
+    }
+
+    public static File getAssentFileTypeThumbPath(){
+        File file = new File(Environment.getExternalStorageDirectory(), ASSETS_FILE_TYPE_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return file;
+    }
+
+
+
 
     public static File getLocalMusicAlbumCacheDir() {
         File file = new File(Environment.getExternalStorageDirectory(), LOCAL_MUSIC_ALBUM_CACHE_PATH);

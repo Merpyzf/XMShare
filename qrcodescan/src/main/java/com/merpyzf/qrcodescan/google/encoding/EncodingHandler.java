@@ -22,11 +22,16 @@ import java.util.Map;
 public final class EncodingHandler {
 	private static final int BLACK = 0xff000000;
 	
-	public static Bitmap createQRCode(String str, int widthAndHeight) throws WriterException {
+	public static Bitmap createQRCode(String str, int widthAndHeight) {
 		Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
-        hints.put(EncodeHintType.CHARACTER_SET, "utf-8"); 
-		BitMatrix matrix = new MultiFormatWriter().encode(str,
-				BarcodeFormat.QR_CODE, widthAndHeight, widthAndHeight);
+        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+		BitMatrix matrix = null;
+		try {
+			matrix = new MultiFormatWriter().encode(str,
+					BarcodeFormat.QR_CODE, widthAndHeight, widthAndHeight);
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
 		int width = matrix.getWidth();
 		int height = matrix.getHeight();
 		int[] pixels = new int[width * height];

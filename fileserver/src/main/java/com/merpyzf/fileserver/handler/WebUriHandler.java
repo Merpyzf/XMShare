@@ -1,14 +1,10 @@
 package com.merpyzf.fileserver.handler;
 
 import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
 
+import com.merpyzf.fileserver.common.Const;
 import com.merpyzf.fileserver.common.bean.FileInfo;
-import com.merpyzf.fileserver.util.FileUtils;
 import com.merpyzf.fileserver.util.IOUtils;
-import com.merpyzf.fileserver.util.Md5Utils;
-import com.merpyzf.transfermanager.util.FilePathManager;
 import com.yanzhenjie.andserver.RequestHandler;
 import com.yanzhenjie.andserver.util.HttpRequestParser;
 
@@ -18,14 +14,10 @@ import org.apache.httpcore.HttpResponse;
 import org.apache.httpcore.entity.StringEntity;
 import org.apache.httpcore.protocol.HttpContext;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
-import javax.security.auth.login.LoginException;
 
 /**
  * description: 用于根据请求的uri生成页面返回
@@ -51,7 +43,6 @@ public class WebUriHandler implements RequestHandler {
 
     @Override
     public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-
         String htmlPage;
         // 分享指定文件
         if (mFileList != null) {
@@ -88,10 +79,14 @@ public class WebUriHandler implements RequestHandler {
             String strFileItem = generateFileItem(fileInfo);
             containerHtml.append(strFileItem);
         }
+        String logoSrcLink = Const.URL_ICO + "?type=" + Const.WEB_SITE_ICO + "&filename=logo.png";
+        String followMeSrcLink = Const.URL_ICO + "?type=" + Const.WEB_SITE_ICO + "&filename=follow_me.png";
         String indexHtml = indexTemplate.replace("{title}", "小马快传文件服务")
                 .replace("{nav_title}", "小马快传 分享文件个数: " + mFileList.size())
                 .replace("{current_path}", "")
-                .replace("{container}", containerHtml);
+                .replace("{container}", containerHtml)
+                .replace("{img_logo}", logoSrcLink)
+                .replace("{img_fork_me}", followMeSrcLink);
         return indexHtml;
     }
 
@@ -108,51 +103,45 @@ public class WebUriHandler implements RequestHandler {
         String strFileItem = null;
         // 获取文件类型
         int type = fileInfo.getType();
+        String fileName = fileInfo.getName();
+        String suffix = fileInfo.getSuffix();
         String strFileType = null;
         String coverHref;
-        String thumbPath = null;
-        if (type == FileInfo.FILE_TYPE_OTHER) {
 
-        } else {
-            switch (type) {
-                case FileInfo.FILE_TYPE_APP:
-                    thumbPath = FilePathManager.getLocalAppThumbCacheFile(fileInfo.getName()).getPath();
-                    strFileType = "应用apk";
-                    break;
-                case FileInfo.FILE_TYPE_IMAGE:
-                    thumbPath = fileInfo.getPath();
-                    strFileType = "图片";
-                    String name = fileInfo.getName();
-                    Log.i(TAG, "图片名称--> " + name);
+        switch (type) {
+            case FileInfo.FILE_TYPE_APP:
+                strFileType = "应用apk";
+                break;
+            case FileInfo.FILE_TYPE_IMAGE:
+                strFileType = "图片";
+                break;
+            case FileInfo.FILE_TYPE_MUSIC:
+                strFileType = "音乐";
+                fileName = String.valueOf(fileInfo.getAlbumId());
+                break;
+            case FileInfo.FILE_TYPE_VIDEO:
+                strFileType = "视频";
+                break;
+            case FileInfo.FILE_TYPE_COMPACT:
+                strFileType = "压缩文件";
+                break;
+            case FileInfo.FILE_TYPE_DOCUMENT:
+                strFileType = "文档";
+                break;
+            case FileInfo.FILE_TYPE_STORAGE:
+                strFileType = "本地存储";
+            default:
+                break;
 
-                    break;
-                case FileInfo.FILE_TYPE_MUSIC:
-                    thumbPath = FilePathManager.getLocalMusicAlbumCacheFile(String.valueOf(fileInfo.getAlbumId())).getPath();
-                    strFileType = "音乐";
-                    break;
-                case FileInfo.FILE_TYPE_VIDEO:
-                    thumbPath = FilePathManager.getLocalVideoThumbCacheFile(fileInfo.getName()).getPath();
-                    strFileType = "视频";
-                    break;
-                case FileInfo.FILE_TYPE_COMPACT:
-                    strFileType = "压缩文件";
-                    break;
-                case FileInfo.FILE_TYPE_DOCUMENT:
-                    strFileType = "文档";
-                    break;
-                default:
-                    break;
-
-            }
         }
-
-        coverHref = "/img?type=" + type + "&path=" + thumbPath;
-        strFileItem = fileItemTemplate.replace("{file_href}", "/file?path=" + fileInfo.getPath() + "&name=" + fileInfo.getName() + "." + fileInfo.getSuffix())
+        String[] sizeArrayStr = com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
+        coverHref = Const.URL_ICO + "?type=" + type + "&filename=" + fileName + "&suffix=" + suffix;
+        strFileItem = fileItemTemplate.replace("{file_href}", Const.URL_DOWN + "?name=" + fileInfo.getName())
                 .replace("{file_name}", fileInfo.getName())
                 .replace("{cover}", coverHref)
                 .replace("{type}", "类型: " + strFileType)
-                .replace("{file_path}", "路径:" + fileInfo.getPath())
-                .replace("{file_size}", "大小:" + String.valueOf(fileInfo.getLength()));
+                .replace("{file_path}", "路径: " + fileInfo.getPath())
+                .replace("{file_size}", "大小: " + sizeArrayStr[0] + sizeArrayStr[1]);
         return strFileItem;
 
     }

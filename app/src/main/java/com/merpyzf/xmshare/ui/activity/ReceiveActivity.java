@@ -35,8 +35,6 @@ import butterknife.Unbinder;
  * 3. 当接收端退出的时候,需要发送一个离线广播
  */
 public class ReceiveActivity extends AppCompatActivity {
-
-
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
     private Context mContext;
@@ -54,9 +52,7 @@ public class ReceiveActivity extends AppCompatActivity {
      * @param context
      */
     public static void start(Context context) {
-
         context.startActivity(new Intent(context, ReceiveActivity.class));
-
     }
 
     @Override
@@ -64,19 +60,15 @@ public class ReceiveActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
         this.mContext = this;
-
         init();
         initUI();
         initEvent();
-
-
     }
 
     /**
      * 初始化对象
      */
     private void init() {
-
         mPeerManager = new PeerManager(mContext, SharedPreUtils.getNickName(mContext));
         // 开启一个UDP消息的监听
         mPeerManager.startMsgListener();
@@ -91,7 +83,6 @@ public class ReceiveActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("我要接收");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         // 跳转到扫描附近设备的界面
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mReceivePeerFragment = new ReceivePeerFragment();
@@ -104,7 +95,6 @@ public class ReceiveActivity extends AppCompatActivity {
      * 初始化事件
      */
     private void initEvent() {
-
         if (mReceivePeerFragment != null) {
             // 局域网下的事件
             mReceivePeerFragment.setOnReceivePairActionListener(new ReceivePeerFragment.OnReceivePairActionListener() {
@@ -113,7 +103,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     // 收到对端请求发送文件的请求
                     // 开启一个Socket服务
                     ReceiverManager receiverManager = ReceiverManager.getInstance(mContext);
-                    receiverManager.register( new AbsTransferObserver() {
+                    receiverManager.register(new AbsTransferObserver() {
                         // TODO: 2018/1/28 增加一个文件全部传输完毕的回调
                         @Override
                         public void onTransferStatus(BaseFileInfo fileInfo) {
@@ -122,6 +112,7 @@ public class ReceiveActivity extends AppCompatActivity {
                                 isTransfering = false;
                             }
                         }
+
                         @Override
                         public void onTransferError(String error) {
                             ToastUtils.showShort(mContext, error);
@@ -158,9 +149,7 @@ public class ReceiveActivity extends AppCompatActivity {
                 }
             });
         }
-
         if (mPeerManager != null) {
-
             mPeerManager.setPeerTransferBreakListener(peer -> {
                 if (isTransfering) {
                     Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
@@ -168,25 +157,17 @@ public class ReceiveActivity extends AppCompatActivity {
                 }
             });
         }
-
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
-
             case android.R.id.home:
                 onBackPressed();
                 break;
             default:
                 break;
-
-
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -208,7 +189,6 @@ public class ReceiveActivity extends AppCompatActivity {
             mPeerManager.stopMsgListener();
         }
         ReceiverManager.getInstance(mContext).release();
-
         super.onDestroy();
     }
 }

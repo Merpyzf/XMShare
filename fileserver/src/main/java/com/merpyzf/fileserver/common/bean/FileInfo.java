@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class FileInfo implements Serializable {
 
 
+
     /**
      * 应用类型(APK)
      */
@@ -46,7 +47,7 @@ public class FileInfo implements Serializable {
     /**
      * 其他文件 (传输的文件夹之类的)
      */
-    public static final int FILE_TYPE_OTHER = 0x07;
+    public static final int FILE_TYPE_STORAGE = 0x07;
 
 
     /**

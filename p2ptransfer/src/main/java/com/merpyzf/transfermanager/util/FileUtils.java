@@ -183,7 +183,7 @@ public class FileUtils {
      */
     public static Bitmap zoomImage(Context mContext, Bitmap bmp) {
         if (bmp == null) {
-            bmp = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_thumb_empty);
+            return null;
         }
 
         // 获取这个图片的宽和高

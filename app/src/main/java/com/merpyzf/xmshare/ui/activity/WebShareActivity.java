@@ -6,20 +6,26 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.merpyzf.fileserver.FileServer;
+import com.merpyzf.fileserver.util.NetworkUtil;
 import com.merpyzf.qrcodescan.google.encoding.EncodingHandler;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.WifiMgr;
@@ -34,22 +40,39 @@ import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.merpyzf.xmshare.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
+/**
+ * @author wangke
+ */
 public class WebShareActivity extends BaseActivity {
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
-    @BindView(R.id.tv_info)
-    TextView mTvInfo;
+    @BindView(R.id.tv_first_step)
+    TextView mTvFirstStep;
+    @BindView(R.id.tv_second_step)
+    TextView mTvSecondStep;
+    @BindView(R.id.tv_net_info)
+    TextView mTvNetInfo;
+    @BindView(R.id.iv_qrcode_share_page)
+    ImageView mIvQrCodeSharePage;
+    @BindView(R.id.progress_waiting)
+    ProgressBar mProgressBar;
+    // android O 以上的设备自建热点需要显示的信息
+    @BindView(R.id.ll_net_info)
+    LinearLayout mLlAboveONetInfo;
+    @BindView(R.id.btn_change_ap)
+    Button mBtnChangeAp;
 
-    private static String TAG = "ww2k";
-    private WifiMgr mWifiMgr;
+
     private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
     private APChangedReceiver mApChangedReceiver;
     private FileServer mFileServer;
+    private WifiMgr mWifiMgr;
+    private static String TAG = "ww2k";
 
     @Override
     protected int getContentLayoutId() {
@@ -61,37 +84,36 @@ public class WebShareActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("web传");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override
     protected void initData() {
         super.initData();
+        mWifiMgr = WifiMgr.getInstance(mContext);
         // 传输的方式
         int transferMode = SharedPreUtils.getInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
                 Const.TRANSFER_MODE_LAN);
         if (transferMode == Const.TRANSFER_MODE_AP) {
-            // 热点传输优先-> 无论是否连接wifi都要建立热点
-            mFileServer = FileServer.getInstance();
-            mFileServer.startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
-            //requestPermissionAndInitAp();
-            //mBtnChangedAp.setVisibility(View.INVISIBLE);
+            mBtnChangeAp.setVisibility(View.INVISIBLE);
+            requestPermissionAndInitAp();
         } else if (transferMode == Const.TRANSFER_MODE_LAN) {
-            // 局域网传输优先-> 如果没有连接wifi 就开启热点
-            //mWifiMgr = WifiMgr.getInstance(mContext);
-            //if (NetworkUtil.isWifi(mContext)) {
-            //    Log.i(TAG, "当前wifi处于WIFI环境");
-            //    String localIp = NetworkUtil.getLocalIp(mContext);
-            //    Log.i(TAG, "localIp: " + localIp);
-            //    mTvInfo.setText("访问: " + "http://" + localIp + ":8888");
-            //
-            //    mFileServer.startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
-            //    //mBtnChangedAp.setVisibility(View.VISIBLE);
-            //} else {
-            //    Toast.makeText(mContext, "建立热点进行传输", Toast.LENGTH_SHORT).show();
-            //    requestPermissionAndInitAp();
-            //    //mBtnChangedAp.setVisibility(View.INVISIBLE);
-            //}
+            // 如果当前已连接到局域网就使用局域网，如果没有局域网就开启热点
+            if (NetworkUtil.isWifi(mContext)) {
+                mBtnChangeAp.setVisibility(View.VISIBLE);
+                mLlAboveONetInfo.setVisibility(View.INVISIBLE);
+                String localIp = NetworkUtil.getLocalIp(mContext);
+                String ssid = mWifiMgr.getCurrConnWifiSsid();
+                mTvFirstStep.setText("第一步: 邀请好友连接到" + ssid + "网络");
+                //开启网页文件共享服务
+                FileServer.getInstance()
+                        .startupFileShareServer(mContext, localIp, FileInfoFactory.toFileServerType(App.getTransferFileList()));
+                String sharePageLink = "http://" + localIp + ":" + com.merpyzf.fileserver.common.Const.DEFAULT_PORT + "/share";
+                mTvSecondStep.setText("第二步: 在地址栏输入" + sharePageLink + "\n或通过手机等智能设备直接扫码访问:");
+                mIvQrCodeSharePage.setImageBitmap(getQrCode(sharePageLink));
+            } else {
+                Toast.makeText(mContext, "建立热点进行传输", Toast.LENGTH_SHORT).show();
+                requestPermissionAndInitAp();
+            }
         }
 
     }
@@ -106,7 +128,37 @@ public class WebShareActivity extends BaseActivity {
         //2. 如果当前设备已经开启热点
         // 8.0一下的设备无密码直接连接
         // 8.0以上的设备需要密码，提供一个包含用户名和密码的选项供用户连接
+        //通过广播监听热点变化
+        // 热点被关闭的回调方法
+        mApChangedReceiver = new APChangedReceiver() {
+            @SuppressLint("CheckResult")
+            @Override
+            public void onApEnableAction() {
+                io.reactivex.Observable.timer(1000, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(aLong -> {
+                            String name = Thread.currentThread().getName();
+                            FileServer.getInstance()
+                                    .startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
+                            String sharePageLink = "http://192.168.43.1:" + com.merpyzf.fileserver.common.Const.DEFAULT_PORT + "/share";
+                            String apSsid = ApManager.getApSSID(mContext);
+                            mTvFirstStep.setText("第一步: 邀请好友连接到\"" + apSsid + "\"网络");
+                            mTvSecondStep.setText("第二步: 输入" + sharePageLink + "\n或通过手机等智能设备扫码访问:");
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            mIvQrCodeSharePage.setVisibility(View.VISIBLE);
+                            mIvQrCodeSharePage.setImageBitmap(getQrCode(sharePageLink));
+                        });
 
+            }
+
+            @Override
+            public void onApDisAbleAction() {
+                FileServer.getInstance().stopRunning();
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
+        mContext.registerReceiver(mApChangedReceiver, intentFilter);
+        mBtnChangeAp.setOnClickListener(v -> requestPermissionAndInitAp());
 
     }
 
@@ -114,8 +166,6 @@ public class WebShareActivity extends BaseActivity {
      * 申请并初始化AP
      */
     private void requestPermissionAndInitAp() {
-
-
         // 检查是否具备修改系统设置的权限
         boolean permission = false;
         // 获取当前设备的SDK的版本
@@ -128,15 +178,8 @@ public class WebShareActivity extends BaseActivity {
                     Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
         }
         if (permission) {
-
-            Log.i("wk", "拥有权限直接建立热点");
-
-            //closeMobileNetwork();
-            // 拥有权限直接建立热点
             initAp();
-
         } else {
-
             requestWriteSettings();
         }
     }
@@ -147,29 +190,11 @@ public class WebShareActivity extends BaseActivity {
      */
     @SuppressLint("CheckResult")
     private void initAp() {
+        mBtnChangeAp.setVisibility(View.INVISIBLE);
         // 如果热点处于开启状态就将其关闭
         if (ApManager.isApOn(mContext)) {
             ApManager.turnOffAp(mContext);
         }
-        //通过广播监听热点变化
-        // 热点被关闭的回调方法
-        mApChangedReceiver = new APChangedReceiver() {
-            @Override
-            public void onApEnableAction() {
-                ToastUtils.showShort(mContext, "热点开启了");
-                mTvInfo.setText("http://192.168.43.1:8888");
-
-            }
-
-            @Override
-            public void onApDisAbleAction() {
-                // 热点被关闭的回调方法
-                //mFileServer.stopRunning();
-            }
-        };
-
-        IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
-        mContext.registerReceiver(mApChangedReceiver, intentFilter);
         // 开启热点
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // 申请位置权限
@@ -177,31 +202,28 @@ public class WebShareActivity extends BaseActivity {
                     .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
                     .subscribe(permission -> {
                         if (permission.granted) {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            mIvQrCodeSharePage.setVisibility(View.INVISIBLE);
+                            mContext.unregisterReceiver(mApChangedReceiver);
                             ApManager.configApStateOnAndroidO(mContext, new ApManager.HotspotStateCallback() {
                                 @RequiresApi(api = Build.VERSION_CODES.O)
                                 @Override
                                 public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                    mIvQrCodeSharePage.setVisibility(View.VISIBLE);
                                     String ssid = reservation.getWifiConfiguration().SSID;
                                     String preSharedKey = reservation.getWifiConfiguration().preSharedKey;
+                                    mLlAboveONetInfo.setVisibility(View.VISIBLE);
                                     ToastUtils.showShort(mContext, "开启成功: ssid " + ssid + " key:" + preSharedKey);
-
-                                    mTvInfo.setText("请先连接: " + ssid + "密码: " + ssid + "\nhttp://192.168.43.1:8888");
                                     mFileServer = FileServer.getInstance();
                                     mFileServer.startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
-
-
                                     App.setReservation(reservation);
-                                    JSONObject jsonObject = new JSONObject();
-                                    try {
-                                        jsonObject.put("ssid", reservation.getWifiConfiguration().SSID);
-                                        jsonObject.put("preSharedKey", reservation.getWifiConfiguration().preSharedKey);
-                                        String hotspotInfo = jsonObject.toString();
-                                        Bitmap bmpLogo = BitmapFactory.decodeResource(getResources(), SharedPreUtils.getAvatar(mContext));
-                                        Bitmap qrCode = EncodingHandler.createQRCode(hotspotInfo, DisplayUtils.dip2px(mContext, 200), DisplayUtils.dip2px(mContext, 200), bmpLogo);
-                                        //mIvQrCode.setImageBitmap(qrCode);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                    String sharePageLink = "http://192.168.43.1:"+ com.merpyzf.fileserver.common.Const.DEFAULT_PORT+"/share";
+                                    mTvFirstStep.setText("第一步：邀请好友连接到\"" + ssid + "\"网络");
+                                    mTvNetInfo.setText("由于Android8.0及以上系统的限制，\n请输入热点密码以连接: \n\n" + preSharedKey);
+                                    mTvSecondStep.setText("第二步: 输入" + sharePageLink + "\n或通过手机等智能设备扫码访问:");
+                                    mIvQrCodeSharePage.setVisibility(View.VISIBLE);
+                                    mIvQrCodeSharePage.setImageBitmap(getQrCode(sharePageLink));
                                 }
 
                                 @Override
@@ -217,9 +239,12 @@ public class WebShareActivity extends BaseActivity {
                         }
                     });
         } else {
+
             ApManager.configApState(mContext, SharedPreUtils.getNickName(mContext), SharedPreUtils.getAvatar(mContext));
-            //mRlShowQrCodeInfo.setVisibility(View.INVISIBLE);
-            //radar.setVisibility(View.VISIBLE);
+            mLlAboveONetInfo.setVisibility(View.INVISIBLE);
+            mIvQrCodeSharePage.setVisibility(View.INVISIBLE);
+            mProgressBar.setVisibility(View.VISIBLE);
+            // 开始开启热点
         }
     }
 
@@ -242,11 +267,18 @@ public class WebShareActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    public Bitmap getQrCode(String message) {
+        Bitmap qrCode = EncodingHandler.createQRCode(message, DisplayUtils.dip2px(mContext, 200));
+        return qrCode;
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mFileServer.isRunning()) {
-            mFileServer.stopRunning();
-        }
+        FileServer.getInstance().stopRunning();
+        mContext.unregisterReceiver(mApChangedReceiver);
+        ApManager.turnOffAp(mContext);
     }
 }

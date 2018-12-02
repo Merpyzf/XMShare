@@ -179,7 +179,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
                 if (App.getTransferFileList().size() == 0) {
-                    fabShow(150);
+                    fabHide(150);
                 }
             }
         };

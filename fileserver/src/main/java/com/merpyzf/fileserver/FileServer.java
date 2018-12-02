@@ -5,8 +5,8 @@ import android.util.Log;
 
 import com.merpyzf.fileserver.common.Const;
 import com.merpyzf.fileserver.common.bean.FileInfo;
-import com.merpyzf.fileserver.handler.DownloadUriHandler;
-import com.merpyzf.fileserver.handler.ImgUriHandler;
+import com.merpyzf.fileserver.handler.DownloadRequestHandler;
+import com.merpyzf.fileserver.handler.ThumbRequestHandler;
 import com.merpyzf.fileserver.handler.WebUriHandler;
 import com.yanzhenjie.andserver.AndServer;
 import com.yanzhenjie.andserver.Server;
@@ -22,7 +22,7 @@ import java.util.List;
  * version:1.0
  */
 public class FileServer {
-
+    // TODO: 2018/12/1 文件共享服务器关闭后注意要清理assets文件夹存放的临时文件 
     private static FileServer sFileServer;
     private Server mServer;
 
@@ -53,10 +53,11 @@ public class FileServer {
             mServer = AndServer.serverBuilder()
                     .port(Const.DEFAULT_PORT)
                     .inetAddress(InetAddress.getByName(hostAddress))
-                    .registerHandler("/", new WebUriHandler(context, fileList))
-                    .registerHandler("/img", new ImgUriHandler())
-                    .registerHandler("/file", new DownloadUriHandler())
+                    .registerHandler(Const.URL_HOME, new WebUriHandler(context, fileList))
+                    .registerHandler(Const.URL_ICO, new ThumbRequestHandler(context, fileList))
+                    .registerHandler(Const.URL_DOWN, new DownloadRequestHandler(fileList))
                     .build();
+            Log.i("ww2k", "文件共享服务开启了");
             mServer.startup();
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -68,18 +69,18 @@ public class FileServer {
      */
     public void startupFileServer(Context context, String hostAddress) {
 
-        try {
-            mServer = AndServer.serverBuilder()
-                    .port(Const.DEFAULT_PORT)
-                    .inetAddress(InetAddress.getByName(hostAddress))
-                    .registerHandler("/", new WebUriHandler(context))
-                    .registerHandler("/img", new ImgUriHandler())
-                    .registerHandler("/file", new DownloadUriHandler())
-                    .build();
-            mServer.startup();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    mServer = AndServer.serverBuilder()
+        //            .port(Const.DEFAULT_PORT)
+        //            .inetAddress(InetAddress.getByName(hostAddress))
+        //            .registerHandler("/", new WebUriHandler(context))
+        //            .registerHandler("/img", new ThumbRequestHandler())
+        //            .registerHandler("/file", new DownloadRequestHandler())
+        //            .build();
+        //    mServer.startup();
+        //} catch (UnknownHostException e) {
+        //    e.printStackTrace();
+        //}
 
     }
 
@@ -97,7 +98,9 @@ public class FileServer {
      */
     public void stopRunning() {
         if (mServer != null) {
-            mServer.shutdown();
+            if (mServer.isRunning()) {
+                mServer.shutdown();
+            }
         }
     }
 

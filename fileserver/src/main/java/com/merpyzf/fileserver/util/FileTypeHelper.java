@@ -1,13 +1,21 @@
-package com.merpyzf.xmshare.util;
+package com.merpyzf.fileserver.util;
 
+import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.merpyzf.xmshare.R;
+import com.merpyzf.fileserver.R;
+import com.merpyzf.transfermanager.util.FilePathManager;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author wangke
+ */
 public class FileTypeHelper {
 
     static ArrayList<String> sDocumentTypes;
@@ -16,6 +24,7 @@ public class FileTypeHelper {
     static ArrayList<String> sMusicTypes;
     static ArrayList<String> sVideoTypes;
     static ArrayList<String> sCodeTypes;
+    private static final String ROOT_PATH = "img/file_type/";
 
 
     static Map<String, Integer> sIcoResMap;
@@ -118,54 +127,70 @@ public class FileTypeHelper {
      * @param suffix
      * @return
      */
-    public static Integer getIcoResBySuffix(String suffix) {
+    public static File getFileTypeThumbBySuffix(Context context, String suffix) {
+        String fileTypeName = getFileTypeName(suffix);
+        File fileTypeThumb = new File(FilePathManager.getAssentFileTypeThumbPath(), fileTypeName);
+        Log.i("ww2k", "fileTypePath: " + fileTypeThumb.getPath());
+        if (fileTypeThumb.exists()) {
+            Log.i("ww2k", "存在: " + fileTypeThumb.getPath());
+            // 如果已经存在则直接使用
+            return fileTypeThumb;
+        } else {
+            //    将assets中的文件拷贝到设备内然后返回
+            InputStream in = FileUtils.OpenFileFromAssets(context, ROOT_PATH + fileTypeName);
+            IOUtils.writeStreamToFile(in, fileTypeThumb);
+        }
+        return fileTypeThumb;
+    }
+
+    private static String getFileTypeName(String suffix) {
         if (TextUtils.equals("", suffix)) {
-            return R.drawable.ic_fileitem_blank;
+            return "file_blank.png";
         }
         if (sDocumentTypes.contains(suffix)) {
             if ("doc".equals(suffix) || "docx".equals(suffix) || "pages".equals(suffix)) {
-                return R.drawable.ic_fileitem_word;
+                return "file_word.png";
             }
             if ("xls".equals(suffix) || "xlsx".equals(suffix) || "numbers".equals(suffix)) {
-                return R.drawable.ic_fileitem_excel;
+                return "file_excel.png";
             }
             if ("ppt".equals(suffix) || "key".equals(suffix)) {
-                return R.drawable.ic_fileitem_ppt;
+                return "file_ppt.png";
             }
-
             if ("pdf".equals(suffix)) {
-                return R.drawable.ic_fileitem_pdf;
+                return "file_pdf.png";
             }
             if ("html".equals(suffix)) {
-                return R.drawable.ic_fileitem_html;
+                return "file_html.png";
             }
-
             if ("psd".equals(suffix)) {
-                return R.drawable.ic_fileitem_psd;
+                return "file_psd.png";
             }
             if ("txt".equals(suffix)) {
-                return R.drawable.ic_fileitem_txt;
+                return "file_txt.png";
             }
             if ("torrent".equals(suffix)) {
-                return R.drawable.ic_fileitem_bt;
+                return "file_bt.png";
             }
-            return R.drawable.ic_fileitem_document;
+            return "file_document.png";
         } else if (sCompactTypes.contains(suffix)) {
             if ("iso".equals(suffix)) {
-                return R.drawable.ic_fileitem_iso;
+                return "file_iso.png";
             }
-            return R.drawable.ic_fileitem_zip;
+            return "file_zip.png";
         } else if (sVideoTypes.contains(suffix)) {
-            return R.drawable.ic_fileitem_video;
+            return "file_video.png";
         } else if (sMusicTypes.contains(suffix)) {
-            return R.drawable.ic_fileitem_music;
+            return "file_music.png";
         } else if ("ttf".equals(suffix)) {
-            return R.drawable.ic_fileitem_ttf;
+            return "file_ttf.png";
         } else if (sCodeTypes.contains(suffix)) {
-            return R.drawable.ic_fileitem_code;
+            return "file_code.png";
         } else {
-            return R.drawable.ic_fileitem_other;
+            return "file_other.png";
         }
+
+
     }
 
     /**

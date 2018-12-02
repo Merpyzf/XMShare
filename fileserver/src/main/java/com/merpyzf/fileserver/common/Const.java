@@ -9,7 +9,11 @@ package com.merpyzf.fileserver.common;
 public class Const {
 
     // 文件服务的默认请求端口
-    public static final int DEFAULT_PORT = 8888;
+    public static final int DEFAULT_PORT = 9140;
+    public static final int WEB_SITE_ICO = 0x00;
+    public static final String URL_HOME = "/share";
+    public static final String URL_ICO = "/share/ico";
+    public static final String URL_DOWN = "/share/download";
 
 
 }

@@ -1,6 +1,10 @@
 package com.merpyzf.fileserver.util;
 
+import android.content.Context;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by merpyzf on 2018/4/16.
@@ -35,6 +39,16 @@ public class FileUtils {
             return "";
         }
         return filePath.substring(beginIndex);
+    }
+
+    public static InputStream OpenFileFromAssets(Context context, String fileName) {
+        InputStream inputStream = null;
+        try {
+            inputStream = context.getAssets().open(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return inputStream;
     }
 
 }
