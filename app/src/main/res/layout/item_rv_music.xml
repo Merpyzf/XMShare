@@ -14,9 +14,9 @@
         <ImageView
             android:id="@+id/iv_cover"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="160dp"
             android:src="@drawable/ic_holder_album_art"
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/iv_select"
@@ -34,9 +34,10 @@
         <LinearLayout
             android:id="@+id/ll_music_bottom"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/iv_cover"
             android:layout_centerVertical="true"
+            android:layout_alignParentBottom="true"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -49,7 +50,8 @@
                 android:paddingRight="5dp"
                 android:singleLine="true"
                 android:text="春末南方的城市"
-                android:textColor="@color/colorPrimaryText" />
+                android:textSize="14sp"
+                android:textColor="@color/black_alpha_192" />
 
             <LinearLayout
                 android:layout_width="match_parent"

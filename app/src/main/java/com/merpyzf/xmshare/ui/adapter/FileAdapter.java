@@ -39,7 +39,9 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 /**
- * Created by wangke on 2017/12/24.
+ *
+ * @author wangke
+ * @date 2017/12/24
  */
 
 public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
@@ -73,8 +75,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             }
         } else if (item instanceof MusicFile) {
             MusicFile musicFile = (MusicFile) item;
-            long albumId = musicFile.getAlbumId();
-
             helper.setText(R.id.tv_title, musicFile.getName());
             helper.setText(R.id.tv_info, musicFile.getArtist() + " " + FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
             LinearLayout llBottom = helper.getView(R.id.ll_music_bottom);
