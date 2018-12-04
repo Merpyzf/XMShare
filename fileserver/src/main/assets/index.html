@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{title}</title>
+    <title>文件目录展示</title>
+
     <style>
-        * {
-            margin: 0;
+
+        body {
             padding: 0;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .file_path {
+                display: none;
+            }
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
         header {
+            position: relative;
             height: 80px;
             width: 100%;
             background-color: white;
@@ -27,33 +42,49 @@
         }
 
         .title {
-            height: 80px;
-            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 90px;
+            height: 30px;
+            margin: auto 30px auto 10px;
             font-weight: 400;
             color: #4D555D;
             font-size: 18px;
-            line-height: 80px;
-            margin-left: 10px;
-            float: left;
+            line-height: 30px;
         }
 
-        .dir_path {
-            float: left;
-            line-height: 80px;
-            margin-left: 20px;
+        .info {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 80px;
+            height: 24px;
+            margin: auto 20px;
+            margin-top: 50px;
             font-weight: 400;
-            color: #4D555D;
-            font-size: 16px;
+            color: #6e6e6e;
+            font-size: 12px;
+            line-height: 24px;
         }
 
         .container {
-            width: 90%;
+            width: 80%;
             margin: 0 auto;
             margin-top: 100px;
         }
 
+        .container a {
+            color: #6e6e6e;
+        }
+
+        .container a:hover {
+            color: #ff8400;
+        }
+
+        /*item*/
         .file_item {
-            height: 70px;
+            padding: 5px;
             border-radius: 4px;
             background-color: white;
             box-shadow: 0 0px 6px 0 rgba(0, 0, 6, .1);
@@ -61,56 +92,51 @@
         }
 
         .cover {
+            display: inline-block;
             width: 56px;
             height: 56px;
             border-radius: 4px;
-            float: left;
             margin: 7px 7px;
+            vertical-align: top;
+        }
+
+        .file_info {
+            display: inline-block;
+            padding: 5px;
         }
 
         .file_info h3 {
             height: 30px;
+            margin: 0;
             line-height: 30px;
             font-weight: 400;
             font-size: 18px;
         }
 
-        .file_info h4 {
-            height: 30px;
+        .file_type .file_size .file_path {
             line-height: 30px;
-            font-weight: 300;
-            font-size: 16px;
         }
 
-        .file_info {
-            left: 90px;
-            float: left;
-            margin-top: 5px;
-            margin-left: 20px;
-        }
-        a {
-           color: #6e6e6e;
-        }
-         a:hover{
-            color: #ff8400;
+        .file_path {
+            max-width: 300px;
+            text-overflow: ellipsis;
         }
 
 
 
     </style>
+
 </head>
 <body>
 
 <header>
     <nav>
-        <img class="logo"
-             src="{img_logo}">
+        <img class="logo" src="{img_logo}">
         <h4 class="title">{nav_title}</h4>
-        <p class="dir_path">{current_path}</p>
-        <a href="https://github.com/merpyzf">
+        <p class="info">{info}</p>
+        <a href="https://github.com/you">
             <img style="position: absolute; top: 0; right: 0; border: 0;"
-                 src="{img_fork_me}"
-                 alt="Fork me on GitHub"></a>
+                 src="{img_fork_me}" alt="Fork me on GitHub"></a>
     </nav>
 </header>
 <div class="container">

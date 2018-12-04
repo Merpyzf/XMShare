@@ -5,6 +5,7 @@ import android.content.Context;
 import com.merpyzf.fileserver.common.Const;
 import com.merpyzf.fileserver.common.bean.FileInfo;
 import com.merpyzf.fileserver.util.IOUtils;
+import com.merpyzf.transfermanager.util.SharedPreUtils;
 import com.yanzhenjie.andserver.RequestHandler;
 import com.yanzhenjie.andserver.util.HttpRequestParser;
 
@@ -83,7 +84,7 @@ public class WebUriHandler implements RequestHandler {
         String followMeSrcLink = Const.URL_ICO + "?type=" + Const.WEB_SITE_ICO + "&filename=follow_me.png";
         String indexHtml = indexTemplate.replace("{title}", "小马快传文件服务")
                 .replace("{nav_title}", "小马快传 分享文件个数: " + mFileList.size())
-                .replace("{current_path}", "")
+                .replace("{info}", "共享自: " + SharedPreUtils.getNickName(mContext))
                 .replace("{container}", containerHtml)
                 .replace("{img_logo}", logoSrcLink)
                 .replace("{img_fork_me}", followMeSrcLink);
@@ -110,7 +111,7 @@ public class WebUriHandler implements RequestHandler {
 
         switch (type) {
             case FileInfo.FILE_TYPE_APP:
-                strFileType = "应用apk";
+                strFileType = "应用";
                 break;
             case FileInfo.FILE_TYPE_IMAGE:
                 strFileType = "图片";
@@ -139,9 +140,9 @@ public class WebUriHandler implements RequestHandler {
         strFileItem = fileItemTemplate.replace("{file_href}", Const.URL_DOWN + "?name=" + fileInfo.getName())
                 .replace("{file_name}", fileInfo.getName())
                 .replace("{cover}", coverHref)
-                .replace("{type}", "类型: " + strFileType)
-                .replace("{file_path}", "路径: " + fileInfo.getPath())
-                .replace("{file_size}", "大小: " + sizeArrayStr[0] + sizeArrayStr[1]);
+                .replace("{type}",  strFileType)
+                .replace("{file_path}", " 路径: " + fileInfo.getPath())
+                .replace("{file_size}", " 大小: " + sizeArrayStr[0] + sizeArrayStr[1]);
         return strFileItem;
 
     }
