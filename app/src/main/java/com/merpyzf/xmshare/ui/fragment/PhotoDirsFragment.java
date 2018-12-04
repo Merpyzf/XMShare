@@ -30,6 +30,7 @@ import com.trello.rxlifecycle2.android.FragmentEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -51,7 +52,7 @@ public class PhotoDirsFragment extends BaseFragment implements
     @BindView(R.id.pb_loading)
     ProgressBar mPbLoading;
     private CheckBox mCheckBoxAll;
-    private List<PhotoDirBean> mPhotoDirs = new ArrayList<>();
+    private CopyOnWriteArrayList<PhotoDirBean> mPhotoDirs = new CopyOnWriteArrayList<>();
     private PhotoDirsAdapter mAdapter;
     private PhotoFragment mPhotoFragment;
     private int mPhotoNum;

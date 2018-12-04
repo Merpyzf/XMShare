@@ -8,8 +8,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
@@ -73,15 +71,14 @@ public class MusicUtils {
      * @param musicList
      */
     @SuppressLint("CheckResult")
-    public static synchronized void writeAlbumImgList2local(final Context context, List<BaseFileInfo> musicList) {
-
+    public static void asyncWriteAlbumListToLocal(final Context context, List<BaseFileInfo> musicList) {
         Observable.fromIterable(musicList)
                 .flatMap(musicFile -> Observable.just(((MusicFile) musicFile))).subscribeOn(Schedulers.io())
-                .subscribe(musicFile -> writeAlbumImg2local(context, musicFile));
+                .subscribe(musicFile -> writeAlbumToLocal(context, musicFile));
     }
 
     @SuppressLint("CheckResult")
-    public static synchronized void writeAlbumImg2local(final Context context, MusicFile musicFile) {
+    public static void writeAlbumToLocal(final Context context, MusicFile musicFile) {
         Bitmap bitmap = loadCoverFromMediaStore(context, musicFile.getAlbumId());
         BufferedOutputStream bos = null;
         try {
@@ -112,8 +109,8 @@ public class MusicUtils {
     /**
      * 更新封面图片
      */
-    public static synchronized void updateAlbumImg(Context context, List<BaseFileInfo> fileInfoList) {
-        writeAlbumImgList2local(context, fileInfoList);
+    public static void asyncUpdateAlbumImg(Context context, List<BaseFileInfo> fileInfoList) {
+        asyncWriteAlbumListToLocal(context, fileInfoList);
     }
 
     public static Observable<List<BaseFileInfo>> asyncLoadingMusic(Cursor data) {
@@ -121,25 +118,18 @@ public class MusicUtils {
                 .flatMap(cursor -> {
                     List<BaseFileInfo> fileList = new ArrayList<>();
                     data.moveToFirst();
-                    // 遍历扫描到的音乐文件
                     while (data.moveToNext()) {
                         String title = data.getString(0);
                         String artist = data.getString(1);
                         String path = data.getString(2);
                         int albumId = data.getInt(3);
-                        // 注意这边的音乐文件的大小是否正确
                         long extraMaxBytes = data.getLong(4);
                         long duration = data.getLong(5);
                         MusicFile fileInfo = new MusicFile(title, path, FILE_TYPE_MUSIC,
                                 (int) extraMaxBytes, albumId, artist, duration);
-                        // 添加文件的后缀名
                         fileInfo.setSuffix(FileUtils.getFileSuffix(path));
                         if (extraMaxBytes > 1024 * 1024) {
                             fileList.add(fileInfo);
-                        }
-                        // TODO: 2018/11/11 偶尔会出现cursor关闭的问题
-                        if (data.isClosed()) {
-                            break;
                         }
                     }
                     return Observable.just(fileList);

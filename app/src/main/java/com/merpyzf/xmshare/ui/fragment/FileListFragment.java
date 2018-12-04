@@ -27,15 +27,13 @@ import com.merpyzf.xmshare.util.ApkUtils;
 import com.merpyzf.xmshare.util.CacheUtils;
 import com.merpyzf.xmshare.util.CollectionUtils;
 import com.merpyzf.xmshare.util.DisplayUtils;
-import com.merpyzf.xmshare.util.Md5Utils;
 import com.merpyzf.xmshare.util.MusicUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -65,7 +63,7 @@ public class FileListFragment extends BaseFragment {
     TextView mTvChecked;
 
     private int mLoadFileType;
-    private List<BaseFileInfo> mFileLists = new ArrayList<>();
+    private CopyOnWriteArrayList<BaseFileInfo> mFileList = new CopyOnWriteArrayList<>();
     private FileAdapter mFileListAdapter;
     private View mBottomSheetView;
     private FileLoadManager mFileLoadManager;
@@ -111,7 +109,7 @@ public class FileListFragment extends BaseFragment {
         }
         mFileListAdapter.setOnItemClickListener((adapter, view, position) -> {
             ImageView ivSelect = view.findViewById(R.id.iv_select);
-            BaseFileInfo fileInfo = mFileLists.get(position);
+            BaseFileInfo fileInfo = mFileList.get(position);
             if (!App.getTransferFileList().contains(fileInfo)) {
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
@@ -125,7 +123,6 @@ public class FileListFragment extends BaseFragment {
                 if (getActivity() != null && (getActivity() instanceof SelectFilesActivity)) {
                     targetView = mBottomSheetView;
                 }
-
                 // 动画开始后再将View还原为原始尺寸，此处先缓存下来
                 int tempHeight = startView.getLayoutParams().height;
                 int tempWidth = startView.getLayoutParams().width;
@@ -154,14 +151,14 @@ public class FileListFragment extends BaseFragment {
             if (isChecked) {
                 mTvChecked.setText("取消全选");
                 FilesStatusObservable.getInstance()
-                        .notifyObservers(mFileLists, TAG,
+                        .notifyObservers(mFileList, TAG,
                                 FilesStatusObservable.FILE_SELECTED_ALL);
                 mFileListAdapter.notifyDataSetChanged();
             } else {
                 mTvChecked.setText("全选");
                 if (isSelectedAllFile()) {
                     FilesStatusObservable.getInstance()
-                            .notifyObservers(mFileLists, TAG,
+                            .notifyObservers(mFileList, TAG,
                                     FilesStatusObservable.FILE_CANCEL_SELECTED_ALL);
                     mFileListAdapter.notifyDataSetChanged();
                 }
@@ -183,8 +180,8 @@ public class FileListFragment extends BaseFragment {
                     observable.subscribe((Consumer<List<ApkFile>>) appFiles -> {
                         // 缓存设备中的应用信息到本地数据库，以便于用户查询
                         CacheUtils.cacheAppInfo(mContext, appFiles);
-                        mFileLists.addAll(appFiles);
-                        CollectionUtils.shortingByFirstCase(mFileLists);
+                        mFileList.addAll(appFiles);
+                        CollectionUtils.shortingByFirstCase(mFileList);
                         updateTitle(Const.PAGE_APP_TITLE);
                         notifyRvDataChanged();
                         ApkUtils.asyncCacheApkIco(mContext, appFiles);
@@ -196,13 +193,13 @@ public class FileListFragment extends BaseFragment {
                             Toast.makeText(getContext(), "没有扫描到音乐文件", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        if (mFileLists.size() == 0) {
-                            mFileLists.addAll(musicFiles);
+                        if (mFileList.size() == 0) {
+                            mFileList.addAll(musicFiles);
                         }
-                        CollectionUtils.shortingByFirstCase(mFileLists);
+                        CollectionUtils.shortingByFirstCase(mFileList);
                         updateTitle(Const.PAGE_MUSIC_TITLE);
+                        MusicUtils.asyncUpdateAlbumImg(getContext(),musicFiles);
                         notifyRvDataChanged();
-                        MusicUtils.updateAlbumImg(getContext(), mFileLists);
                     });
                 } else if (mLoadFileType == FILE_TYPE_VIDEO) {
                     observable.subscribe((Consumer<List<BaseFileInfo>>) videoFiles -> {
@@ -211,19 +208,18 @@ public class FileListFragment extends BaseFragment {
                             Toast.makeText(getContext(), "没有扫描到视频文件", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        if (mFileLists.size() == 0) {
-                            mFileLists.addAll(videoFiles);
+                        if (mFileList.size() == 0) {
+                            mFileList.addAll(videoFiles);
                         }
-                        CollectionUtils.shortingByFirstCase(mFileLists);
+                        CollectionUtils.shortingByFirstCase(mFileList);
                         updateTitle(Const.PAGE_VIDEO_TITLE);
+                        VideoUtils.asyncUpdateThumb(getContext(), videoFiles);
                         notifyRvDataChanged();
-                        VideoUtils.updateThumbImg(getContext(), videoFiles);
                     });
 
                 }
             }
         };
-
     }
 
     private void initRecyclerView() {
@@ -231,7 +227,7 @@ public class FileListFragment extends BaseFragment {
             case FILE_TYPE_APP:
                 updateTitle("应用");
                 mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 4));
-                mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_apk, mFileLists);
+                mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_apk, mFileList);
                 break;
 
             case FILE_TYPE_MUSIC:
@@ -239,7 +235,7 @@ public class FileListFragment extends BaseFragment {
                 mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 3));
                 mRvFileList.addItemDecoration(new RecyclerViewItemDecoration(DisplayUtils.
                         dip2px(getContext(), 5)));
-                mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_music, mFileLists);
+                mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_music, mFileList);
                 break;
 
             case FILE_TYPE_VIDEO:
@@ -247,7 +243,7 @@ public class FileListFragment extends BaseFragment {
                 mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 3));
                 mRvFileList.addItemDecoration(new RecyclerViewItemDecoration(DisplayUtils.
                         dip2px(getContext(), 5)));
-                mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_video, mFileLists);
+                mFileListAdapter = new FileAdapter<>(getActivity(), R.layout.item_rv_video, mFileList);
                 break;
 
             default:
@@ -258,9 +254,7 @@ public class FileListFragment extends BaseFragment {
             if (mFileListAdapter == null) {
                 return;
             }
-            // 设置空布局， 需要将布局文件转换成View后才能设置，否则会报错
             mFileListAdapter.setEmptyView(emptyView);
-            // 设置适配器
             mRvFileList.setAdapter(mFileListAdapter);
         }
     }
@@ -281,11 +275,11 @@ public class FileListFragment extends BaseFragment {
     }
 
     public void updateTitle(String type) {
-        mTvTitle.setText(type + "(" + mFileLists.size() + ")");
+        mTvTitle.setText(type + "(" + mFileList.size() + ")");
     }
 
     private boolean isSelectedAllFile() {
-        for (BaseFileInfo fileInfo : mFileLists) {
+        for (BaseFileInfo fileInfo : mFileList) {
             if (!App.getTransferFileList().contains(fileInfo)) {
                 return false;
             }

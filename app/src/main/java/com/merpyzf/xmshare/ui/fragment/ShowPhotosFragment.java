@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 
@@ -51,7 +52,7 @@ public class ShowPhotosFragment extends BaseFragment {
     private CheckBox mCheckBoxAll;
     private PhotoDirBean mPhotoDirBean;
     private AbsFileStatusObserver mFileStatusObserver;
-    private List<Section> mDatas;
+    private CopyOnWriteArrayList<Section> mSectionDatas;
     private final String TAG = ShowPhotosFragment.class.getSimpleName();
     private CustomRecyclerScrollViewListener mScrollListener;
 
@@ -65,15 +66,14 @@ public class ShowPhotosFragment extends BaseFragment {
     protected void initArgs(Bundle bundle) {
         super.initArgs(bundle);
         mPhotoDirBean = (PhotoDirBean) bundle.getSerializable("photos");
-        mDatas = getSelectionData(mPhotoDirBean);
+        mSectionDatas = getSelectionData(mPhotoDirBean);
         updateSelectionHead();
     }
 
     // TODO: 2018/10/24 此方法中的业务逻辑后期使用RxJava改写
-    private List<Section> getSelectionData(PhotoDirBean dirBean) {
-
+    private CopyOnWriteArrayList<Section> getSelectionData(PhotoDirBean dirBean) {
         LinkedHashMap<String, List<BaseFileInfo>> tempMap = new LinkedHashMap<>();
-        List<Section> datas = new ArrayList<>();
+        CopyOnWriteArrayList<Section> sections = new CopyOnWriteArrayList<>();
         for (BaseFileInfo fileInfo : dirBean.getImageList()) {
             File file = new File(fileInfo.getPath());
             long lastModified = file.lastModified();
@@ -91,13 +91,13 @@ public class ShowPhotosFragment extends BaseFragment {
             List<BaseFileInfo> photos = entry.getValue();
             Section headSection = new Section(true, key, photos.size());
             headSection.setChildNum(photos.size());
-            datas.add(headSection);
+            sections.add(headSection);
             for (BaseFileInfo photo : photos) {
                 photo.setLastModified(key);
-                datas.add(new Section(photo));
+                sections.add(new Section(photo));
             }
         }
-        return datas;
+        return sections;
 
     }
 
@@ -113,7 +113,7 @@ public class ShowPhotosFragment extends BaseFragment {
         mRvPhotoList.setLayoutManager(new GridLayoutManager(mContext, 3));
         mRvPhotoList.addItemDecoration(new RecyclerViewItemDecoration(DisplayUtils.dip2px(getContext(), 5)));
         mRvPhotoList.getItemAnimator().setChangeDuration(0);
-        mAdapter = new PhotoSectionAdapter(R.layout.item_rv_pic, R.layout.item_selction_head, mDatas);
+        mAdapter = new PhotoSectionAdapter(R.layout.item_rv_pic, R.layout.item_selction_head, mSectionDatas);
         mRvPhotoList.setAdapter(mAdapter);
         mCheckBoxAll = getCheckBoxFromParentFrg();
         mCheckBoxAll.setChecked(mPhotoDirBean.isChecked());
@@ -201,7 +201,7 @@ public class ShowPhotosFragment extends BaseFragment {
                 section.setCheckedAllChild(!section.isCheckedAllChild());
                 String lastChanged = section.header;
                 if (section.isCheckedAllChild()) {
-                    for (Section mData : mDatas) {
+                    for (Section mData : mSectionDatas) {
                         if (!mData.isHeader) {
                             if (mData.t.getLastModified().equals(lastChanged)) {
                                 App.addTransferFile(mData.t);
@@ -212,7 +212,7 @@ public class ShowPhotosFragment extends BaseFragment {
                         }
                     }
                 } else {
-                    for (Section mData : mDatas) {
+                    for (Section mData : mSectionDatas) {
                         if (!mData.isHeader) {
                             if (mData.t.getLastModified().equals(lastChanged)) {
                                 App.removeTransferFile(mData.t);
@@ -271,7 +271,7 @@ public class ShowPhotosFragment extends BaseFragment {
      * @return
      */
     private boolean isSelectedAllPhotos() {
-        for (Section section : mDatas) {
+        for (Section section : mSectionDatas) {
             if (!section.isHeader) {
                 if (!App.getTransferFileList().contains(section.t)) {
                     return false;
@@ -312,15 +312,15 @@ public class ShowPhotosFragment extends BaseFragment {
     }
 
     public void updateSelectionHead() {
-        if (mDatas == null) {
+        if (mSectionDatas == null) {
             return;
         }
-        for (Section section : mDatas) {
+        for (Section section : mSectionDatas) {
             if (section.isHeader) {
                 String headName = section.header;
                 int unCheckedChildCount = 0;
                 // 查找child
-                for (Section s : mDatas) {
+                for (Section s : mSectionDatas) {
                     if (!s.isHeader) {
                         // 循环遍历每一组的子孩子，如果存在一个child和组名相同时并且没有被选中则将head的状态设置为未选中
                         if (s.t.getLastModified().equals(headName)) {
@@ -341,19 +341,18 @@ public class ShowPhotosFragment extends BaseFragment {
     }
 
     private void updateSelectionHeadWhenItemClick(Section section) {
-
         String headName = "";
         if (section.t != null) {
             // 检查并更新head的选中状态
             headName = section.t.getLastModified();
-            for (Section mData : mDatas) {
+            for (Section mData : mSectionDatas) {
                 if (!mData.isHeader) {
                     if (headName.equals(mData.t.getLastModified()) && !App.getTransferFileList()
                             .contains(mData.t)) {
-                        for (Section data : mDatas) {
+                        for (Section data : mSectionDatas) {
                             if (data.isHeader && data.header.equals(headName)) {
                                 data.setCheckedAllChild(false);
-                                int pos = mDatas.indexOf(data);
+                                int pos = mSectionDatas.indexOf(data);
                                 mAdapter.notifyItemChanged(pos);
                                 return;
                             }
@@ -364,10 +363,10 @@ public class ShowPhotosFragment extends BaseFragment {
             }
         }
 
-        for (Section mData : mDatas) {
+        for (Section mData : mSectionDatas) {
             if (mData.isHeader && mData.header.equals(headName)) {
                 mData.setCheckedAllChild(true);
-                int pos = mDatas.indexOf(mData);
+                int pos = mSectionDatas.indexOf(mData);
                 mAdapter.notifyItemChanged(pos);
                 return;
             }

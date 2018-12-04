@@ -120,7 +120,6 @@ public class WebShareActivity extends BaseActivity {
 
     @Override
     protected void initEvents() {
-
         //1. 如果当前处在局域网的环境
         //    1.1 显示局域网的名称，以及文件共享页面的主页
         //    2.2 提供自行组建局域网的按钮选项
@@ -167,7 +166,7 @@ public class WebShareActivity extends BaseActivity {
      */
     private void requestPermissionAndInitAp() {
         // 检查是否具备修改系统设置的权限
-        boolean permission = false;
+        boolean permission;
         // 获取当前设备的SDK的版本
         int sdkVersion = Build.VERSION.SDK_INT;
         // 如果
@@ -205,6 +204,7 @@ public class WebShareActivity extends BaseActivity {
                             mProgressBar.setVisibility(View.VISIBLE);
                             mIvQrCodeSharePage.setVisibility(View.INVISIBLE);
                             mContext.unregisterReceiver(mApChangedReceiver);
+                            mApChangedReceiver = null;
                             ApManager.configApStateOnAndroidO(mContext, new ApManager.HotspotStateCallback() {
                                 @RequiresApi(api = Build.VERSION_CODES.O)
                                 @Override
@@ -218,7 +218,7 @@ public class WebShareActivity extends BaseActivity {
                                     mFileServer = FileServer.getInstance();
                                     mFileServer.startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
                                     App.setReservation(reservation);
-                                    String sharePageLink = "http://192.168.43.1:"+ com.merpyzf.fileserver.common.Const.DEFAULT_PORT+"/share";
+                                    String sharePageLink = "http://192.168.43.1:" + com.merpyzf.fileserver.common.Const.DEFAULT_PORT + "/share";
                                     mTvFirstStep.setText("第一步：邀请好友连接到\"" + ssid + "\"网络");
                                     mTvNetInfo.setText("由于Android8.0及以上系统的限制，\n请输入热点密码以连接: \n\n" + preSharedKey);
                                     mTvSecondStep.setText("第二步: 输入" + sharePageLink + "\n或通过手机等智能设备扫码访问:");
@@ -278,7 +278,10 @@ public class WebShareActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         FileServer.getInstance().stopRunning();
-        mContext.unregisterReceiver(mApChangedReceiver);
+        if (mApChangedReceiver != null) {
+            mContext.unregisterReceiver(mApChangedReceiver);
+            mApChangedReceiver = null;
+        }
         ApManager.turnOffAp(mContext);
     }
 }

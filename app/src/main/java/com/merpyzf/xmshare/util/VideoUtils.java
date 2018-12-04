@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.VideoFile;
@@ -56,23 +55,15 @@ public class VideoUtils {
         return bmp;
     }
 
-
     /**
      * 更新封面图片
      */
-    public static void updateThumbImg(Context context, List<BaseFileInfo> fileInfoList) {
-
-        List<BaseFileInfo> copyFileInfos = new ArrayList<>();
-        copyFileInfos.addAll(fileInfoList);
-        writeThumbImg2local(context, copyFileInfos);
-
+    public static void asyncUpdateThumb(Context context, List<BaseFileInfo> fileInfoList) {
+        asyncWriteThumbToLocal(context, fileInfoList);
     }
 
-
     @SuppressLint("CheckResult")
-    public static void writeThumbImg2local(Context context, List<BaseFileInfo> videoList) {
-
-
+    public static void asyncWriteThumbToLocal(Context context, List<BaseFileInfo> videoList) {
         Observable.fromIterable(videoList)
                 .filter(videoFile -> {
                     if (videoFile instanceof VideoFile) {

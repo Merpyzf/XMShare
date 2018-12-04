@@ -1,5 +1,6 @@
 package com.merpyzf.xmshare;
 
+import android.app.Application;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -16,22 +17,19 @@ import org.litepal.LitePalApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by wangke on 2018/1/16.
+ *
+ * @author wangke
+ * @date 2018/1/16
  */
 
-public class App extends LitePalApplication {
-
-
+public class App extends Application {
     private static Context AppContext;
-
-    /**
-     * 待发送的文件集合
-     */
-    private static List<BaseFileInfo> mTransferFiles;
-    private static String TAG = App.class.getSimpleName();
+    private static CopyOnWriteArrayList<BaseFileInfo> mTransferFiles;
     private static WifiManager.LocalOnlyHotspotReservation mReservation = null;
+    private static String TAG = App.class.getSimpleName();
 
     @Override
     public void onCreate() {
@@ -43,7 +41,7 @@ public class App extends LitePalApplication {
             StrictMode.setVmPolicy(builder.build());
         }
         AppContext = getApplicationContext();
-        mTransferFiles = new ArrayList<>();
+        mTransferFiles = new CopyOnWriteArrayList<>();
     }
 
 

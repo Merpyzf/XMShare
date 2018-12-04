@@ -50,6 +50,7 @@
             android:layout_height="360dp"
             android:layout_marginTop="2dp"
             android:scrollIndicators="right"
+            android:splitMotionEvents="false"
             android:scrollbars="vertical" />
     </LinearLayout>
 </LinearLayout>

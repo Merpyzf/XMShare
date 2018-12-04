@@ -15,12 +15,14 @@ import com.merpyzf.xmshare.bean.PhotoDirBean;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 /**
- * Created by merpyzf on 2018/4/2.
+ * @author merpyzf
+ * @date 2018/4/2
  */
 
 public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHolder> {
@@ -31,8 +33,6 @@ public class PhotoDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHol
 
     @Override
     protected void convert(BaseViewHolder helper, PhotoDirBean item) {
-
-
         ImageView ivCover = helper.getView(R.id.iv_photo_dir_cover);
         GifImageView gifIv = helper.getView(R.id.gif_photo_dir_cover);
         ImageView ivSelect = helper.getView(R.id.iv_select);

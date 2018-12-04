@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by merpyzf on 2018/4/2.
@@ -19,17 +20,25 @@ import java.util.List;
 
 public class PhotoDirBean implements Serializable {
 
-    // 相册文件夹的封面图
+    /**
+     * 相册文件夹的封面图
+     */
     private String coverImg;
-    // 相册名
+
+    /**
+     * 相册文件夹的封面图
+     */
     private String name;
-    // 是否选中
+
+    /**
+     * 相册文件夹的封面图
+     */
     private boolean isChecked = false;
 
-    private List<BaseFileInfo> imageList;
+    private CopyOnWriteArrayList<BaseFileInfo> imageList;
 
 
-    public PhotoDirBean(String coverImg, String name, boolean isChecked, List<BaseFileInfo> imageList) {
+    public PhotoDirBean(String coverImg, String name, boolean isChecked, CopyOnWriteArrayList<BaseFileInfo> imageList) {
         this.coverImg = coverImg;
         this.name = name;
         this.isChecked = isChecked;
@@ -74,14 +83,14 @@ public class PhotoDirBean implements Serializable {
         return imageList;
     }
 
-    public void setImageList(List<BaseFileInfo> imageList) {
+    public void setImageList(CopyOnWriteArrayList<BaseFileInfo> imageList) {
         this.imageList = imageList;
     }
 
 
     public void setImageList(File[] images) {
 
-        List<BaseFileInfo> imageList = new ArrayList<>();
+        List<BaseFileInfo> sortImageList = new ArrayList<>();
         for (File image : images) {
             PicFile picFile = new PicFile();
             picFile.setPath(image.getPath());
@@ -89,10 +98,10 @@ public class PhotoDirBean implements Serializable {
             picFile.setLength((int) image.length());
             picFile.setSuffix(FileUtils.getFileSuffix(image));
             picFile.setType(BaseFileInfo.FILE_TYPE_IMAGE);
-            imageList.add(picFile);
+            sortImageList.add(picFile);
         }
 
-        Collections.sort(imageList, (o1, o2) -> {
+        Collections.sort(sortImageList, (o1, o2) -> {
             File file1 = new File(o1.getPath());
             File file2 = new File(o2.getPath());
             if (file1.lastModified() > file2.lastModified()) {
@@ -105,9 +114,8 @@ public class PhotoDirBean implements Serializable {
         });
 
 
-        this.imageList = imageList;
-
-
+        this.imageList = new CopyOnWriteArrayList<>();
+        this.imageList.addAll(sortImageList);
     }
 
 

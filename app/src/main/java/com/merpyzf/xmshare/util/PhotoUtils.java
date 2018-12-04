@@ -96,7 +96,6 @@ public class PhotoUtils {
      * @param mPhotoDirs 存放图片的父路径集合
      */
     public static Observable<Integer> getNumberOfPhotos(List<PhotoDirBean> mPhotoDirs) {
-
         Observable<Integer> observable = Observable.just(mPhotoDirs)
                 .map(photoDirBeans -> {
                     int photoCount = 0;
