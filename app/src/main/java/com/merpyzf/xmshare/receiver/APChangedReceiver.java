@@ -18,9 +18,8 @@ public abstract class APChangedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         String action = intent.getAction();
-        // wifi的状态发生变化
+        // 接收系统广播监听AP热点的状态
         if (action.equals(ACTION_WIFI_AP_STATE_CHANGED)) {
             int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
             if (WifiManager.WIFI_STATE_ENABLED == state % 10) {
@@ -39,7 +38,13 @@ public abstract class APChangedReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * 当无线AP开启时的回调
+     */
     public abstract void onApEnableAction();
 
+    /**
+     * 当无线AP关闭时的回调
+     */
     public abstract void onApDisAbleAction();
 }

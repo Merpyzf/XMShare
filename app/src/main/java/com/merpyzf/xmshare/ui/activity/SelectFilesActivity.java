@@ -508,7 +508,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         if (imageFragment == null) {
             return;
         }
-        imageFragment.getFileSelectIndicator().back();
+        imageFragment.getFileSelectIndicator().pop();
     }
 
     public void popBackStack(FragmentManager fragmentManager) {

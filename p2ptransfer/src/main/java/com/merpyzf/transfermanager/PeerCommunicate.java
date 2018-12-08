@@ -22,7 +22,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
- *
  * @author wangke
  * @date 2017/12/3
  * 负责局域网内设备间UDP通讯
@@ -31,8 +30,10 @@ import java.net.UnknownHostException;
 public class PeerCommunicate extends Thread {
     private DatagramSocket mUdpSocket;
     private boolean isLoop = true;
-    private Context mContext = null;
-    private Handler mHandler = null;
+    private Context mContext;
+    private Handler mHandler;
+    private String mNickName;
+    private int mAvatar;
     private static final String TAG = PeerCommunicate.class.getName();
 
     public PeerCommunicate(Context context, Handler handler, int port) {
@@ -160,8 +161,8 @@ public class PeerCommunicate extends Thread {
         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
         signMessage.setMsgContent("ON_LINE");
         signMessage.setCmd(SignMessage.Cmd.ON_LINE);
-        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
+        signMessage.setNickName(mNickName);
+        signMessage.setAvatarPosition(mAvatar);
         sendBroadcast(signMessage);
     }
 

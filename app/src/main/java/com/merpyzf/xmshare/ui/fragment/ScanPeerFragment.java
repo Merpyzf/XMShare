@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +22,7 @@ import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.NetworkUtil;
-import com.merpyzf.transfermanager.util.WifiMgr;
+import com.merpyzf.transfermanager.util.WifiHelper;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
@@ -37,7 +36,6 @@ import com.merpyzf.xmshare.util.SingleThreadPool;
 import com.merpyzf.xmshare.util.ToastUtils;
 import com.merpyzf.xmshare.util.UiUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,7 +73,7 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
     private PeerAdapter mPeerAdapter;
     private OnPairActionListener mOnPairActionListener;
     private Peer mPeerRequestConn;
-    private WifiMgr mWifiMgr;
+    private WifiHelper mWifiHelper;
     private String mLocalAddress;
     private ScanPeerHandler mHandler;
     private OSTimer mScanWifiTimer;
@@ -113,7 +111,7 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
         mHandler = new ScanPeerHandler(this);
         // 开启一个udp server 用于和局域网内的设备进行交互
         //todo 这个接口需要重新设计
-        mPeerManager = new PeerManager(mContext, App.getNickname());
+        mPeerManager = new PeerManager(mContext);
         mPeerManager.setOnPeerActionListener(new OnPeerActionListener() {
             @Override
             public void onDeviceOnLine(Peer peer) {
@@ -169,15 +167,15 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
     }
 
     /**
-     * 初始化wifi状态,关闭热点开启wifi
+     * 初始化wifi状态
      */
     private void initWifiState() {
-        mWifiMgr = WifiMgr.getInstance(mContext);
+        mWifiHelper = WifiHelper.getInstance(mContext);
         if (ApManager.isApOn(mContext)) {
             ApManager.turnOffAp(mContext);
         }
-        if (!mWifiMgr.isWifiEnable()) {
-            mWifiMgr.openWifi();
+        if (!mWifiHelper.isWifiEnable()) {
+            mWifiHelper.openWifi();
         }
     }
 
@@ -241,13 +239,13 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
         // 传输前建立wifi连接
         connNewWifi(peer.getSsid(), peer.getPreSharedKey());
         // 获取远端建立热点设备的ip地址
-        mLocalAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
+        mLocalAddress = WifiHelper.getInstance(mContext).getIpAddressFromHotspot();
         if ("0.0.0.0".equals(mLocalAddress)) {
             SingleThreadPool.getSingleton().execute(() -> {
                 // 当连接上wifi后立即获取对端主机地址，有可能获取不到，需要多次获取才能拿到
                 int count = 0;
                 while (count < com.merpyzf.transfermanager.common.Const.PING_COUNT) {
-                    mLocalAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
+                    mLocalAddress = WifiHelper.getInstance(mContext).getIpAddressFromHotspot();
                     Message msg = mHandler.obtainMessage();
                     msg.what = TYPE_GET_IP;
                     msg.arg1 = count;
@@ -279,12 +277,12 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
 
         WifiConfiguration wifiCfg;
         if (null == pwd) {
-            wifiCfg = WifiMgr.createWifiCfg(ssid, null, WifiMgr.WIFICIPHER_NOPASS);
+            wifiCfg = WifiHelper.createWifiCfg(ssid, null, WifiHelper.WIFICIPHER_NOPASS);
         } else {
-            wifiCfg = WifiMgr.createWifiCfg(ssid, pwd, WifiMgr.WIFICIPHER_WPA);
+            wifiCfg = WifiHelper.createWifiCfg(ssid, pwd, WifiHelper.WIFICIPHER_WPA);
         }
         // 连接热点
-        mWifiMgr.connectNewWifi(wifiCfg);
+        mWifiHelper.connectNewWifi(wifiCfg);
     }
 
     /**
@@ -292,7 +290,7 @@ public class ScanPeerFragment extends BaseFragment implements BaseQuickAdapter.O
      */
     @SuppressLint("CheckResult")
     public void scanWifi() {
-        List<ScanResult> scanResults = mWifiMgr.startScan();
+        List<ScanResult> scanResults = mWifiHelper.startScan();
         if (null == scanResults) {
             return;
         }

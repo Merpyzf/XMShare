@@ -28,7 +28,6 @@ import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.SettingHelper;
-import com.merpyzf.xmshare.util.ToastUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
@@ -315,7 +314,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     }
 
     public void onBackPressed() {
-        if (mSelectIndicator.isRoot()) {
+        if (mSelectIndicator.isInRoot()) {
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fl_main_container, new FunctionListFragment());
             transaction.commit();
@@ -335,7 +334,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                 loadingDirectory(fileInfo.getPath());
                 Indicator indicator = new Indicator(fileInfo.getName(), fileInfo.getPath());
                 int[] lastPosition = getRecyclerViewLastPosition(mLayoutManager);
-                mSelectIndicator.setScrollPosTag(lastPosition);
+                mSelectIndicator.setTagInIndicator(lastPosition);
                 mSelectIndicator.addIndicator(indicator);
             }
         }

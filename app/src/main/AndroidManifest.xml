@@ -5,7 +5,6 @@
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
-
     <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
@@ -65,20 +64,8 @@
         <activity
             android:name=".ui.activity.SendActivity"
             android:label="发送文件" />
-        <activity android:name=".ui.activity.SelectFilesActivity">
-
-        </activity>
+        <activity android:name=".ui.activity.SelectFilesActivity"/>
         <activity android:name=".ui.activity.SettingActivity" />
-
-        <receiver
-            android:name=".receiver.APChangedReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".receiver.WifiChangedReceiver"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity
             android:name=".ui.activity.PersonalActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
@@ -87,11 +74,8 @@
         <activity android:name=".ui.activity.ReceivedFileActivity" />
         <activity
             android:name=".ui.activity.SearchActivity"
-            android:windowSoftInputMode="stateAlwaysHidden">
-
-
-        </activity>
-        <activity android:name=".ui.activity.WebShareActivity"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".ui.activity.WebShareActivity"/>
     </application>
 
 </manifest>

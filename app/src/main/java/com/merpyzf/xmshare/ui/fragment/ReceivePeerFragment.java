@@ -42,7 +42,7 @@ import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.NetworkUtil;
-import com.merpyzf.transfermanager.util.WifiMgr;
+import com.merpyzf.transfermanager.util.WifiHelper;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
@@ -80,25 +80,20 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     RecyclerView mRvPeerList;
     @BindView(R.id.tv_tip)
     TextView mTvTip;
-    // 切换到热点传输模式
     @BindView(R.id.btn_change_ap)
     Button mBtnChangedAp;
     @BindView(R.id.tv_net_name)
     TextView mTvNetName;
-    // 网络模式
     @BindView(R.id.tv_mode)
     TextView mTvNetMode;
     @BindView(R.id.civ_avatar)
     CircleImageView mCivAvatar;
     @BindView(R.id.iv_qrcode)
     ImageView mIvQrCode;
-    // 展示二维码相关信息的布局
     @BindView(R.id.rl_show_qrcode_info)
     RelativeLayout mRlShowQrCodeInfo;
-    // 热点名称
     @BindView(R.id.tv_hotspot_name_o)
     TextView mTvHotspotNameO;
-    // 热点密码
     @BindView(R.id.tv_hotspot_pwd)
     TextView mTvHotspotPwd;
     @BindView(R.id.ll_show_peers_container)
@@ -112,8 +107,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private OSTimer mOsTimer;
     private PeerAdapter mPeerAdapter;
     private OnReceivePairActionListener mOnReceivePairActionListener;
-    private String mNickName;
-    private WifiMgr mWifiMgr;
     private APChangedReceiver mApChangedReceiver;
     private OSTimer mHideTipTimer;
     private WifiManager.LocalOnlyHotspotReservation mReservation;
@@ -146,7 +139,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             mBtnChangedAp.setVisibility(View.INVISIBLE);
         } else if (transferMode == Const.TRANSFER_MODE_LAN) {
             // 局域网传输优先-> 如果没有连接wifi 就开启热点
-            mWifiMgr = WifiMgr.getInstance(mContext);
             if (NetworkUtil.isWifi(mContext)) {
                 initUdpListener();
                 mBtnChangedAp.setVisibility(View.VISIBLE);
@@ -185,7 +177,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
      */
     private void initUdpListener() {
         String nickName = com.merpyzf.xmshare.util.SharedPreUtils.getString(mContext, Const.SP_USER, "nickName", "");
-        mPeerManager = new PeerManager(mContext, nickName);
+        mPeerManager = new PeerManager(mContext);
         mPeerManager.setOnPeerActionListener(new OnPeerActionListener() {
             @Override
             public void onDeviceOffLine(Peer peer) {
@@ -279,11 +271,9 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         mApChangedReceiver = new APChangedReceiver() {
             @Override
             public void onApEnableAction() {
-
                 mLlShowPeersContainer.setVisibility(View.INVISIBLE);
                 String apSSID = ApManager.getApSSID(mContext);
                 mTvNetName.setText(apSSID);
-
                 if (mOnReceivePairActionListener != null) {
                     mOnReceivePairActionListener.onApEnableAction();
                 }
@@ -333,6 +323,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                                         e.printStackTrace();
                                     }
                                 }
+
                                 @Override
                                 public void onStopped() {
                                 }
@@ -375,7 +366,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                 .into(mCivAvatar);
 
         if (NetworkUtil.isWifi(mContext)) {
-            WifiInfo currConnWifiInfo = WifiMgr.getInstance(mContext).getCurrConnWifiInfo();
+            WifiInfo currConnWifiInfo = WifiHelper.getInstance(mContext).getCurrConnWifiInfo();
             String ssid = currConnWifiInfo.getSSID();
             mTvNetName.setText(ssid);
             mTvNetMode.setVisibility(View.VISIBLE);

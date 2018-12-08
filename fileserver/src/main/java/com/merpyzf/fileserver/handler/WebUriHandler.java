@@ -5,6 +5,7 @@ import android.content.Context;
 import com.merpyzf.fileserver.common.Const;
 import com.merpyzf.fileserver.common.bean.FileInfo;
 import com.merpyzf.fileserver.util.IOUtils;
+import com.merpyzf.transfermanager.util.PersonalSettingHelper;
 import com.merpyzf.transfermanager.util.SharedPreUtils;
 import com.yanzhenjie.andserver.RequestHandler;
 import com.yanzhenjie.andserver.util.HttpRequestParser;
@@ -25,17 +26,19 @@ import java.util.Map;
  * author: wangke
  * date: 2018/8/11.
  * version:1.0
+ * @author wangke
  */
 public class WebUriHandler implements RequestHandler {
-    private List<FileInfo> mFileList = null;
-    private Context mContext = null;
+    private List<FileInfo> mFileList;
+    private Context mContext;
+    private String mNickName;
     private static final String TAG = WebUriHandler.class.getSimpleName();
 
     public WebUriHandler(Context context, List<FileInfo> fileList) {
         //    在构造方法中构造html页面
         this.mFileList = fileList;
         this.mContext = context;
-
+        this.mNickName = PersonalSettingHelper.getNickname(context);
     }
 
     public WebUriHandler(Context context) {
@@ -84,7 +87,7 @@ public class WebUriHandler implements RequestHandler {
         String followMeSrcLink = Const.URL_ICO + "?type=" + Const.WEB_SITE_ICO + "&filename=follow_me.png";
         String indexHtml = indexTemplate.replace("{title}", "小马快传文件服务")
                 .replace("{nav_title}", "小马快传 分享文件个数: " + mFileList.size())
-                .replace("{info}", "共享自: " + SharedPreUtils.getNickName(mContext))
+                .replace("{info}", "共享自: " + mNickName)
                 .replace("{container}", containerHtml)
                 .replace("{img_logo}", logoSrcLink)
                 .replace("{img_fork_me}", followMeSrcLink);
@@ -140,7 +143,7 @@ public class WebUriHandler implements RequestHandler {
         strFileItem = fileItemTemplate.replace("{file_href}", Const.URL_DOWN + "?name=" + fileInfo.getName())
                 .replace("{file_name}", fileInfo.getName())
                 .replace("{cover}", coverHref)
-                .replace("{type}",  strFileType)
+                .replace("{type}", strFileType)
                 .replace("{file_path}", " 路径: " + fileInfo.getPath())
                 .replace("{file_size}", " 大小: " + sizeArrayStr[0] + sizeArrayStr[1]);
         return strFileItem;

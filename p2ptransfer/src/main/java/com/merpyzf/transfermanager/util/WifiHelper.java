@@ -10,16 +10,15 @@ import android.net.wifi.WifiManager;
 import java.util.List;
 
 /**
- * Created by wangke on 2018/1/25.
+ * @author wangke
+ * @date 2018/1/25
  */
 
-public class WifiMgr {
+public class WifiHelper {
 
-    private static WifiMgr mWifiMgr;
+    private static WifiHelper mWifiHelper;
     private WifiManager mWifiManager;
     private List<ScanResult> mScanResults;
-    private List<WifiConfiguration> mConfiguredNetworks;
-
     /**
      * 创建WifiConfiguration的类型
      */
@@ -30,44 +29,38 @@ public class WifiMgr {
     private WifiInfo mWifiInfo;
 
 
-    private WifiMgr(Context context) {
+    private WifiHelper(Context context) {
         this.mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
 
-    public static WifiMgr getInstance(Context context) {
-
-        if (mWifiMgr == null) {
+    public static WifiHelper getInstance(Context context) {
+        if (mWifiHelper == null) {
             synchronized (Object.class) {
-                if (mWifiMgr == null) {
-                    mWifiMgr = new WifiMgr(context);
+                if (mWifiHelper == null) {
+                    mWifiHelper = new WifiHelper(context);
                 }
             }
-
         }
-        return mWifiMgr;
+        return mWifiHelper;
     }
 
     /**
      * 打开wifi
      */
     public void openWifi() {
-
         if (!mWifiManager.isWifiEnabled()) {
             mWifiManager.setWifiEnabled(true);
         }
-
     }
 
     /**
      * 关闭Wifi
      */
     public void closeWifi() {
-
         if (mWifiManager.isWifiEnabled()) {
             mWifiManager.setWifiEnabled(false);
         }
-
     }
 
     /**
@@ -83,42 +76,41 @@ public class WifiMgr {
      * 开始扫描
      */
     public List<ScanResult> startScan() {
-
         if (mWifiManager.isWifiEnabled()) {
             mWifiManager.startScan();
             mScanResults = mWifiManager.getScanResults();
-            mConfiguredNetworks = mWifiManager.getConfiguredNetworks();
             return mScanResults;
         }
-
         return null;
-
     }
-
-
-    public List<ScanResult> getScanResults() {
-        return mScanResults;
-    }
-
-    public List<WifiConfiguration> getConfiguredNetworks() {
-        return mConfiguredNetworks;
-    }
-
 
     /**
-     * 连接到指定的Wifi网络
+     * 获取配置过的网络
+     *
+     * @return
+     */
+    public List<WifiConfiguration> getConfiguredNetworks() {
+        return mWifiManager.getConfiguredNetworks();
+    }
+
+    /**
+     * 连接wifi
      */
     public boolean connectNewWifi(WifiConfiguration wifiCfg) {
         // 断开当前的连接
         disconnectCurrentNetwork();
+        List<WifiConfiguration> configuredNetworks = getConfiguredNetworks();
+        if (configuredNetworks != null) {
+            for (WifiConfiguration configuredNetwork : configuredNetworks) {
+                mWifiManager.disableNetwork(configuredNetwork.networkId);
+            }
+        }
         int netWorkId = mWifiManager.addNetwork(wifiCfg);
         return mWifiManager.enableNetwork(netWorkId, true);
     }
 
-
     /**
-     * 关闭当前的Wifi网络
-     *
+     * 断开当前的网络连接
      * @return
      */
     public boolean disconnectCurrentNetwork() {

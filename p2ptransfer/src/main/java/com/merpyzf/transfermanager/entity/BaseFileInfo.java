@@ -5,7 +5,6 @@ import android.content.Context;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.util.FileUtils;
 
-import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
 
@@ -15,7 +14,7 @@ import java.io.Serializable;
  * @author wangke
  * @date 2017/12/23
  */
-public class BaseFileInfo extends DataSupport implements Serializable {
+public class BaseFileInfo {
 
     /**
      * 应用类型(APK)

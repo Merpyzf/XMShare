@@ -4,19 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>文件目录展示</title>
-
     <style>
-
         body {
             padding: 0;
             margin: 0;
+            background-color: bisque;
             font-size: 14px;
-        }
-
-        @media screen and (max-width: 768px) {
-            .file_path {
-                display: none;
-            }
         }
 
         a {
@@ -26,7 +19,6 @@
 
         header {
             position: relative;
-            height: 80px;
             width: 100%;
             background-color: white;
             box-shadow: 0 4px 8px 0 rgba(7, 17, 27, .1);
@@ -54,9 +46,8 @@
             line-height: 30px;
         }
 
-        .info {
+        .dir_path {
             position: absolute;
-            top: 0;
             bottom: 0;
             left: 80px;
             height: 24px;
@@ -102,7 +93,9 @@
 
         .file_info {
             display: inline-block;
+            width: calc(100% - 90px);
             padding: 5px;
+            overflow: hidden;
         }
 
         .file_info h3 {
@@ -111,6 +104,9 @@
             line-height: 30px;
             font-weight: 400;
             font-size: 18px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .file_type .file_size .file_path {
@@ -122,6 +118,23 @@
             text-overflow: ellipsis;
         }
 
+        @media screen and (max-width: 768px) {
+            .file_path {
+                display: none;
+            }
+
+            .logo {
+                height: 60px;
+            }
+
+            .title {
+                font-size: 16px;
+            }
+
+            .dir_path {
+                font-size: 10px;
+            }
+        }
 
 
     </style>

@@ -36,14 +36,14 @@ public interface FileSelectIndicator {
     /**
      * 移除最后面的那个指示器
      */
-    void pop();
+    boolean pop();
 
     /**
      * 是否返回到根标签了
      *
      * @return
      */
-    boolean isRoot();
+    boolean isInRoot();
 
 
     /**

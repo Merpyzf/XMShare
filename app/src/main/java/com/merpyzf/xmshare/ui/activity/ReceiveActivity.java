@@ -69,8 +69,7 @@ public class ReceiveActivity extends AppCompatActivity {
      * 初始化对象
      */
     private void init() {
-        mPeerManager = new PeerManager(mContext, SharedPreUtils.getNickName(mContext));
-        // 开启一个UDP消息的监听
+        mPeerManager = new PeerManager(mContext);
         mPeerManager.startMsgListener();
     }
 

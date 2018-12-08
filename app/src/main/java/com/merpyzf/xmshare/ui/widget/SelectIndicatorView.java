@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 import com.merpyzf.xmshare.util.DisplayUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,8 +109,6 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
                 }
             }
         }
-
-        //  回调当前标签的值
     }
 
     @Override
@@ -127,12 +124,10 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
                 mCallBack.onIndicatorChanged(mIndicatorList.get(mIndicatorList.size() - 1));
             }
         }
-
-        // 回调当前所在标签的值
     }
 
     @Override
-    public void pop() {
+    public boolean pop() {
         if (mIndicatorList.size() > 1) {
             int pos = mIndicatorList.size() - 1;
             mIndicatorList.remove(pos);
@@ -140,34 +135,18 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
             if (mCallBack != null) {
                 mCallBack.onIndicatorChanged(mIndicatorList.get(mIndicatorList.size() - 1));
             }
+            return true;
         }
+        return false;
     }
 
     @Override
-    public boolean isRoot() {
+    public boolean isInRoot() {
         if (mIndicatorList.size() == 1) {
             return true;
         }
         return false;
     }
-
-
-    /**
-     * 移除最后一个标签相当于返回
-     */
-    public boolean back() {
-        String currentPath = null;
-        int removeIndex = mIndicatorList.size() - 1;
-        // 保留根标签不被移除
-        if (removeIndex != 0) {
-            mIndicatorList.remove(removeIndex);
-            mRootView.removeViewAt(removeIndex);
-            currentPath = mIndicatorList.get(mIndicatorList.size() - 1).getValue();
-            return true;
-        }
-        return false;
-    }
-
 
     @Override
     public View createIndicatorView(Indicator indicator) {
@@ -182,8 +161,6 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
         // 需要对路径的进行分割，区最末尾的哪个文件目录
         textView.setText(indicator.getName());
         textView.setTextColor(Color.parseColor("#6e6e6e"));
-        // 设置字体加粗
-        //textView.getPaint().setFakeBoldText(true);
         linearLayout.addView(textView);
         LinearLayout.LayoutParams tvParams = (LinearLayout.LayoutParams) textView.getLayoutParams();
         tvParams.leftMargin = DisplayUtils.dip2px(mContext, 5);
@@ -203,7 +180,6 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
         linearLayout.setOnClickListener(this);
         return linearLayout;
     }
-
 
     /**
      * 指示器标签点击实事件的回调用
@@ -225,8 +201,6 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
             if (mCallBack != null) {
                 mCallBack.onIndicatorChanged(indicator);
             }
-        } else {
-            ToastUtils.showShort(mContext, "不需要移除");
         }
     }
 
@@ -234,7 +208,12 @@ public class SelectIndicatorView extends HorizontalScrollView implements FileSel
         this.mCallBack = mCallBack;
     }
 
-    public void setScrollPosTag(Object tag) {
+    /**
+     * 给末尾的指示器设置标签
+     *
+     * @param tag
+     */
+    public void setTagInIndicator(Object tag) {
         int pos = mIndicatorList.size() - 1;
         Indicator indicator = mIndicatorList.get(pos);
         if (indicator != null) {

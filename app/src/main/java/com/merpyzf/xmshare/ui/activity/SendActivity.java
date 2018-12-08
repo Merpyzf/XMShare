@@ -100,11 +100,9 @@ public class SendActivity extends BaseActivity {
     @Override
     protected void initEvents() {
         mScanPeerFragment.setOnPeerActionListener(new OnPairActionListener() {
-
             @Override
             public void onSendConnRequest() {
                 super.onSendConnRequest();
-
                 mLinearRocket.setVisibility(View.VISIBLE);
                 mLinearRocket.setFocusable(true);
                 mFrameContent.setFocusable(false);
@@ -124,14 +122,13 @@ public class SendActivity extends BaseActivity {
                             isTransfer = false;
                         }
                     }
+
                     @Override
                     public void onTransferError(String error) {
                         ToastUtils.showShort(mContext, error);
                         finish();
                     }
                 });
-
-                // 开始进行文件的发送，并添加动画
                 ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
                 animator.setInterpolator(new AccelerateInterpolator());
                 animator.setDuration(500);
@@ -184,13 +181,15 @@ public class SendActivity extends BaseActivity {
                 transaction.commit();
             }
         });
-        mPeerManager = new PeerManager(mContext, SharedPreUtils.getNickName(mContext));
+
+        mPeerManager = new PeerManager(mContext);
         mPeerManager.setPeerTransferBreakListener(peer -> {
             if (isTransfer) {
                 Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
+
         mPeerManager.startMsgListener();
     }
 

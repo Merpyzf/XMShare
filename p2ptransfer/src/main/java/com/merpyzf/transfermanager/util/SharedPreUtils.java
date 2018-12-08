@@ -47,25 +47,4 @@ public class SharedPreUtils {
     }
 
 
-    /**
-     * 获取用户设置的昵称
-     *
-     * @param context
-     * @return
-     */
-    public static String getNickName(Context context) {
-
-        return getString(context, Const.SP_USER, "nickName", DeviceUtils.getDeviceName());
-    }
-
-    /**
-     * 获取用户对应的头像
-     *
-     * @param context
-     * @return
-     */
-    public static int getAvatar(Context context) {
-        return getInteger(context, Const.SP_USER, "avatar", 0);
-    }
-
 }

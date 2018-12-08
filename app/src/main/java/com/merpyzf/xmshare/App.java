@@ -154,13 +154,4 @@ public class App extends Application {
         return mReservation;
     }
 
-    /**
-     * 获取用户昵称
-     *
-     * @return
-     */
-    public static String getNickname() {
-        return SharedPreUtils.getString(AppContext, Const.SP_USER, "nickName", "");
-    }
-
 }

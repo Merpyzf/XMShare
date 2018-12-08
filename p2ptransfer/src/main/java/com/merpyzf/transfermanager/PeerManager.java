@@ -1,22 +1,23 @@
 package com.merpyzf.transfermanager;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 import com.merpyzf.transfermanager.util.NetworkUtil;
+import com.merpyzf.transfermanager.util.PersonalSettingHelper;
 import com.merpyzf.transfermanager.util.SharedPreUtils;
-import com.merpyzf.transfermanager.util.WifiMgr;
+import com.merpyzf.transfermanager.util.WifiHelper;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.transfermanager.util.timer.Timeout;
 
 import java.net.InetAddress;
 
 /**
- * Created by wangke on 2017/12/17.
+ * @author wangke
+ * @date 2017/12/17
  */
 
 public class PeerManager {
@@ -25,16 +26,18 @@ public class PeerManager {
     private PeerHandler mPeerHandler;
     private PeerCommunicate mPeerCommunicate;
     private PeerTransferBreakCallBack mTransferBreakCallback = null;
-    private String mNickName;
     private OSTimer mOnLineTimer;
     private boolean isStop = false;
+    private String mNickName;
+    private int mAvatar;
 
 
-    public PeerManager(Context context, String nickName) {
+    public PeerManager(Context context) {
         this.mContext = context;
-        this.mNickName = nickName;
         this.mPeerHandler = new PeerHandler(mContext);
         this.mPeerCommunicate = new PeerCommunicate(mContext, mPeerHandler, Const.UDP_PORT);
+        this.mNickName = PersonalSettingHelper.getNickname(context);
+        this.mAvatar = PersonalSettingHelper.getAvatar(context);
     }
 
 
@@ -56,9 +59,8 @@ public class PeerManager {
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("TRANSFER_BREAK");
                         signMessage.setCmd(SignMessage.Cmd.TRANSFER_BREAK);
-                        // TODO: 2018/1/24 获取已存储在本地的用户名
-                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
+                        signMessage.setNickName(mNickName);
+                        signMessage.setAvatarPosition(mAvatar);
                         sendBroadcastMsg(signMessage);
                     }
                 }).start();
@@ -86,8 +88,8 @@ public class PeerManager {
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("ON_LINE");
                         signMessage.setCmd(SignMessage.Cmd.ON_LINE);
-                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
+                        signMessage.setNickName(mNickName);
+                        signMessage.setAvatarPosition(mAvatar);
                         sendBroadcastMsg(signMessage);
 
                     }
@@ -125,11 +127,11 @@ public class PeerManager {
                         }
                         String name = Thread.currentThread().getName();
                         SignMessage signMessage = new SignMessage();
-                        signMessage.setHostAddress(WifiMgr.getInstance(mContext).getHotspotLocalIpAddress());
+                        signMessage.setHostAddress(WifiHelper.getInstance(mContext).getHotspotLocalIpAddress());
                         signMessage.setMsgContent("ON_LINE");
                         signMessage.setCmd(SignMessage.Cmd.ON_LINE);
-                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
+                        signMessage.setNickName(mNickName);
+                        signMessage.setAvatarPosition(mAvatar);
                         sendBroadcastMsg(destAddress, signMessage);
                     }
                 }).start();
@@ -159,8 +161,8 @@ public class PeerManager {
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("OFF_LINE");
                         signMessage.setCmd(SignMessage.Cmd.OFF_LINE);
-                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
+                        signMessage.setNickName(mNickName);
+                        signMessage.setAvatarPosition(mAvatar);
                         sendBroadcastMsg(signMessage);
                     }
                 }).start();
@@ -223,10 +225,11 @@ public class PeerManager {
 
     /**
      * 设置局域网内用户动作的监听
+     *
      * @param onPeerActionListener
      */
-    public void setOnPeerActionListener(OnPeerActionListener onPeerActionListener){
-        if(mPeerHandler!=null){
+    public void setOnPeerActionListener(OnPeerActionListener onPeerActionListener) {
+        if (mPeerHandler != null) {
             mPeerHandler.setOnPeerActionListener(onPeerActionListener);
         }
     }
