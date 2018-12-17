@@ -24,20 +24,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.merpyzf.common.utils.DisplayUtils;
 import com.merpyzf.fileserver.FileServer;
-import com.merpyzf.fileserver.util.NetworkUtil;
+import com.merpyzf.common.utils.NetworkUtil;
 import com.merpyzf.qrcodescan.google.encoding.EncodingHandler;
-import com.merpyzf.transfermanager.util.ApManager;
-import com.merpyzf.transfermanager.util.WifiHelper;
+import com.merpyzf.common.utils.ApManager;
+import com.merpyzf.common.helper.WifiHelper;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
-import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
-import com.merpyzf.xmshare.util.DisplayUtils;
-import com.merpyzf.xmshare.util.SharedPreUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
+import com.merpyzf.common.utils.PersonalSettingUtils;
+import com.merpyzf.common.utils.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.concurrent.TimeUnit;
@@ -61,7 +60,6 @@ public class WebShareActivity extends BaseActivity {
     ImageView mIvQrCodeSharePage;
     @BindView(R.id.progress_waiting)
     ProgressBar mProgressBar;
-    // android O 以上的设备自建热点需要显示的信息
     @BindView(R.id.ll_net_info)
     LinearLayout mLlAboveONetInfo;
     @BindView(R.id.btn_change_ap)
@@ -72,7 +70,7 @@ public class WebShareActivity extends BaseActivity {
     private APChangedReceiver mApChangedReceiver;
     private FileServer mFileServer;
     private WifiHelper mWifiMgr;
-    private static String TAG = "ww2k";
+    private static String TAG = WebShareActivity.class.getSimpleName();
 
     @Override
     protected int getContentLayoutId() {
@@ -80,7 +78,7 @@ public class WebShareActivity extends BaseActivity {
     }
 
     @Override
-    protected void initWidget(Bundle savedInstanceState) {
+    protected void doCreateView(Bundle savedInstanceState) {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("web传");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -91,12 +89,11 @@ public class WebShareActivity extends BaseActivity {
         super.initData();
         mWifiMgr = WifiHelper.getInstance(mContext);
         // 传输的方式
-        int transferMode = SharedPreUtils.getInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
-                Const.TRANSFER_MODE_LAN);
-        if (transferMode == Const.TRANSFER_MODE_AP) {
+        int transferMode = PersonalSettingUtils.getTransferMode(mContext);
+        if (transferMode == PersonalSettingUtils.TRANSFER_MODE_AP) {
             mBtnChangeAp.setVisibility(View.INVISIBLE);
             requestPermissionAndInitAp();
-        } else if (transferMode == Const.TRANSFER_MODE_LAN) {
+        } else if (transferMode == PersonalSettingUtils.TRANSFER_MODE_LAN) {
             // 如果当前已连接到局域网就使用局域网，如果没有局域网就开启热点
             if (NetworkUtil.isWifi(mContext)) {
                 mBtnChangeAp.setVisibility(View.VISIBLE);
@@ -119,34 +116,27 @@ public class WebShareActivity extends BaseActivity {
     }
 
     @Override
-    protected void initEvents() {
-        //1. 如果当前处在局域网的环境
-        //    1.1 显示局域网的名称，以及文件共享页面的主页
-        //    2.2 提供自行组建局域网的按钮选项
-
-        //2. 如果当前设备已经开启热点
-        // 8.0一下的设备无密码直接连接
-        // 8.0以上的设备需要密码，提供一个包含用户名和密码的选项供用户连接
-        //通过广播监听热点变化
-        // 热点被关闭的回调方法
+    protected void doCreateEvent() {
         mApChangedReceiver = new APChangedReceiver() {
             @SuppressLint("CheckResult")
             @Override
             public void onApEnableAction() {
-                io.reactivex.Observable.timer(1000, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(aLong -> {
-                            String name = Thread.currentThread().getName();
-                            FileServer.getInstance()
-                                    .startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
-                            String sharePageLink = "http://192.168.43.1:" + com.merpyzf.fileserver.common.Const.DEFAULT_PORT + "/share";
-                            String apSsid = ApManager.getApSSID(mContext);
-                            mTvFirstStep.setText("第一步: 邀请好友连接到\"" + apSsid + "\"网络");
-                            mTvSecondStep.setText("第二步: 输入" + sharePageLink + "\n或通过手机等智能设备扫码访问:");
-                            mProgressBar.setVisibility(View.INVISIBLE);
-                            mIvQrCodeSharePage.setVisibility(View.VISIBLE);
-                            mIvQrCodeSharePage.setImageBitmap(getQrCode(sharePageLink));
-                        });
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    io.reactivex.Observable.timer(1000, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(aLong -> {
+                                String name = Thread.currentThread().getName();
+                                FileServer.getInstance()
+                                        .startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
+                                String sharePageLink = "http://192.168.43.1:" + com.merpyzf.fileserver.common.Const.DEFAULT_PORT + "/share";
+                                String apSsid = ApManager.getApSSID(mContext);
+                                mTvFirstStep.setText("第一步: 邀请好友连接到\"" + apSsid + "\"网络");
+                                mTvSecondStep.setText("第二步: 输入" + sharePageLink + "\n或通过手机等智能设备扫码访问:");
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                mIvQrCodeSharePage.setVisibility(View.VISIBLE);
+                                mIvQrCodeSharePage.setImageBitmap(getQrCode(sharePageLink));
+                            });
+                }
 
             }
 
@@ -158,7 +148,6 @@ public class WebShareActivity extends BaseActivity {
         IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
         mContext.registerReceiver(mApChangedReceiver, intentFilter);
         mBtnChangeAp.setOnClickListener(v -> requestPermissionAndInitAp());
-
     }
 
     /**
@@ -196,67 +185,66 @@ public class WebShareActivity extends BaseActivity {
         if (ApManager.isApOn(mContext)) {
             ApManager.turnOffAp(mContext);
         }
-        // 开启热点
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            boolean hasPermission = hasPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
-            // TODO: 2018/12/5
-            if (hasPermission) {
-
-                ToastUtils.showShort(mContext, "已经拥有位置权限");
-
-            } else {
-                // 申请位置权限
-                // 部分手机当申请并授予位置权限之后，在执行这段代码的时候回报错
-                new RxPermissions(mContext)
-                        .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
-                        .subscribe(permission -> {
-                            if (permission.granted) {
-                                mProgressBar.setVisibility(View.VISIBLE);
-                                mIvQrCodeSharePage.setVisibility(View.INVISIBLE);
-                                mContext.unregisterReceiver(mApChangedReceiver);
-                                mApChangedReceiver = null;
-                                ApManager.configApStateOnAndroidO(mContext, new ApManager.HotspotStateCallback() {
-                                    @RequiresApi(api = Build.VERSION_CODES.O)
-                                    @Override
-                                    public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
-                                        mProgressBar.setVisibility(View.INVISIBLE);
-                                        mIvQrCodeSharePage.setVisibility(View.VISIBLE);
-                                        String ssid = reservation.getWifiConfiguration().SSID;
-                                        String preSharedKey = reservation.getWifiConfiguration().preSharedKey;
-                                        mLlAboveONetInfo.setVisibility(View.VISIBLE);
-                                        ToastUtils.showShort(mContext, "开启成功: ssid " + ssid + " key:" + preSharedKey);
-                                        mFileServer = FileServer.getInstance();
-                                        mFileServer.startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
-                                        App.setReservation(reservation);
-                                        String sharePageLink = "http://192.168.43.1:" + com.merpyzf.fileserver.common.Const.DEFAULT_PORT + "/share";
-                                        mTvFirstStep.setText("第一步：邀请好友连接到\"" + ssid + "\"网络");
-                                        mTvNetInfo.setText("由于Android8.0及以上系统的限制，\n请输入热点密码以连接: \n\n" + preSharedKey);
-                                        mTvSecondStep.setText("第二步: 输入" + sharePageLink + "\n或通过手机等智能设备扫码访问:");
-                                        mIvQrCodeSharePage.setVisibility(View.VISIBLE);
-                                        mIvQrCodeSharePage.setImageBitmap(getQrCode(sharePageLink));
-                                    }
-
-                                    @Override
-                                    public void onStopped() {
-                                        Log.i(TAG, "stopped...");
-                                    }
-
-                                    @Override
-                                    public void onFailed(int reason) {
-                                        Log.i(TAG, "onFailed...");
-                                    }
-                                });
-                            }
-                        });
-            }
+        boolean hasPermission = hasPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (hasPermission) {
+            startHotspot();
+            ToastUtils.showShort(mContext, "已经拥有位置权限");
         } else {
+            new RxPermissions(mContext)
+                    .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .subscribe(permission -> {
+                        if (permission.granted) {
+                            startHotspot();
+                        }
+                    });
+        }
+    }
 
-            ApManager.configApState(mContext, SharedPreUtils.getNickName(mContext), SharedPreUtils.getAvatar(mContext));
+    /**
+     * 开启热点，兼容Android8.0及以上的设备
+     */
+    private void startHotspot() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mIvQrCodeSharePage.setVisibility(View.INVISIBLE);
+            ApManager.configApStateOnAndroidO(mContext, new ApManager.HotspotStateCallback() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    mIvQrCodeSharePage.setVisibility(View.VISIBLE);
+                    String ssid = reservation.getWifiConfiguration().SSID;
+                    String preSharedKey = reservation.getWifiConfiguration().preSharedKey;
+                    mLlAboveONetInfo.setVisibility(View.VISIBLE);
+                    mFileServer = FileServer.getInstance();
+                    mFileServer.startupFileShareServer(mContext, "192.168.43.1", FileInfoFactory.toFileServerType(App.getTransferFileList()));
+                    App.setReservation(reservation);
+                    String sharePageLink = "http://192.168.43.1:" + com.merpyzf.fileserver.common.Const.DEFAULT_PORT + "/share";
+                    Log.i("w3k", "执行了");
+                    mTvFirstStep.setText("第一步：邀请好友连接到\"" + ssid + "\"网络");
+                    mTvNetInfo.setText("由于Android8.0及以上系统的限制，\n请输入热点密码以连接: \n\n" + preSharedKey);
+                    mTvSecondStep.setText("第二步: 输入" + sharePageLink + "\n或通过手机等智能设备扫码访问:");
+                    mIvQrCodeSharePage.setVisibility(View.VISIBLE);
+                    mIvQrCodeSharePage.setImageBitmap(getQrCode(sharePageLink));
+                }
+
+                @Override
+                public void onStopped() {
+                    Log.i(TAG, "stopped...");
+                }
+
+                @Override
+                public void onFailed(int reason) {
+                    Log.i(TAG, "onFailed...");
+                }
+            });
+        } else {
+            String nickName = PersonalSettingUtils.getNickname(mContext);
+            int avatar = PersonalSettingUtils.getAvatar(mContext);
+            ApManager.configApState(mContext, nickName, avatar);
             mLlAboveONetInfo.setVisibility(View.INVISIBLE);
             mIvQrCodeSharePage.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
-            // 开始开启热点
         }
     }
 
@@ -280,7 +268,7 @@ public class WebShareActivity extends BaseActivity {
             if (hasWriteSystemPermission()) {
                 initAp();
                 ToastUtils.showShort(mContext, "授予了修改系统设置的权限");
-            }else {
+            } else {
                 ToastUtils.showShort(mContext, "修改系统设置的权限未被授予");
             }
         }

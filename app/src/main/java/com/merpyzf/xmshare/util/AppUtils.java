@@ -33,8 +33,6 @@ import java.io.File;
  */
 public final class AppUtils {
 
-    private static final String TAG = AppUtils.class.getSimpleName();
-
     private AppUtils() {
         throw new Error("Do not need instantiate!");
     }

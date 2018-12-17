@@ -24,7 +24,7 @@ import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
 import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.DateUtils;
-import com.merpyzf.xmshare.util.DisplayUtils;
+import com.merpyzf.common.utils.DisplayUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class ShowPhotosFragment extends BaseFragment {
     }
 
     @Override
-    protected void initWidget(View rootView) {
+    protected void doCreateView(View rootView) {
         mPhotoFrg = getMyParentFragment();
         mBottomSheetView = Objects.requireNonNull(getActivity()).findViewById(R.id.bottom_sheet);
         mRvPhotoList.setLayoutManager(new GridLayoutManager(mContext, 3));
@@ -128,7 +128,7 @@ public class ShowPhotosFragment extends BaseFragment {
     }
 
     @Override
-    protected void initEvent() {
+    protected void doCreateEvent() {
         if (mScrollListener != null) {
             mRvPhotoList.addOnScrollListener(mScrollListener);
         }

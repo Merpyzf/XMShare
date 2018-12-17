@@ -1,26 +1,24 @@
 package com.merpyzf.xmshare.ui.adapter;
 
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.merpyzf.common.utils.Md5Utils;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
-import com.merpyzf.transfermanager.util.FilePathManager;
-import com.merpyzf.transfermanager.util.FormatUtils;
-import com.merpyzf.transfermanager.util.Md5Utils;
+import com.merpyzf.common.utils.FilePathManager;
+import com.merpyzf.common.utils.FormatUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
 import com.merpyzf.xmshare.util.FileTypeHelper;
-import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.UiUtils;
 
 import java.io.File;
@@ -72,7 +70,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Ba
                 } else if (fileInfo instanceof MusicFile) {
                     tvActionTip.setText("播放");
                     helper.setText(R.id.tv_name, fileInfo.getName());
-                    String[] sizeArrayStr = com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
+                    String[] sizeArrayStr = com.merpyzf.transfermanager.utils.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
                     helper.setText(R.id.tv_size, sizeArrayStr[0] + "" + sizeArrayStr[1]);
                     loadImgPath = FilePathManager.getLocalMusicAlbumCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = UiUtils.getPlaceHolder(fileType);
@@ -80,7 +78,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Ba
                 } else if (fileInfo instanceof VideoFile) {
                     tvActionTip.setText("播放");
                     helper.setText(R.id.tv_name, fileInfo.getName());
-                    String[] sizeArrayStr = com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
+                    String[] sizeArrayStr = com.merpyzf.transfermanager.utils.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
                     helper.setText(R.id.tv_size, sizeArrayStr[0] + "" + sizeArrayStr[1]);
                     loadImgPath = FilePathManager.getLocalVideoThumbCacheDir().getPath() + File.separator + Md5Utils.getMd5(item.getData().getName());
                     errorImgRes = UiUtils.getPlaceHolder(fileType);
@@ -89,7 +87,7 @@ public class ReceivedFileAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Ba
                     StorageFile storageFile = (StorageFile) fileInfo;
                     tvActionTip.setText("打开");
                     helper.setText(R.id.tv_name, fileInfo.getName());
-                    String[] sizeArrayStr = com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
+                    String[] sizeArrayStr = com.merpyzf.transfermanager.utils.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
                     helper.setText(R.id.tv_size, sizeArrayStr[0] + "" + sizeArrayStr[1]);
                     if (storageFile.isPhoto()) {
                         errorImgRes = UiUtils.getPlaceHolder(BaseFileInfo.FILE_TYPE_IMAGE);

@@ -29,7 +29,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_saved_netflow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="累计节省流量: 200M" />

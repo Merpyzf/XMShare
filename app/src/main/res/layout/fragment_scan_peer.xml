@@ -20,7 +20,7 @@
         android:text="正在扫描周围的接受者..."
         />
 
-   <com.merpyzf.xmshare.ui.widget.ScanView
+   <com.merpyzf.common.widget.ScanView
        android:layout_margin="20dp"
        android:layout_width="200dp"
        android:layout_height="200dp"

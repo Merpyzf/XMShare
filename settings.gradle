@@ -1,1 +1,1 @@
-include ':app', ':p2ptransfer', ':radarview', ':qrcodescan', ':fileserver'
+include ':app', ':p2ptransfer', ':qrcodescan', ':fileserver', ':common'

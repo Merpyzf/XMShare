@@ -1,17 +1,18 @@
 package com.merpyzf.transfermanager;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.merpyzf.common.manager.ThreadPoolManager;
+import com.merpyzf.common.utils.NetworkUtil;
+import com.merpyzf.common.utils.PersonalSettingUtils;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
-import com.merpyzf.transfermanager.util.NetworkUtil;
-import com.merpyzf.transfermanager.util.PersonalSettingHelper;
-import com.merpyzf.transfermanager.util.SharedPreUtils;
-import com.merpyzf.transfermanager.util.WifiHelper;
-import com.merpyzf.transfermanager.util.timer.OSTimer;
-import com.merpyzf.transfermanager.util.timer.Timeout;
+import com.merpyzf.common.helper.WifiHelper;
+import com.merpyzf.common.helper.TimerHelper;
+import com.merpyzf.common.helper.Timeout;
 
 import java.net.InetAddress;
 
@@ -22,22 +23,19 @@ import java.net.InetAddress;
 
 public class PeerManager {
 
-    private Context mContext = null;
+    private Context mContext;
     private PeerHandler mPeerHandler;
     private PeerCommunicate mPeerCommunicate;
-    private PeerTransferBreakCallBack mTransferBreakCallback = null;
-    private OSTimer mOnLineTimer;
-    private boolean isStop = false;
     private String mNickName;
     private int mAvatar;
 
 
     public PeerManager(Context context) {
         this.mContext = context;
-        this.mPeerHandler = new PeerHandler(mContext);
+        this.mPeerHandler = new PeerHandler();
         this.mPeerCommunicate = new PeerCommunicate(mContext, mPeerHandler, Const.UDP_PORT);
-        this.mNickName = PersonalSettingHelper.getNickname(context);
-        this.mAvatar = PersonalSettingHelper.getAvatar(context);
+        this.mNickName = PersonalSettingUtils.getNickname(context);
+        this.mAvatar = PersonalSettingUtils.getAvatar(context);
     }
 
 
@@ -45,106 +43,44 @@ public class PeerManager {
      * 发送传输中断广播
      */
     public void sendTransferBreakMsg() {
-
-
         Timeout timeout = new Timeout() {
             @Override
             public void onTimeOut() {
-                // TODO: 2018/4/26 替换掉这种线程操作
-                new Thread(new Runnable() {
+                ThreadPoolManager.getInstance().execute(new Runnable() {
                     @Override
                     public void run() {
-                        String name = Thread.currentThread().getName();
-                        SignMessage signMessage = new SignMessage();
-                        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-                        signMessage.setMsgContent("TRANSFER_BREAK");
-                        signMessage.setCmd(SignMessage.Cmd.TRANSFER_BREAK);
-                        signMessage.setNickName(mNickName);
-                        signMessage.setAvatarPosition(mAvatar);
-                        sendBroadcastMsg(signMessage);
+                        sendBroadcastMsg(createSignMessage(SignMessage.CMD.TRANSFER_BREAK));
                     }
-                }).start();
+                });
             }
         };
         timeout.onTimeOut();
-        //发送两个广播消息
-        new OSTimer(null, timeout, 50, false).start();
-        new OSTimer(null, timeout, 100, false).start();
+        new TimerHelper(null, timeout, 50, false).start();
+        new TimerHelper(null, timeout, 100, false).start();
+        new TimerHelper(null, timeout, 150, false).start();
     }
 
     /**
      * 发送设备上线广播
      */
-    public OSTimer sendOnLineBroadcast(boolean isCycle) {
+    public TimerHelper sendOnLineBroadcast(boolean isCycle) {
         Timeout timeout = new Timeout() {
             @Override
             public void onTimeOut() {
-                // TODO: 2018/4/26 替换掉这种线程操作
-                new Thread(new Runnable() {
+                ThreadPoolManager.getInstance().execute(new Runnable() {
                     @Override
                     public void run() {
-                        String name = Thread.currentThread().getName();
-                        SignMessage signMessage = new SignMessage();
-                        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-                        signMessage.setMsgContent("ON_LINE");
-                        signMessage.setCmd(SignMessage.Cmd.ON_LINE);
-                        signMessage.setNickName(mNickName);
-                        signMessage.setAvatarPosition(mAvatar);
-                        sendBroadcastMsg(signMessage);
-
+                        sendBroadcastMsg(createSignMessage(SignMessage.CMD.ON_LINE));
                     }
-                }).start();
+                });
             }
         };
 
         timeout.onTimeOut();
-        //发送两个广播消息
-        OSTimer osTimer = new OSTimer(null, timeout, 100, isCycle);
-        osTimer.start();
-        return osTimer;
+        TimerHelper timerHelper = new TimerHelper(null, timeout, 100, isCycle);
+        timerHelper.start();
+        return timerHelper;
     }
-
-
-    /**
-     * 发送设备上线广播
-     */
-    public OSTimer sendOnLineBroadcast(final String destAddress, boolean isCycle) {
-        Timeout timeout = new Timeout() {
-            @Override
-            public void onTimeOut() {
-                // TODO: 2018/4/26 替换掉这种线程操作
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int count = 0;
-                        while (!NetworkUtil.pingIpAddress(destAddress) && count < Const.PING_COUNT) {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            count += 1;
-                        }
-                        String name = Thread.currentThread().getName();
-                        SignMessage signMessage = new SignMessage();
-                        signMessage.setHostAddress(WifiHelper.getInstance(mContext).getHotspotLocalIpAddress());
-                        signMessage.setMsgContent("ON_LINE");
-                        signMessage.setCmd(SignMessage.Cmd.ON_LINE);
-                        signMessage.setNickName(mNickName);
-                        signMessage.setAvatarPosition(mAvatar);
-                        sendBroadcastMsg(destAddress, signMessage);
-                    }
-                }).start();
-            }
-        };
-
-        timeout.onTimeOut();
-        //发送两个广播消息
-        OSTimer osTimer = new OSTimer(null, timeout, 100, isCycle);
-        osTimer.start();
-        return osTimer;
-    }
-
 
     /**
      * 发送设备下线广播
@@ -153,29 +89,26 @@ public class PeerManager {
         Timeout timeout = new Timeout() {
             @Override
             public void onTimeOut() {
-                // TODO: 2018/4/26 替换掉这种线程操作
-                new Thread(new Runnable() {
+                ThreadPoolManager.getInstance().execute(new Runnable() {
                     @Override
                     public void run() {
-                        SignMessage signMessage = new SignMessage();
-                        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-                        signMessage.setMsgContent("OFF_LINE");
-                        signMessage.setCmd(SignMessage.Cmd.OFF_LINE);
-                        signMessage.setNickName(mNickName);
-                        signMessage.setAvatarPosition(mAvatar);
+                        SignMessage signMessage = createSignMessage(SignMessage.CMD.OFF_LINE);
                         sendBroadcastMsg(signMessage);
+
                     }
-                }).start();
+                });
             }
         };
         timeout.onTimeOut();
         //发送两个广播消息
-        new OSTimer(null, timeout, 50, false).start();
-        new OSTimer(null, timeout, 100, false).start();
+        new TimerHelper(null, timeout, 0, false).start();
+        new TimerHelper(null, timeout, 50, false).start();
+        new TimerHelper(null, timeout, 70, false).start();
+        new TimerHelper(null, timeout, 90, false).start();
     }
 
     /**
-     * 开启广播监听
+     * 开启广播消息监听
      */
     public void startMsgListener() {
         if (mPeerCommunicate != null) {
@@ -184,7 +117,7 @@ public class PeerManager {
     }
 
     /**
-     * 停止广播监听
+     * 关闭广播消息监听
      */
     public void stopMsgListener() {
         mPeerCommunicate.release();
@@ -193,17 +126,13 @@ public class PeerManager {
     /**
      * 给局域网内的其他设备发送UDP
      */
-    public void send2Peer(final String msg, final InetAddress dest, final int port) {
-        // TODO: 2018/4/26 替换掉这种线程操作
-        // TODO: 2018/1/13 只发送一个UDP数据包，可能会出现UDP包丢失未能正确传送给对端的问题
-        new Thread(new Runnable() {
+    public void sendMsgToPeer(final String msg, final InetAddress dest, final int port) {
+        ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 mPeerCommunicate.sendUdpData(msg, dest, port);
             }
-        }).start();
-
-
+        });
     }
 
     /**
@@ -215,12 +144,19 @@ public class PeerManager {
         mPeerCommunicate.sendBroadcast(signMessage);
     }
 
-    public void sendBroadcastMsg(String dest, SignMessage signMessage) {
-        mPeerCommunicate.sendBroadcast(dest, signMessage);
-    }
-
-    public void setPeerTransferBreakListener(PeerTransferBreakCallBack transferBreakListener) {
-        mPeerHandler.setTransferBreakListener(transferBreakListener);
+    /**
+     * 创建signMessage对象
+     *
+     * @param cmd
+     */
+    private SignMessage createSignMessage(int cmd) {
+        SignMessage signMessage = new SignMessage();
+        String hostAddress = NetworkUtil.getLocalIp(mContext);
+        signMessage.setHostAddress(hostAddress);
+        signMessage.setCmd(cmd);
+        signMessage.setNickName(mNickName);
+        signMessage.setAvatarPosition(mAvatar);
+        return signMessage;
     }
 
     /**
@@ -233,5 +169,7 @@ public class PeerManager {
             mPeerHandler.setOnPeerActionListener(onPeerActionListener);
         }
     }
+
+
 }
 

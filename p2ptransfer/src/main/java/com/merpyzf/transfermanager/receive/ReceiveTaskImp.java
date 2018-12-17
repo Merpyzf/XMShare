@@ -10,9 +10,9 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.factory.FileInfoFactory;
 import com.merpyzf.transfermanager.entity.MusicFile;
-import com.merpyzf.transfermanager.util.CacheUtils;
-import com.merpyzf.transfermanager.util.CloseUtils;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.CacheUtils;
+import com.merpyzf.common.utils.CloseUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

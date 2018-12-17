@@ -27,7 +27,6 @@ import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.PhotoUtils;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -72,7 +71,7 @@ public class PhotoDirsFragment extends BaseFragment implements
     }
 
     @Override
-    protected void initEvent() {
+    protected void doCreateEvent() {
         if(mScrollListener!=null){
             mRvDirsList.addOnScrollListener(mScrollListener);
         }
@@ -141,8 +140,8 @@ public class PhotoDirsFragment extends BaseFragment implements
     }
 
     @Override
-    protected void initWidget(View rootView) {
-        super.initWidget(rootView);
+    protected void doCreateView(View rootView) {
+        super.doCreateView(rootView);
         mEmptyView = View.inflate(mContext, R.layout.view_rv_file_empty, null);
         mTvTip = mEmptyView.findViewById(R.id.tv_empty);
         mTvTip.setText("扫描中...");

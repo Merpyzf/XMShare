@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.merpyzf.common.utils.PersonalSettingUtils;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.xmshare.App;
@@ -27,7 +28,6 @@ import com.merpyzf.xmshare.ui.widget.bean.Indicator;
 import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.FileUtils;
-import com.merpyzf.xmshare.util.SettingHelper;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import java.io.File;
@@ -81,8 +81,8 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
     }
 
     @Override
-    protected void initWidget(View rootView) {
-        super.initWidget(rootView);
+    protected void doCreateView(View rootView) {
+        super.doCreateView(rootView);
         mSelectIndicator.addIndicator(new Indicator(mVolumeName, mRootPath));
         mLayoutManager = new LinearLayoutManager(mContext);
         mRvFileList.setLayoutManager(mLayoutManager);
@@ -102,8 +102,8 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
 
     @SuppressLint("CheckResult")
     @Override
-    protected void initEvent() {
-        super.initEvent();
+    protected void doCreateEvent() {
+        super.doCreateEvent();
         if (mScrollListener != null) {
             mRvFileList.addOnScrollListener(mScrollListener);
         }
@@ -199,7 +199,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
                 .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .filter(storageFile -> {
                     // 根据配置选择是否过滤隐藏文件
-                    boolean isShow = SettingHelper.showHiddenFile(mContext);
+                    boolean isShow = PersonalSettingUtils.getIsShowHiddenFile(mContext);
                     if (!isShow) {
                         if (storageFile.getName().startsWith(".")) {
                             return false;
@@ -282,7 +282,7 @@ public class FileManagerFragment extends BaseFragment implements BaseQuickAdapte
         int folderNum = 0;
         File file = new File(storageFile.getPath());
         File[] files = file.listFiles(f -> {
-            boolean isShowHidden = SettingHelper.showHiddenFile(mContext);
+            boolean isShowHidden = PersonalSettingUtils.getIsShowHiddenFile(mContext);
             if (isShowHidden) {
                 return true;
             } else {

@@ -58,7 +58,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
     }
 
     @Override
-    protected void initEvent() {
+    protected void doCreateEvent() {
         int childCount = mLlReceiveFiles.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View view = mLlReceiveFiles.getChildAt(i);
@@ -87,7 +87,7 @@ public class FunctionListFragment extends BaseFragment implements View.OnClickLi
      * @param rootView
      */
     @Override
-    protected void initWidget(View rootView) {
+    protected void doCreateView(View rootView) {
         mRlVolume.setLayoutManager(new LinearLayoutManager(mContext));
         mVolumeAdapter = new VolumeAdapter(mContext, R.layout.item_rv_volume, mVolumes);
         mRlVolume.setAdapter(mVolumeAdapter);

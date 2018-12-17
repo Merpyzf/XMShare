@@ -3,7 +3,7 @@ package com.merpyzf.transfermanager.entity;
 import android.content.Context;
 
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 
 /**
  *

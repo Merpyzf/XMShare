@@ -2,19 +2,15 @@ package com.merpyzf.xmshare.util;
 
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.util.Log;
 
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.bean.PhotoDirBean;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -51,7 +47,6 @@ public class PhotoUtils {
                                     photoDirBean.setCoverImg(images[images.length - 1].getPath());
                                     photoDirBean.setName(file.getParentFile().getName());
                                     photoDirBean.setImageList(images);
-                                    Md5Utils.asyncGenerateFileMd5(photoDirBean.getImageList());
                                     mDirList.add(photoDirBean);
                                 }
                                 dirSet.add(file.getParent());

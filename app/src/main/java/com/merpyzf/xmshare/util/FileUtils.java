@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by merpyzf on 2018/4/16.
+ * @author merpyzf
+ * @date 2018/4/16
  * 文件操作相关的工具类
  */
 
 public class FileUtils {
-
 
     private static Map<String, String> sMimeTypeMap = new HashMap<>();
     private static List<BaseFileInfo> mFileList = new ArrayList<>();
@@ -91,113 +91,6 @@ public class FileUtils {
         sMimeTypeMap.put("zip", "application/zip");
     }
 
-    // TODO: 2018/4/16 等待编辑
-
-    /**
-     * 遍历文件夹下面的文件
-     *
-     * @param path 根目录
-     */
-    public static List<BaseFileInfo> traverseFolder(String path) {
-        File file = new File(path);
-        if (file.exists()) {
-            File[] files = file.listFiles();
-            if (null == files || files.length == 0) {
-                return null;
-            } else {
-                for (File file2 : files) {
-                    if (file2.isDirectory()) {
-                        traverseFolder(file2.getAbsolutePath());
-                    } else {
-                        // 获取文件的后缀
-                        String suffix = getFileSuffix(file2.getPath());
-                        if (isDocumentType(suffix)) {
-                            // TODO: 2018/4/16 扫描完成后，对于md5值进行异步获取
-                            DocFile docFile = new DocFile();
-                            docFile.setName(file2.getName());
-                            docFile.setPath(file2.getPath());
-                            docFile.setLength((int) file2.length());
-                            docFile.setSuffix(suffix);
-                            docFile.setType(BaseFileInfo.FILE_TYPE_DOCUMENT);
-                            mFileList.add(docFile);
-
-                        } else if (isApkType(suffix)) {
-                            ApkFile apkFile = new ApkFile();
-                            apkFile.setName(file2.getName());
-                            apkFile.setPath(file2.getPath());
-                            apkFile.setLength((int) file2.length());
-                            apkFile.setSuffix(suffix);
-                            apkFile.setType(BaseFileInfo.FILE_TYPE_APP);
-                            // todo: 扫描完成后需要对apk的ico进行缓存
-                            apkFile.setApkDrawable(null);
-                            mFileList.add(apkFile);
-                        } else if (isCompactType(suffix)) {
-                            CompactFile compactFile = new CompactFile();
-                            compactFile.setName(file2.getName());
-                            compactFile.setPath(file2.getPath());
-                            compactFile.setLength((int) file2.length());
-                            compactFile.setSuffix(suffix);
-                            compactFile.setType(BaseFileInfo.FILE_TYPE_COMPACT);
-                            mFileList.add(compactFile);
-                        }
-                    }
-                }
-            }
-        }
-        return mFileList;
-    }
-
-    /**
-     * 判断文件是否为文稿
-     *
-     * @param suffix 文件后缀名
-     * @return
-     */
-    public static boolean isDocumentType(String suffix) {
-
-        String s = suffix.toLowerCase();
-
-        if (Const.FILE_DOCUMENT_TYPES.contains(s)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 判断文件是否为压缩文件类型
-     *
-     * @param suffix
-     * @return
-     */
-    public static boolean isCompactType(String suffix) {
-
-        String s = suffix.toLowerCase();
-
-        if (Const.FILE_COMPACT_TYPES.contains(s)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 判断文件是否为应用安装包
-     *
-     * @param suffix
-     * @return
-     */
-    public static boolean isApkType(String suffix) {
-
-        String s = suffix.toLowerCase();
-
-        if ("apk".equals(s)) {
-            return true;
-        }
-        return false;
-    }
-
-
     /**
      * 根据文件路径获取文件后缀名
      *
@@ -213,7 +106,6 @@ public class FileUtils {
             return "";
         }
         return filePath.substring(beginIndex);
-
     }
 
 
@@ -233,40 +125,19 @@ public class FileUtils {
     }
 
 
-    public static boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * 添加一个文件到MediaStore媒体数据库中
      *
      * @param file 要添加的文件
      */
     public static void addFileToMediaStore(Context context, File file) {
-
         Uri contentUri = Uri.fromFile(file);
         // 发送广播，通知系统将此文件添加到数据库中
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
         context.sendBroadcast(intent);
-
-    }
-
-    public static boolean isContain(File parent, String fileName) {
-        String[] fileNames = parent.list();
-        for (String childFileName : fileNames) {
-            if (fileName.equals(childFileName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static void openFile(Activity context, File file) {
-
         if (context == null || file == null) {
             return;
         }
@@ -289,10 +160,7 @@ public class FileUtils {
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file),
                     mimeType);
-
         }
         context.startActivity(intent);
-
-
     }
 }

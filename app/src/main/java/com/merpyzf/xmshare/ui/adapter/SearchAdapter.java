@@ -1,11 +1,8 @@
 package com.merpyzf.xmshare.ui.adapter;
 
-import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
-import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -16,18 +13,13 @@ import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
-import com.merpyzf.transfermanager.util.FilePathManager;
-import com.merpyzf.transfermanager.util.FormatUtils;
+import com.merpyzf.common.utils.FilePathManager;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.util.FileUtils;
 import com.merpyzf.xmshare.util.UiUtils;
-
-import net.qiujuer.genius.res.Resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import pl.droidsonroids.gif.GifDrawable;
@@ -114,7 +106,7 @@ public class SearchAdapter extends BaseQuickAdapter<BaseFileInfo, BaseViewHolder
         }
 
         helper.setText(R.id.tv_title, item.getName() + "." + item.getSuffix());
-        String[] sizeStrArray = com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr(item.getLength());
+        String[] sizeStrArray = com.merpyzf.transfermanager.utils.FileUtils.getFileSizeArrayStr(item.getLength());
         helper.setText(R.id.tv_size, sizeStrArray[0] + "" + sizeStrArray[1]);
         if (App.isContain(item)) {
             ivSelect.setVisibility(View.VISIBLE);

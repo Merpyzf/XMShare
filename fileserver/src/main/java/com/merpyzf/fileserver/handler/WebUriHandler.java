@@ -2,11 +2,10 @@ package com.merpyzf.fileserver.handler;
 
 import android.content.Context;
 
+import com.merpyzf.common.utils.IOUtils;
 import com.merpyzf.fileserver.common.Const;
 import com.merpyzf.fileserver.common.bean.FileInfo;
-import com.merpyzf.fileserver.util.IOUtils;
-import com.merpyzf.transfermanager.util.PersonalSettingHelper;
-import com.merpyzf.transfermanager.util.SharedPreUtils;
+import com.merpyzf.common.utils.PersonalSettingUtils;
 import com.yanzhenjie.andserver.RequestHandler;
 import com.yanzhenjie.andserver.util.HttpRequestParser;
 
@@ -26,6 +25,7 @@ import java.util.Map;
  * author: wangke
  * date: 2018/8/11.
  * version:1.0
+ *
  * @author wangke
  */
 public class WebUriHandler implements RequestHandler {
@@ -38,7 +38,7 @@ public class WebUriHandler implements RequestHandler {
         //    在构造方法中构造html页面
         this.mFileList = fileList;
         this.mContext = context;
-        this.mNickName = PersonalSettingHelper.getNickname(context);
+        this.mNickName = PersonalSettingUtils.getNickname(context);
     }
 
     public WebUriHandler(Context context) {
@@ -86,7 +86,7 @@ public class WebUriHandler implements RequestHandler {
         String logoSrcLink = Const.URL_ICO + "?type=" + Const.WEB_SITE_ICO + "&filename=logo.png";
         String followMeSrcLink = Const.URL_ICO + "?type=" + Const.WEB_SITE_ICO + "&filename=follow_me.png";
         String indexHtml = indexTemplate.replace("{title}", "小马快传文件服务")
-                .replace("{nav_title}", "小马快传 分享文件个数: " + mFileList.size())
+                .replace("{nav_title}", "分享文件个数: " + mFileList.size())
                 .replace("{info}", "共享自: " + mNickName)
                 .replace("{container}", containerHtml)
                 .replace("{img_logo}", logoSrcLink)
@@ -138,7 +138,7 @@ public class WebUriHandler implements RequestHandler {
                 break;
 
         }
-        String[] sizeArrayStr = com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
+        String[] sizeArrayStr = com.merpyzf.transfermanager.utils.FileUtils.getFileSizeArrayStr(fileInfo.getLength());
         coverHref = Const.URL_ICO + "?type=" + type + "&filename=" + fileName + "&suffix=" + suffix;
         strFileItem = fileItemTemplate.replace("{file_href}", Const.URL_DOWN + "?name=" + fileInfo.getName())
                 .replace("{file_name}", fileInfo.getName())

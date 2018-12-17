@@ -20,8 +20,8 @@ public class MainFragment extends BaseFragment {
     }
 
     @Override
-    protected void initWidget(View rootView) {
-        super.initWidget(rootView);
+    protected void doCreateView(View rootView) {
+        super.doCreateView(rootView);
         FunctionListFragment functionListFragment = new FunctionListFragment();
         functionListFragment.setScrollListener(mScrollListener);
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();

@@ -15,11 +15,15 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.merpyzf.common.utils.ApManager;
+import com.merpyzf.common.utils.PersonalSettingUtils;
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.observer.AbsTransferObserver;
+import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
@@ -27,8 +31,9 @@ import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.fragment.ScanPeerFragment;
 import com.merpyzf.xmshare.ui.fragment.transfer.TransferSendFragment;
 import com.merpyzf.xmshare.ui.interfaces.OnPairActionListener;
-import com.merpyzf.xmshare.util.SharedPreUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
+import com.merpyzf.common.utils.ToastUtils;
+
+import net.qiujuer.genius.ui.animation.AnimatorListener;
 
 import java.util.List;
 
@@ -68,8 +73,7 @@ public class SendActivity extends BaseActivity {
 
     private ScanPeerFragment mScanPeerFragment;
     private TransferSendFragment mTransferSendFragment;
-    private PeerManager mPeerManager;
-    private boolean isTransfer = false;
+    private boolean isTransfering = false;
     private static final String TAG = SendActivity.class.getSimpleName();
 
     public static void start(Context context) {
@@ -82,7 +86,7 @@ public class SendActivity extends BaseActivity {
     }
 
     @Override
-    protected void initWidget(Bundle savedInstanceState) {
+    protected void doCreateView(Bundle savedInstanceState) {
         // 加载好友扫描的Fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mScanPeerFragment = new ScanPeerFragment();
@@ -98,7 +102,7 @@ public class SendActivity extends BaseActivity {
     }
 
     @Override
-    protected void initEvents() {
+    protected void doCreateEvent() {
         mScanPeerFragment.setOnPeerActionListener(new OnPairActionListener() {
             @Override
             public void onSendConnRequest() {
@@ -109,102 +113,84 @@ public class SendActivity extends BaseActivity {
                 mFrameContent.setClickable(false);
             }
 
+            /**
+             * 设备下线
+             * @param peer
+             */
+            @Override
+            public void onOffline(Peer peer) {
+                super.onOffline(peer);
+                mLinearRocket.setVisibility(View.INVISIBLE);
+            }
+
             @Override
             public void onPairSuccess(Peer peer) {
-                super.onPairSuccess(peer);
-                // 注册一个文件发送状态的监听
-                SenderManager.getInstance(mContext).register(new AbsTransferObserver() {
-                    // 传输中的文件的状态
-                    @Override
-                    public void onTransferStatus(BaseFileInfo fileInfo) {
-                        // 如果当前传输的是最后一个文件，并且传输成功后重置标记
-                        if (fileInfo.getIsLast() == Const.IS_LAST && fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
-                            isTransfer = false;
-                        }
-                    }
-
-                    @Override
-                    public void onTransferError(String error) {
-                        ToastUtils.showShort(mContext, error);
-                        finish();
-                    }
-                });
-                ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
-                animator.setInterpolator(new AccelerateInterpolator());
-                animator.setDuration(500);
-                animator.addListener(new Animator.AnimatorListener() {
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
+                ObjectAnimator animator = startRocketFlyAnimation();
+                animator.addListener(new AnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        mLinearRocket.setVisibility(View.INVISIBLE);
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        mTransferSendFragment = new TransferSendFragment(peer);
-                        transaction.replace(R.id.frame_content, mTransferSendFragment);
-                        transaction.commit();
-                        isTransfer = true;
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
+                        super.onAnimationEnd(animation);
+                        mLinearRocket.setVisibility(View.GONE);
+                        isTransfering = true;
+                        loadSendFrg(peer);
                     }
                 });
-                animator.start();
+                // 注册一个文件发送状态的监听
+                SenderManager.getInstance(mContext).register(new FileTransferListener());
             }
 
             @Override
             public void onPeerPairFailed(Peer peer) {
-                super.onPeerPairFailed(peer);
-
-                // 隐藏
-                mLinearRocket.setVisibility(View.INVISIBLE);
-
+                mLinearRocket.setVisibility(View.GONE);
             }
 
             @Override
             public void onStartTransfer(Peer peer, List<BaseFileInfo> fileInfoLis) {
-                super.onStartTransfer(peer, fileInfoLis);
-                // 加载文件发送界面
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                mTransferSendFragment = new TransferSendFragment(peer);
-                transaction.replace(R.id.frame_content, mTransferSendFragment);
-                transaction.commit();
+                isTransfering = true;
+                // 热点模式下的文件发送回调
+                loadSendFrg(peer);
+                SenderManager.getInstance(mContext).register(new FileTransferListener());
             }
         });
-
-        mPeerManager = new PeerManager(mContext);
-        mPeerManager.setPeerTransferBreakListener(peer -> {
-            if (isTransfer) {
-                Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
-
-        mPeerManager.startMsgListener();
     }
 
+
+    private void loadSendFrg(Peer peer) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        mTransferSendFragment = new TransferSendFragment(peer);
+        transaction.replace(R.id.frame_content, mTransferSendFragment);
+        transaction.commit();
+    }
+
+    private ObjectAnimator startRocketFlyAnimation() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.setDuration(500);
+        animator.start();
+        return animator;
+
+    }
 
     @Override
     public void onBackPressed() {
+        if (isTransfering) {
+            MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
+                    .title("您确定要退出么？")
+                    .content("本次任务还存在未传输完成的文件，直接退出会导致传输中断！")
+                    .negativeText("退出")
+                    .positiveText("继续传输")
+                    .onPositive((dialog1, which) -> {
+                        dialog1.dismiss();
 
-        if (mPeerManager != null) {
-            // 发送传输中断退出的广播
-            mPeerManager.sendTransferBreakMsg();
+                    }).onNegative((dialog2, which) -> {
+                        super.onBackPressed();
+                    });
+            dialog.show();
+        } else {
+            super.onBackPressed();
         }
 
-        super.onBackPressed();
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -219,13 +205,25 @@ public class SendActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        if (mPeerManager != null) {
-            mPeerManager.stopMsgListener();
+    class FileTransferListener extends AbsTransferObserver {
+        @Override
+        public void onTransferStatus(BaseFileInfo fileInfo) {
+            // 如果当前传输的是最后一个文件，并且传输成功后重置标记
+            if (fileInfo.getIsLast() == Const.IS_LAST && fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
+                isTransfering = false;
+            }
         }
-        App.resetSelectedFilesStatus();
-        super.onDestroy();
+
+        @Override
+        public void onTransferError(String error) {
+            isTransfering = false;
+            ToastUtils.showLong(mContext, "ლ(╹◡╹ლ) sorry! 传输被意外终止: \n" + error);
+            int closePageMode = PersonalSettingUtils.getIsCloseCurrPageWhenError(mContext);
+            if (closePageMode == PersonalSettingUtils.CLOSE_CURRENT_PAGE_WHEN_ERROR) {
+                finish();
+            }
+        }
     }
+
 
 }

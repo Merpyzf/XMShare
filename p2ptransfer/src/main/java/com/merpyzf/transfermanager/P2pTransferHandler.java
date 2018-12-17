@@ -12,7 +12,9 @@ import com.merpyzf.transfermanager.receive.ReceiverManager;
 import java.util.List;
 
 /**
- * Created by wangke on 2018/1/22.
+ *
+ * @author wangke
+ * @date 2018/1/22
  */
 
 public class P2pTransferHandler extends Handler {

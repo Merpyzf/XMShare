@@ -2,11 +2,7 @@ package com.merpyzf.xmshare.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,13 +14,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.merpyzf.common.utils.PersonalSettingUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
-import com.merpyzf.xmshare.ui.adapter.AvatarAdapter;
 import com.merpyzf.xmshare.observer.PersonalObservable;
-import com.merpyzf.xmshare.ui.widget.RecyclerViewItemDecoration;
-import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.ui.adapter.AvatarAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,12 +60,11 @@ public class PersonalActivity extends BaseActivity {
     }
 
     @Override
-    protected void initWidget(Bundle savedInstanceState) {
+    protected void doCreateView(Bundle savedInstanceState) {
         mUnbind = ButterKnife.bind(mContext, this);
         // 设置昵称
-        mEdtNickname.setText(SharedPreUtils.getNickName(mContext));
-        int avatarPosition = SharedPreUtils.getAvatar(mContext);
-        // 设置头像
+        mEdtNickname.setText(PersonalSettingUtils.getNickname(mContext));
+        int avatarPosition = PersonalSettingUtils.getAvatar(mContext);
         Glide.with(mContext)
                 .load(Const.AVATAR_LIST.get(avatarPosition))
                 .crossFade()
@@ -87,7 +81,7 @@ public class PersonalActivity extends BaseActivity {
     }
 
     @Override
-    protected void initEvents() {
+    protected void doCreateEvent() {
         mAvatarAdapter.setOnItemClickListener((adapter, view, position) -> {
             mAvatarPosition = position;
             Glide.with(mContext)
@@ -96,33 +90,16 @@ public class PersonalActivity extends BaseActivity {
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(mCivAvatar);
-            //setWidgetsBgColor(mAvatarPosition);
-
         });
 
         // 保存用户设置
         mBtnSave.setOnClickListener(v -> {
-            SharedPreUtils.putString(mContext, Const.SP_USER, "nickName", mEdtNickname.getText().toString().trim());
-            SharedPreUtils.putInteger(mContext, Const.SP_USER, "avatar", mAvatarPosition);
+            PersonalSettingUtils.saveNickname(mContext, mEdtNickname.getText().toString().trim());
+            PersonalSettingUtils.saveAvatar(mContext, mAvatarPosition);
             Toast.makeText(mContext, "保存成功", Toast.LENGTH_SHORT).show();
             PersonalObservable.getInstance().notifyAllObserver();
         });
     }
-
-
-    private void setWidgetsBgColor(int mAvatarPosition) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Const.AVATAR_LIST.get(mAvatarPosition));
-        Palette.from(bitmap).generate(p -> {
-            Palette.Swatch swatch = p.getVibrantSwatch();
-            if (swatch != null) {
-                int rgb = swatch.getRgb();
-                mRlHeader.setBackgroundColor(rgb);
-                mToolBar.setBackgroundColor(rgb);
-                mBtnSave.setBackgroundColor(rgb);
-            }
-        });
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

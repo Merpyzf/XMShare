@@ -22,23 +22,8 @@ public class Const {
      * 热点模式下用于匹配可连接热点名的前缀规则
      */
     public static final String SSID_PREFIX = "XM";
-    /**
-     * 传输模式
-     */
-    public static final String KEY_TRANSFER_MODE = "transfer_mode";
 
     public static final String IS_SHOW_HIDDEN_FILE = "is_show_hidden_file";
-    public static final int SHOW_HIDDEN_FILE = 1;
-    public static final int DONT_SHOW_HIDDEN_FILE = -1;
-
-    /**
-     * 使用已连接的局域网传输模式
-     */
-    public static final int TRANSFER_MODE_LAN = -1;
-    /**
-     * 通过建立热点组件局域网的方式传输模式
-     */
-    public static final int TRANSFER_MODE_AP = 1;
     public static final String HOME_OBSERVER_NAME = SelectFilesActivity.class.getSimpleName();
     /**
      * 头像信息

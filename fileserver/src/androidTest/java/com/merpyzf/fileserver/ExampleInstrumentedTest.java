@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.merpyzf.fileserver.util.IOUtils;
+import com.merpyzf.common.utils.IOUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.merpyzf.common.utils.DisplayUtils;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.App;
@@ -26,7 +27,6 @@ import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.ApkUtils;
 import com.merpyzf.xmshare.util.CacheUtils;
 import com.merpyzf.xmshare.util.CollectionUtils;
-import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.MusicUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -93,14 +93,14 @@ public class FileListFragment extends BaseFragment {
     }
 
     @Override
-    protected void initWidget(View rootView) {
+    protected void doCreateView(View rootView) {
         mBottomSheetView = getActivity().findViewById(R.id.bottom_sheet);
         updateCbxTitle();
         initRecyclerView();
     }
 
     @Override
-    protected void initEvent() {
+    protected void doCreateEvent() {
         if (mFileListAdapter == null) {
             return;
         }
@@ -114,7 +114,6 @@ public class FileListFragment extends BaseFragment {
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
                 App.addTransferFile(fileInfo);
-                //fileInfo.setMd5(Md5Utils.getFileMd5(fileInfo));
                 // 将文件选择的事件回调给外部
                 FilesStatusObservable.getInstance().notifyObservers(fileInfo, TAG,
                         FilesStatusObservable.FILE_SELECTED);
@@ -198,7 +197,7 @@ public class FileListFragment extends BaseFragment {
                         }
                         CollectionUtils.shortingByFirstCase(mFileList);
                         updateTitle(Const.PAGE_MUSIC_TITLE);
-                        MusicUtils.asyncUpdateAlbumImg(getContext(),musicFiles);
+                        MusicUtils.asyncUpdateAlbumImg(getContext(), musicFiles);
                         notifyRvDataChanged();
                     });
                 } else if (mLoadFileType == FILE_TYPE_VIDEO) {

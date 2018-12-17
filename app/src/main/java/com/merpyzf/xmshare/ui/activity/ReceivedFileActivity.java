@@ -9,14 +9,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
-import com.merpyzf.transfermanager.util.FilePathManager;
+import com.merpyzf.common.utils.FilePathManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.factory.FileInfoFactory;
 import com.merpyzf.xmshare.bean.PinnedHeaderEntity;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.common.base.BaseHeaderAdapter;
 import com.merpyzf.xmshare.ui.adapter.ReceivedFileAdapter;
-import com.merpyzf.xmshare.util.AppUtils;
 import com.merpyzf.xmshare.util.FileUtils;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
 
@@ -53,7 +52,7 @@ public class ReceivedFileActivity extends BaseActivity {
     }
 
     @Override
-    protected void initWidget(Bundle savedInstanceState) {
+    protected void doCreateView(Bundle savedInstanceState) {
         initRecyclerView();
         mAdapter = new ReceivedFileAdapter(mFileInfoList, mFileType);
         mAdapter.setEmptyView(LayoutInflater.from(getApplicationContext()).inflate(R.layout.view_rv_file_empty, null, false));
@@ -100,7 +99,7 @@ public class ReceivedFileActivity extends BaseActivity {
     }
 
     @Override
-    protected void initEvents() {
+    protected void doCreateEvent() {
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
             PinnedHeaderEntity<BaseFileInfo> entity = (PinnedHeaderEntity<BaseFileInfo>) adapter.getItem(position);
             if (entity.getItemType() == BaseHeaderAdapter.TYPE_DATA) {

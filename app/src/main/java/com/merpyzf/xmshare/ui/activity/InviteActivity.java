@@ -45,7 +45,7 @@ public class InviteActivity extends BaseActivity {
     }
 
     @Override
-    public void initWidget(Bundle savedInstanceState) {
+    public void doCreateView(Bundle savedInstanceState) {
 
     }
 
@@ -59,7 +59,7 @@ public class InviteActivity extends BaseActivity {
     }
 
     @Override
-    public void initEvents() {
+    public void doCreateEvent() {
 
     }
 

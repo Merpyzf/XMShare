@@ -2,6 +2,7 @@ package com.merpyzf.transfermanager.send;
 
 import android.content.Context;
 
+import com.merpyzf.common.manager.ThreadPoolManager;
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.observer.TransferObserver;
@@ -12,12 +13,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by wangke on 2018/1/17.
+ *
+ * @author wangke
+ * @date 2018/1/17
  */
 
 public class SenderManager {
 
-    private ExecutorService mSingleThreadPool;
     private Context mContext;
     private static SenderManager mSenderManager;
     private SenderTaskImp mSenderTaskImp;
@@ -42,7 +44,6 @@ public class SenderManager {
     private SenderManager(Context context) {
         mTransferObserverLists = new ArrayList<>();
         mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
-        mSingleThreadPool = Executors.newSingleThreadExecutor();
         this.mContext = context.getApplicationContext();
     }
 
@@ -75,7 +76,7 @@ public class SenderManager {
      */
     public void send(String destAddress, List<BaseFileInfo> fileInfoList) {
         mSenderTaskImp = new SenderTaskImp(mContext, destAddress, fileInfoList, mP2pTransferHandler);
-        mSingleThreadPool.execute(mSenderTaskImp);
+        ThreadPoolManager.getInstance().execute(mSenderTaskImp);
     }
 
     /**

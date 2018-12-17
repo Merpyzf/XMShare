@@ -6,9 +6,8 @@ import android.os.StatFs;
 import android.os.storage.StorageManager;
 import android.text.format.Formatter;
 
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.bean.Volume;
-import com.merpyzf.xmshare.ui.MainActivity;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +15,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 
+/**
+ * @author wangke
+ */
 public class StorageUtils {
     /**
      * 获取设备中所有的存储器
@@ -32,19 +34,15 @@ public class StorageUtils {
             Object[] volumeList = (Object[]) getVolumeListMethod.invoke(storageManager);
             if (volumeList != null) {
                 Volume volume;
-                for (int i = 0; i < volumeList.length; i++) {
+                for (Object aVolumeList : volumeList) {
                     volume = new Volume();
-                    volume.setPath((String) volumeList[i].getClass().getMethod("getPath").invoke(volumeList[i]));
-                    volume.setRemovable((boolean) volumeList[i].getClass().getMethod("isRemovable").invoke(volumeList[i]));
-                    volume.setState((String) volumeList[i].getClass().getMethod("getState").invoke(volumeList[i]));
+                    volume.setPath((String) aVolumeList.getClass().getMethod("getPath").invoke(aVolumeList));
+                    volume.setRemovable((boolean) aVolumeList.getClass().getMethod("isRemovable").invoke(aVolumeList));
+                    volume.setState((String) aVolumeList.getClass().getMethod("getState").invoke(aVolumeList));
                     volumes.add(volume);
                 }
             }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return volumes;

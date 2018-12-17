@@ -103,7 +103,6 @@ public class Peer {
         }
 
         Peer peer = (Peer) o;
-
         return hostAddress.equals(peer.hostAddress);
     }
 

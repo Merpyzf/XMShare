@@ -1,6 +1,6 @@
 package com.merpyzf.transfermanager.entity;
 
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 
 /**
  *

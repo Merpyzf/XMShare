@@ -1,7 +1,5 @@
 package com.merpyzf.fileserver;
 
-import com.merpyzf.fileserver.util.FileUtils;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;

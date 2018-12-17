@@ -1,20 +1,21 @@
 package com.merpyzf.xmshare.ui.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.bumptech.glide.Glide;
+import com.merpyzf.common.utils.PersonalSettingUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
-import com.merpyzf.xmshare.util.SettingHelper;
-import com.merpyzf.xmshare.util.SharedPreUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
+import com.merpyzf.common.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -29,11 +30,14 @@ public class SettingActivity extends BaseActivity {
 
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
-    // 设置建立局域网的方式
     @BindView(R.id.switch_transfer_mode)
     Switch mSwitchTransferMode;
     @BindView(R.id.switch_show_hidden)
     Switch mSwitchShowHidden;
+    @BindView(R.id.switch_close_curr_page)
+    Switch mSwitchErrorIsCloseCurrPage;
+    @BindView(R.id.rl_trello)
+    RelativeLayout mRlTrello;
     private static final String TAG = SendActivity.class.getSimpleName();
 
 
@@ -43,38 +47,62 @@ public class SettingActivity extends BaseActivity {
     }
 
     @Override
-    public void initWidget(Bundle savedInstanceState) {
-        int transferMode = SharedPreUtils.getInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE, Const.TRANSFER_MODE_LAN);
-        if (transferMode == Const.TRANSFER_MODE_LAN) {
+    public void doCreateView(Bundle savedInstanceState) {
+        int transferMode = PersonalSettingUtils.getTransferMode(mContext);
+        if (transferMode == PersonalSettingUtils.TRANSFER_MODE_LAN) {
             mSwitchTransferMode.setChecked(false);
-        } else if (transferMode == Const.TRANSFER_MODE_AP) {
+        } else if (transferMode == PersonalSettingUtils.TRANSFER_MODE_AP) {
             mSwitchTransferMode.setChecked(true);
         }
-        boolean showHiddenFile = SettingHelper.showHiddenFile(mContext);
-        mSwitchShowHidden.setChecked(showHiddenFile);
+        mSwitchShowHidden.setChecked(PersonalSettingUtils.getIsShowHiddenFile(mContext));
+
+        int pageCloseMode = PersonalSettingUtils.getIsCloseCurrPageWhenError(mContext);
+        if (pageCloseMode == PersonalSettingUtils.CLOSE_CURRENT_PAGE_WHEN_ERROR) {
+            mSwitchErrorIsCloseCurrPage.setChecked(true);
+        } else {
+            mSwitchErrorIsCloseCurrPage.setChecked(false);
+        }
+
 
     }
 
     @Override
-    public void initEvents() {
+    public void doCreateEvent() {
         //设置传输文件时优先使用的模式
         mSwitchTransferMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
-                        Const.TRANSFER_MODE_AP);
+                PersonalSettingUtils.updateTransferMode(mContext, PersonalSettingUtils.TRANSFER_MODE_AP);
             } else {
-                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
-                        Const.TRANSFER_MODE_LAN);
+                PersonalSettingUtils.updateTransferMode(mContext, PersonalSettingUtils.TRANSFER_MODE_LAN);
             }
         });
         // 设置是否显示隐藏文件和目录
         mSwitchShowHidden.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.IS_SHOW_HIDDEN_FILE, Const.SHOW_HIDDEN_FILE);
+                PersonalSettingUtils.updateIsShowHiddenFile(mContext, PersonalSettingUtils.SHOW_HIDDEN_FILE);
             } else {
-                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.IS_SHOW_HIDDEN_FILE, Const.DONT_SHOW_HIDDEN_FILE);
+                PersonalSettingUtils.updateIsShowHiddenFile(mContext, PersonalSettingUtils.DONT_SHOW_HIDDEN_FILE);
             }
         });
+        // 设置在传输过程中程序出错或认为的退出是否直接关闭当前所在的传输页面
+        mSwitchErrorIsCloseCurrPage.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                PersonalSettingUtils.updateIsCloseCurrPageWhenError(mContext, PersonalSettingUtils.CLOSE_CURRENT_PAGE_WHEN_ERROR);
+            } else {
+                PersonalSettingUtils.updateIsCloseCurrPageWhenError(mContext, PersonalSettingUtils.DONT_CLOSE_CURRENT_PAGE_WHEN_ERROR);
+
+            }
+        });
+
+        // 查看本项目在trello上的最新开发计划
+        mRlTrello.setOnClickListener(v -> {
+            String trelloUrl = "https://trello.com/b/LnZuAbAs/xmshare";
+            Intent intent = new Intent();
+            intent.setData(Uri.parse(trelloUrl));
+            intent.setAction(Intent.ACTION_VIEW);
+            this.startActivity(intent);
+        });
+
 
     }
 

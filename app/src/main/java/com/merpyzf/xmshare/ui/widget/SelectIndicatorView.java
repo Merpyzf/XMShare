@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.widget.bean.Indicator;
-import com.merpyzf.xmshare.util.DisplayUtils;
+import com.merpyzf.common.utils.DisplayUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,25 +2,24 @@ package com.merpyzf.xmshare.ui.fragment.transfer;
 
 
 import android.annotation.SuppressLint;
-import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.merpyzf.common.utils.PersonalSettingUtils;
+import com.merpyzf.common.utils.ToastUtils;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.observer.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseFragment;
+import com.merpyzf.xmshare.observer.PersonalObservable;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
-import com.merpyzf.xmshare.util.AppUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class TransferReceiveFragment extends BaseFragment {
     }
 
     @Override
-    protected void initWidget(View rootView) {
+    protected void doCreateView(View rootView) {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.getItemAnimator().setChangeDuration(0);
         mFileTransferAdapter = new FileTransferAdapter(R.layout.item_rv_transfer, FileTransferAdapter.TYPE_RECEIVE, mTransferFileList);
@@ -70,7 +69,7 @@ public class TransferReceiveFragment extends BaseFragment {
     }
 
     @Override
-    protected void initEvent() {
+    protected void doCreateEvent() {
         ReceiverManager.getInstance(mContext).register(new TransferObserver() {
             @Override
             public void onTransferProgress(BaseFileInfo fileInfo) {
@@ -84,6 +83,7 @@ public class TransferReceiveFragment extends BaseFragment {
                 FileUtils.addFileToMediaStore(getActivity(), new File(fileInfo.getPath()));
                 mLastFileSize = fileInfo.getLength();
                 mTotalSize += mLastFileSize;
+                PersonalSettingUtils.updateSavedNetFlow(mContext, mLastFileSize);
                 if (fileInfo.getIsLast() == Const.IS_LAST) {
                     showTransferDataSize();
                 }
@@ -91,12 +91,22 @@ public class TransferReceiveFragment extends BaseFragment {
 
             @Override
             public void onTransferError(String error) {
+                if (mTvState != null && mTvSave != null && mTvSpeed != null) {
+                    mTvState.setText("sorry! 传输被意外中断...");
+                    mTvSave.setVisibility(View.GONE);
+                    mTvSpeed.setVisibility(View.GONE);
+                }
 
             }
         });
         mFileTransferAdapter.setOnItemClickListener((adapter, view, position) -> {
             BaseFileInfo fileInfo = (BaseFileInfo) adapter.getItem(position);
-            com.merpyzf.xmshare.util.FileUtils.openFile(mContext, new File(fileInfo.getPath()));
+            if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
+                com.merpyzf.xmshare.util.FileUtils.openFile(mContext, new File(fileInfo.getPath()));
+            } else {
+                ToastUtils.showShort(mContext, "请等待文件传输完成...");
+            }
+
         });
     }
 
@@ -146,6 +156,8 @@ public class TransferReceiveFragment extends BaseFragment {
     public void onDestroy() {
         App.getTransferFileList().clear();
         App.closeHotspotOnAndroidO();
+        // 更新用户信息(累计节省的流量)
+        PersonalObservable.getInstance().notifyAllObserver();
         super.onDestroy();
     }
 

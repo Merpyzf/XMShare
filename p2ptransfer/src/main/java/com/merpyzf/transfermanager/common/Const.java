@@ -18,6 +18,7 @@ public class Const {
     // 传输过程中参数间的分割符
     public static final String S_SEPARATOR = ":";
     public static final int BUFFER_LENGTH = 1024 * 8;
+    public static final int UDP_BUFFER_LENGTH = 1024;
     public static final int UDP_PORT = 8900;
     // 接收端的IP地址
     public static final String HOST_ADDRESS = "192.168.31.184";
@@ -35,7 +36,7 @@ public class Const {
     // 检查网络状态时候ping命令的执行次数
     public static final int PING_COUNT = 10;
     // 消息中包含信息的个数
-    public static final int MSG_PROPERTIES_LENGTH = 6;
+    public static final int MSG_PROPERTIES_LENGTH = 4;
     // 传输进度和
     public static final int PROGRESS_REFRESH_INTERVAL = 200;
 

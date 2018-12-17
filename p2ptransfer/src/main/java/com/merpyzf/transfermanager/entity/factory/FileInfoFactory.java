@@ -6,7 +6,7 @@ import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
-import com.merpyzf.transfermanager.util.FilePathManager;
+import com.merpyzf.common.utils.FilePathManager;
 
 import java.io.File;
 

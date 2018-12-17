@@ -19,6 +19,11 @@ public abstract class OnPairActionListener {
     public void onSendConnRequest() {
     }
 
+    public void onOffline(Peer peer) {
+
+
+    }
+
     /**
      * 配对成功
      *

@@ -28,6 +28,10 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.merpyzf.common.utils.FileUtils;
+import com.merpyzf.common.utils.FormatUtils;
+import com.merpyzf.common.utils.PersonalSettingUtils;
+import com.merpyzf.common.utils.ToastUtils;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
@@ -35,19 +39,18 @@ import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
 import com.merpyzf.xmshare.observer.FilesStatusObserver;
+import com.merpyzf.xmshare.observer.PersonalObservable;
+import com.merpyzf.xmshare.observer.PersonalObserver;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.adapter.FilesFrgPagerAdapter;
 import com.merpyzf.xmshare.ui.fragment.FileListFragment;
 import com.merpyzf.xmshare.ui.fragment.MainFragment;
 import com.merpyzf.xmshare.ui.fragment.PhotoFragment;
-import com.merpyzf.xmshare.observer.PersonalObservable;
-import com.merpyzf.xmshare.observer.PersonalObserver;
 import com.merpyzf.xmshare.ui.fragment.filemanager.FileManagerFragment;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
 import com.merpyzf.xmshare.ui.widget.tools.CustomRecyclerScrollViewListener;
 import com.merpyzf.xmshare.util.AnimationUtils;
-import com.merpyzf.xmshare.util.SharedPreUtils;
-import com.merpyzf.xmshare.util.ToastUtils;
+import com.merpyzf.xmshare.util.UiUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
@@ -93,18 +96,19 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     ImageView mIvActionSearch;
     CircleImageView mNavCivAvatar;
     TextView mNavTvNickname;
+    TextView mTvSavedNetFlow;
 
     private List<Fragment> mFragmentList;
     private String[] mTabTitles;
     private BottomSheetBehavior<View> mSheetBehavior;
     private FileSelectAdapter<BaseFileInfo> mFileSelectAdapter;
     private static int sFabState = Const.FAB_STATE_SEND;
-    private static final String TAG = SelectFilesActivity.class.getSimpleName();
     private FragmentManager mFragmentManager;
     private FilesStatusObserver mFilesStatusObserver;
     private CustomRecyclerScrollViewListener mScrollListener;
     private FabShowAnimatorListener mFabShowAnimatorListener = new FabShowAnimatorListener();
     private FabHideAnimatorListener mFabHideAnimatorListener = new FabHideAnimatorListener();
+    private static final String TAG = SelectFilesActivity.class.getSimpleName();
 
     @Override
     public int getContentLayoutId() {
@@ -121,10 +125,11 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
     @SuppressLint("CheckResult")
     @Override
-    public void initWidget(Bundle savedInstanceState) {
+    public void doCreateView(Bundle savedInstanceState) {
         View headerView = mNavigationView.getHeaderView(0);
         mNavCivAvatar = headerView.findViewById(R.id.civ_avatar);
         mNavTvNickname = headerView.findViewById(R.id.tv_nickname);
+        mTvSavedNetFlow = headerView.findViewById(R.id.tv_saved_netflow);
         fabHide(0);
         updateUserInfo();
         updateBottomTitle();
@@ -228,7 +233,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     }
 
     @Override
-    public void initEvents() {
+    public void doCreateEvent() {
         // 申请文件读写权限
         requestPermission();
         // 注册一个用于检查用户信息变化的观察者对象
@@ -255,7 +260,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                         break;
 
                 }
-
 
 
             }
@@ -323,6 +327,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
                 mFileSelectAdapter.notifyDataSetChanged();
                 FilesStatusObservable.getInstance().notifyObservers(App.getTransferFileList(), HOME_OBSERVER_NAME,
                         FilesStatusObservable.FILE_CANCEL_SELECTED_ALL);
+                mFabBtn.setImageResource(R.drawable.ic_send);
+                mFabBtn.setBackgroundTintList(UiUtils.getColorStateListTest(mContext, R.color.colorAccent));
                 fabHide(150);
             }
         });
@@ -340,7 +346,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             switch (id) {
                 // 接收文件
                 case R.id.nav_receive:
-                    ReceiveActivity.start(mContext);
+                    ReceiveActivity.start(mContext, ReceiveActivity.class);
                     break;
                 // 电脑传
                 case R.id.nav_transfer2pc:
@@ -418,9 +424,14 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
      */
     @Override
     public void updateUserInfo() {
-        mNavTvNickname.setText(SharedPreUtils.getNickName(mContext));
-        setAvatar(mNavCivAvatar, Const.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
-        setAvatar(mCivAvatar, Const.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
+        String nickname = PersonalSettingUtils.getNickname(mContext);
+        mNavTvNickname.setText(nickname);
+        int avatar = Const.AVATAR_LIST.get(PersonalSettingUtils.getAvatar(mContext));
+        setAvatar(mNavCivAvatar, avatar);
+        setAvatar(mCivAvatar, avatar);
+        Long savedNetFlow = PersonalSettingUtils.getSavedNetFlow(mContext);
+        String[] sizeArrayStr = com.merpyzf.transfermanager.utils.FileUtils.getFileSizeArrayStr(savedNetFlow);
+        mTvSavedNetFlow.setText("累计节省流量: " + sizeArrayStr[0] + "" + sizeArrayStr[1]);
     }
 
     /**

@@ -1,10 +1,8 @@
 package com.merpyzf.xmshare.ui.adapter;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,15 +17,13 @@ import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
-import com.merpyzf.transfermanager.util.FilePathManager;
-import com.merpyzf.transfermanager.util.FormatUtils;
+import com.merpyzf.common.utils.FilePathManager;
+import com.merpyzf.common.utils.FormatUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.UiUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-
-import net.qiujuer.genius.res.Resource;
 
 import java.io.File;
 import java.io.IOException;

@@ -30,13 +30,13 @@ public class SplashActivity extends BaseActivity {
     }
 
     @Override
-    protected void initWidget(Bundle savedInstanceState) {
+    protected void doCreateView(Bundle savedInstanceState) {
 
     }
 
     @SuppressLint("CheckResult")
     @Override
-    protected void initEvents() {
+    protected void doCreateEvent() {
         Observable.timer(500, TimeUnit.MILLISECONDS)
                 .subscribe(aLong -> {
                     SelectFilesActivity.start(mContext, SelectFilesActivity.class);

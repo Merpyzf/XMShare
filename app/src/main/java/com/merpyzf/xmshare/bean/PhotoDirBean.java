@@ -1,10 +1,8 @@
 package com.merpyzf.xmshare.bean;
 
-import android.util.Log;
-
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.App;
 
 import java.io.File;
@@ -132,6 +130,4 @@ public class PhotoDirBean implements Serializable {
         return imageList.size();
 
     }
-
-
 }

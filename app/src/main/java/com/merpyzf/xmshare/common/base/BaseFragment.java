@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,15 +44,14 @@ public abstract class BaseFragment extends RxFragment {
             mRootUnbinder = ButterKnife.bind(this, root);
             mRootView = root;
         }
-        initWidget(mRootView);
-        initEvent();
+        doCreateView(mRootView);
+        doCreateEvent();
         return mRootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // 当View创建完成之后初始化数据
         initData();
     }
 
@@ -79,7 +77,7 @@ public abstract class BaseFragment extends RxFragment {
      *
      * @param rootView 根View
      */
-    protected void initWidget(View rootView) {
+    protected void doCreateView(View rootView) {
 
     }
 
@@ -93,7 +91,7 @@ public abstract class BaseFragment extends RxFragment {
     /**
      * 初始化事件
      */
-    protected void initEvent() {
+    protected void doCreateEvent() {
 
     }
 

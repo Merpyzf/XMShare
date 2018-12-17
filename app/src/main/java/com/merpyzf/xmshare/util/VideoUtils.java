@@ -8,11 +8,12 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.provider.MediaStore;
 
+import com.merpyzf.common.utils.Md5Utils;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.VideoFile;
-import com.merpyzf.transfermanager.util.CloseUtils;
-import com.merpyzf.transfermanager.util.FilePathManager;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.common.utils.CloseUtils;
+import com.merpyzf.common.utils.FilePathManager;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.R;
 
 import java.io.BufferedOutputStream;
@@ -29,7 +30,9 @@ import io.reactivex.schedulers.Schedulers;
 import static com.merpyzf.transfermanager.entity.BaseFileInfo.FILE_TYPE_VIDEO;
 
 /**
- * Created by wangke on 2018/1/14.
+ *
+ * @author wangke
+ * @date 2018/1/14
  */
 
 public class VideoUtils {

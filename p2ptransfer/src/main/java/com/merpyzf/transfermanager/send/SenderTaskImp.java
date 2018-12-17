@@ -2,15 +2,14 @@ package com.merpyzf.transfermanager.send;
 
 import android.content.Context;
 import android.os.Message;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.StorageFile;
-import com.merpyzf.transfermanager.util.CloseUtils;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.common.utils.CloseUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -18,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.security.acl.LastOwnerException;
 import java.util.List;
 
 /**
@@ -75,10 +73,7 @@ public class SenderTaskImp implements SendTask, Runnable {
     @Override
     public void connect() throws Exception {
         mSocket = new Socket();
-        // 设置字节流读取的阻塞时间为3秒
         mSocket.setSoTimeout(3 * 1000);
-        //mSocket.setSendBufferSize(64 * 1024 * 1024);
-        //mSocket.setPerformancePreferences(2, 1, 2);
         mSocket.connect(new InetSocketAddress(mtargetAddress, Const.SOCKET_PORT), 3000);
         mOutputStream = mSocket.getOutputStream();
     }

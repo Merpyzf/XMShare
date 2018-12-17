@@ -8,7 +8,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
-        <include layout="@layout/include_trasfer_state_layout"/>
+        <include layout="@layout/include_transfer_state_layout"/>
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView

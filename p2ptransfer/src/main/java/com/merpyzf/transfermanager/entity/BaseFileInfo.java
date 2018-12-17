@@ -3,8 +3,7 @@ package com.merpyzf.transfermanager.entity;
 import android.content.Context;
 
 import com.merpyzf.transfermanager.common.Const;
-import com.merpyzf.transfermanager.util.FileUtils;
-
+import com.merpyzf.transfermanager.utils.FileUtils;
 
 import java.io.Serializable;
 
@@ -14,7 +13,7 @@ import java.io.Serializable;
  * @author wangke
  * @date 2017/12/23
  */
-public class BaseFileInfo {
+public class BaseFileInfo implements Serializable {
 
     /**
      * 应用类型(APK)

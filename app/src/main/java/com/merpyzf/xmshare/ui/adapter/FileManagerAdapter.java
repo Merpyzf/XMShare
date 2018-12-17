@@ -16,7 +16,7 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.List;
 
-import static com.merpyzf.transfermanager.util.FileUtils.getFileSizeArrayStr;
+import static com.merpyzf.transfermanager.utils.FileUtils.getFileSizeArrayStr;
 
 /**
  * 文件管理列表的适配器

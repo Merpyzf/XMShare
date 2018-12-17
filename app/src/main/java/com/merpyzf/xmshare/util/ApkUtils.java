@@ -13,14 +13,13 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.merpyzf.common.utils.Md5Utils;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
-import com.merpyzf.transfermanager.util.CloseUtils;
-import com.merpyzf.transfermanager.util.FilePathManager;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.common.utils.CloseUtils;
+import com.merpyzf.common.utils.FilePathManager;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.db.AppDatabase;
-import com.merpyzf.xmshare.db.entity.FileCache;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;

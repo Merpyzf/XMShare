@@ -8,19 +8,13 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
-import com.merpyzf.xmshare.common.Const;
-import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.crashreport.CrashReport;
 
-import org.litepal.LitePalApplication;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- *
  * @author wangke
  * @date 2018/1/16
  */
@@ -34,7 +28,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LeakCanary.install(this);
+        //LeakCanary.install(this);
         CrashReport.initCrashReport(getApplicationContext(), "85b38acd34", true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -132,6 +126,9 @@ public class App extends Application {
         for (int i = 0; i < mTransferFiles.size(); i++) {
             BaseFileInfo fileInfo = mTransferFiles.get(i);
             fileInfo.reset();
+            if (i == mTransferFiles.size() - 1) {
+                fileInfo.setIsLast(1);
+            }
         }
     }
 

@@ -5,12 +5,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.merpyzf.common.utils.CloseUtils;
+import com.merpyzf.common.utils.NetworkUtil;
+import com.merpyzf.common.utils.PersonalSettingUtils;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.util.NetworkUtil;
-import com.merpyzf.transfermanager.util.SharedPreUtils;
-import com.merpyzf.transfermanager.util.timer.OSTimer;
-import com.merpyzf.transfermanager.util.timer.Timeout;
+import com.merpyzf.common.helper.TimerHelper;
+import com.merpyzf.common.helper.Timeout;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,7 +30,7 @@ import java.net.UnknownHostException;
 
 public class PeerCommunicate extends Thread {
     private DatagramSocket mUdpSocket;
-    private boolean isLoop = true;
+    private boolean running = true;
     private Context mContext;
     private Handler mHandler;
     private String mNickName;
@@ -39,17 +40,13 @@ public class PeerCommunicate extends Thread {
     public PeerCommunicate(Context context, Handler handler, int port) {
         mContext = context;
         mHandler = handler;
-        String nickName = SharedPreUtils.getString(context, Const.SP_USER, "nickName", "");
-        init(port);
-    }
-
-    public PeerCommunicate(int port) {
+        mNickName = PersonalSettingUtils.getNickname(context);
+        mAvatar = PersonalSettingUtils.getAvatar(context);
         init(port);
     }
 
     private void init(int port) {
         try {
-            // 初始化发送端所用socket
             mUdpSocket = new DatagramSocket(null);
             mUdpSocket.setReuseAddress(true);
             mUdpSocket.bind(new InetSocketAddress(port));
@@ -66,30 +63,31 @@ public class PeerCommunicate extends Thread {
     public void run() {
         try {
             if (mUdpSocket != null) {
-                while (isLoop) {
-                    byte[] buffer = new byte[Const.BUFFER_LENGTH];
-                    DatagramPacket receivePacket = new DatagramPacket(buffer, 0, Const.BUFFER_LENGTH);
-                    //block
+                while (running) {
+                    byte[] buffer = new byte[Const.UDP_BUFFER_LENGTH];
+                    DatagramPacket receivePacket = new DatagramPacket(buffer, 0, buffer.length);
                     mUdpSocket.receive(receivePacket);
                     if (receivePacket.getLength() == 0) {
                         continue;
                     }
                     String hostAddress = receivePacket.getAddress().getHostAddress();
-                    String receiveMsg = new String(buffer, 0, buffer.length, "utf-8");
+                    String receiveMsg = new String(buffer, 0, receivePacket.getLength(), "utf-8");
                     // 当接收到UDP消息不是来自本机才进行一下操作
-                    if (!NetworkUtil.isLocal(hostAddress)) {
+                    if (!msgIsFormMe(hostAddress)) {
+                        Log.i("wk", "收到的UDP消息: " + receiveMsg);
                         SignMessage signMessage = SignMessage.decodeProtocol(receiveMsg);
-                        Message message = Message.obtain();
-                        message.obj = signMessage;
-                        // 将收到的消息转发给主线程处理
-                        mHandler.sendMessage(message);
+                        if (signMessage != null) {
+                            Message message = Message.obtain();
+                            message.obj = signMessage;
+                            // 将收到的消息转发给主线程处理
+                            mHandler.sendMessage(message);
+                        }
                     }
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
-            isLoop = false;
+            running = false;
         } finally {
             if (null != mUdpSocket) {
                 mUdpSocket.close();
@@ -111,22 +109,21 @@ public class PeerCommunicate extends Thread {
             if (mUdpSocket != null) {
                 byte[] buffer = msg.getBytes(Const.S_CHARSET);
                 DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, dest, port);
+                Log.i("wk", "request conn-> " + dest.getHostAddress() + ": " + port + "msg-> " + msg);
                 mUdpSocket.send(sendPacket);
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            mUdpSocket.close();
+            CloseUtils.close(mUdpSocket);
         }
     }
-
 
     /**
      * 发送广播信息
      */
     public void sendBroadcast(SignMessage signMessage) {
-
         InetAddress broadcastAddress = null;
         try {
             broadcastAddress = NetworkUtil.getBroadcastAddress(mContext);
@@ -156,11 +153,9 @@ public class PeerCommunicate extends Thread {
      * 将当前设备的信息回复给对端
      */
     public void replyMsg() {
-        String name = Thread.currentThread().getName();
         SignMessage signMessage = new SignMessage();
         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-        signMessage.setMsgContent("ON_LINE");
-        signMessage.setCmd(SignMessage.Cmd.ON_LINE);
+        signMessage.setCmd(SignMessage.CMD.ON_LINE);
         signMessage.setNickName(mNickName);
         signMessage.setAvatarPosition(mAvatar);
         sendBroadcast(signMessage);
@@ -171,14 +166,24 @@ public class PeerCommunicate extends Thread {
      */
     public void release() {
         if (mUdpSocket != null) {
-            OSTimer osTimer = new OSTimer(null, new Timeout() {
+            TimerHelper timerHelper = new TimerHelper(null, new Timeout() {
                 @Override
                 public void onTimeOut() {
-                    isLoop = false;
+                    running = false;
                     mUdpSocket.close();
                 }
             }, 0, false);
-            osTimer.start();
+            timerHelper.start();
         }
+    }
+
+    /**
+     * 判断收到的消息是否来自自己
+     *
+     * @param hostAddress
+     * @return
+     */
+    public boolean msgIsFormMe(String hostAddress) {
+        return NetworkUtil.isLocal(hostAddress);
     }
 }

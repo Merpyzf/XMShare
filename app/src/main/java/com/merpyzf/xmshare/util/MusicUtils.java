@@ -11,8 +11,8 @@ import android.net.Uri;
 
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
-import com.merpyzf.transfermanager.util.FilePathManager;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.common.utils.FilePathManager;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.R;
 
 import java.io.BufferedOutputStream;

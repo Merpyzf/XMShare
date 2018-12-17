@@ -33,8 +33,8 @@ public class PhotoFragment extends BaseFragment {
     }
 
     @Override
-    protected void initWidget(View rootView) {
-        super.initWidget(rootView);
+    protected void doCreateView(View rootView) {
+        super.doCreateView(rootView);
         mSelectIndicator.addIndicator(new Indicator("相册", ""));
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         PhotoDirsFragment photoDirsFragment = new PhotoDirsFragment();

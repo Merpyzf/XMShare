@@ -29,4 +29,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.yanzhenjie:andserver:1.1.4'
     implementation project(':p2ptransfer')
+    implementation project(':common')
 }

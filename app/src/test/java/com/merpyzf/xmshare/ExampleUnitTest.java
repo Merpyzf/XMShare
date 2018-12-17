@@ -2,8 +2,8 @@ package com.merpyzf.xmshare;
 
 import android.graphics.Point;
 
-import com.merpyzf.transfermanager.util.FileUtils;
-import com.merpyzf.transfermanager.util.FormatUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
+import com.merpyzf.common.utils.FormatUtils;
 
 import org.junit.Test;
 
@@ -14,11 +14,8 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 

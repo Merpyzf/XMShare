@@ -45,9 +45,9 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         initSystemBarTint();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         initData();
-        initWidget(savedInstanceState);
+        doCreateView(savedInstanceState);
         initToolBar();
-        initEvents();
+        doCreateEvent();
 
     }
 
@@ -69,7 +69,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
      *
      * @param savedInstanceState
      */
-    protected abstract void initWidget(Bundle savedInstanceState);
+    protected abstract void doCreateView(Bundle savedInstanceState);
 
     /**
      * 初始化ToolBar
@@ -81,7 +81,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     /**
      * 控件事件的初始化
      */
-    protected abstract void initEvents();
+    protected abstract void doCreateEvent();
 
     /**
      * 初始化RecyclerView

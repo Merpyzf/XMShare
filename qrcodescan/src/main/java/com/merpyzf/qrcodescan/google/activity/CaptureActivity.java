@@ -98,7 +98,6 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
 
     private void addToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
     }
 
@@ -124,12 +123,10 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
                         photoPath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
                     }
                     cursor.close();
-
                     mProgress = new ProgressDialog(CaptureActivity.this);
                     mProgress.setMessage("正在扫描...");
                     mProgress.setCancelable(false);
                     mProgress.show();
-                    // TODO: 2018/4/26 替换掉这种线程池操作
                     new Thread(new Runnable() {
                         @Override
                         public void run() {

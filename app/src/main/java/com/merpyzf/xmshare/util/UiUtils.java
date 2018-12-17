@@ -2,6 +2,7 @@ package com.merpyzf.xmshare.util;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -10,8 +11,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
-import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.R;
+
+import net.qiujuer.genius.ui.animation.AnimatorListener;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by merpyzf on 2018/4/15.
@@ -26,50 +35,28 @@ public class UiUtils {
     /**
      * 延时隐藏View并带有渐变得动画
      *
-     * @param context   上下文
      * @param view      要隐藏的View
      * @param delayTime 延时毫秒
      */
-    public static void delayHideView(Activity context, View view, int delayTime) {
-
-        //时间3s
-        OSTimer mHideTipTimer = new OSTimer(null, () -> {
-            context.runOnUiThread(() -> {
-
-                ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f);
-                animator.setDuration(1000);//时间1s
-                animator.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                        if (view == null) {
-                            return;
+    @SuppressLint("CheckResult")
+    public static void delayHideView(View view, int delayTime) {
+        // TODO: 2018/12/8 RxJava实现延时效果
+        Observable.timer(delayTime, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> {
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f);
+                    animator.setDuration(1000);
+                    animator.addListener(new AnimatorListener() {
+                        @Override
+                        public void onAnimationEnd(Animator animation, boolean isReverse) {
+                            if (view == null) {
+                                return;
+                            }
+                            view.setVisibility(View.INVISIBLE);
                         }
-                        view.setVisibility(View.INVISIBLE);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
+                    });
+                    animator.start();
                 });
-                animator.start();
-            });
-
-        }, delayTime, false);
-
-        mHideTipTimer.start();
-
     }
 
     /**

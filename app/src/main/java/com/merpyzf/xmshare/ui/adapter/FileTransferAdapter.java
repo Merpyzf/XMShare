@@ -1,7 +1,6 @@
 package com.merpyzf.xmshare.ui.adapter;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -18,8 +17,8 @@ import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.StorageFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
-import com.merpyzf.transfermanager.util.FilePathManager;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.common.utils.FilePathManager;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.util.FileTypeHelper;
 import com.merpyzf.xmshare.util.UiUtils;
 import com.merpyzf.xmshare.R;
@@ -46,20 +45,13 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
     @Override
     protected void convert(BaseViewHolder helper, T item) {
-        // 缩略图
         ImageView ivThumb = helper.getView(R.id.iv_file_thumb);
-        // 传输完成标记
         ImageView ivDone = helper.getView(R.id.iv_done);
-        // 设置传输的文件的大小
         TextView tvSize = helper.getView(R.id.tv_size);
-        // 传输进度条
         ProgressBar progressBar = helper.getView(R.id.progress);
-        // 进度提示
         TextView tvProgress = helper.getView(R.id.tv_progress);
-        // 文件名
         TextView tvTitle = helper.getView(R.id.tv_title);
 
-        // 当前条目对应的文件信息
         BaseFileInfo fileInfo = (BaseFileInfo) item;
         String[] fileSizeArrayStr = FileUtils.getFileSizeArrayStr(fileInfo.getLength());
         tvTitle.setText(fileInfo.getName());
@@ -84,7 +76,6 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             Glide.with(mContext)
                     .load(thumbFile)
                     .placeholder(UiUtils.getPlaceHolder(fileInfo.getType()))
-                    .crossFade()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .error(UiUtils.getPlaceHolder(fileInfo.getType()))
@@ -120,11 +111,14 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             } else {
                 tvProgress.setText("传输完毕");
             }
+
         } else if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_EXPECTION) {
             progressBar.setProgress((int) fileInfo.getProgress());
             progressBar.setVisibility(View.VISIBLE);
             ivDone.setVisibility(View.INVISIBLE);
             tvProgress.setText("传输失败");
+        }else {
+            progressBar.setVisibility(View.INVISIBLE);
         }
 
     }

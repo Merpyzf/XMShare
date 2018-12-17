@@ -4,19 +4,24 @@ package com.merpyzf.xmshare.ui.fragment.transfer;
 import android.annotation.SuppressLint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.merpyzf.common.utils.PersonalSettingUtils;
+import com.merpyzf.common.utils.SharedPreUtils;
+import com.merpyzf.common.utils.ToastUtils;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.observer.AbsTransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
-import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.utils.FileUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseFragment;
+import com.merpyzf.xmshare.observer.PersonalObservable;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 
 import butterknife.BindView;
@@ -37,7 +42,6 @@ public class TransferSendFragment extends BaseFragment {
     TextView mTvSpeed;
     @BindView(R.id.tv_save)
     TextView mTvSave;
-    // 显示传输时详细信息的布局
     @BindView(R.id.rl_info)
     RelativeLayout mRlInfo;
     private FileTransferAdapter<BaseFileInfo> mFileTransferAdapter;
@@ -52,7 +56,7 @@ public class TransferSendFragment extends BaseFragment {
     }
 
     @Override
-    protected void initEvent() {
+    protected void doCreateEvent() {
         SenderManager.getInstance(getContext()).register(new AbsTransferObserver() {
             @Override
             public void onTransferProgress(BaseFileInfo fileInfo) {
@@ -66,6 +70,7 @@ public class TransferSendFragment extends BaseFragment {
                 // 记录本次文件传输的字节数
                 mLastFileSize = fileInfo.getLength();
                 mTotalSize += mLastFileSize;
+                PersonalSettingUtils.updateSavedNetFlow(mContext, mLastFileSize);
                 if (fileInfo.getIsLast() == Const.IS_LAST) {
                     showTransferDataSize();
                 }
@@ -73,15 +78,19 @@ public class TransferSendFragment extends BaseFragment {
 
             @Override
             public void onTransferError(String error) {
-
+                if (mTvState != null && mTvSave != null && mTvSpeed != null) {
+                    mTvState.setText("sorry! 传输被意外中断...");
+                    mTvSave.setVisibility(View.GONE);
+                    mTvSpeed.setVisibility(View.GONE);
+                }
             }
         });
-        // 当View创建完毕后进行文件的发送
+        // 传输前先重置文件的状态
+        App.resetSelectedFilesStatus();
         SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), App.getTransferFileList());
     }
 
     private void showTransferDataSize() {
-
         String[] arrayStr = FileUtils.getFileSizeArrayStr((mTotalSize));
         if (mRlInfo != null) {
             // 传输完毕的事件
@@ -125,8 +134,8 @@ public class TransferSendFragment extends BaseFragment {
     }
 
     @Override
-    protected void initWidget(View rootView) {
-        super.initWidget(rootView);
+    protected void doCreateView(View rootView) {
+        super.doCreateView(rootView);
         mRvSendList.setLayoutManager(new LinearLayoutManager(mContext));
         mRvSendList.getItemAnimator().setChangeDuration(0);
         mFileTransferAdapter = new FileTransferAdapter(R.layout.item_rv_transfer,
@@ -136,8 +145,9 @@ public class TransferSendFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
+        // 更新用户信息(累计节省的流量)
+        PersonalObservable.getInstance().notifyAllObserver();
         SenderManager.getInstance(mContext).release();
-        App.resetSelectedFilesStatus();
         super.onDestroy();
     }
 

@@ -1,9 +1,11 @@
-<a href="{file_href}">
-    <div class="file_item">
-        <img class="cover" src="{cover}">
-            <div class="file_info">
-                <h3>{file_name}</h3>
-                <span class="file_type">{type}</span><span class="file_size">{file_size}</span><span class="file_path">{file_path}</span>
-            </div>
-    </div>
-</a>
+        <li>
+            <a href="{file_href}">
+                <div class="file_item">
+                    <img class="cover" src="{cover}">
+                    <div class="file_info">
+                        <h3>{file_name}</h3>
+                        <span class="file_type">{type}</span><span class="file_size">{file_size}</span><span class="file_path">{file_path}</span>
+                    </div>
+                </div>
+            </a>
+        </li>

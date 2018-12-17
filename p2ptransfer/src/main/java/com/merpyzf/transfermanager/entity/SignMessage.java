@@ -10,17 +10,9 @@ import com.merpyzf.transfermanager.common.Const;
 
 public class SignMessage {
     /**
-     * 数据包的包名
-     */
-    private String packetName;
-    /**
      * 发送数据包的设备的主机地址
      */
     private String hostAddress;
-    /**
-     * 消息的内容
-     */
-    private String msgContent;
     /**
      * 发送设备的昵称
      */
@@ -40,7 +32,7 @@ public class SignMessage {
      * 3. 回复配对请求
      */
 
-    public static class Cmd {
+    public static class CMD {
 
         /**
          * 局域网内设备请求上线(在屏幕上显示局域网内可见的设备)
@@ -64,24 +56,15 @@ public class SignMessage {
         public static final int TRANSFER_BREAK = 5;
     }
 
-    public SignMessage() {
-        this.packetName = getTime();
-
-    }
-
-    public SignMessage(String hostAddress, String msgContent, String nickName) {
-        this.packetName = getTime();
+    public SignMessage(String hostAddress, int avatar, String nickName, int cmd) {
         this.hostAddress = hostAddress;
-        this.msgContent = msgContent;
         this.nickName = nickName;
+        this.avatarPosition = avatar;
+        this.cmd = cmd;
     }
 
-    public String getPacketName() {
-        return packetName;
-    }
 
-    public void setPacketName(String packetName) {
-        this.packetName = packetName;
+    public SignMessage() {
     }
 
     public String getHostAddress() {
@@ -90,14 +73,6 @@ public class SignMessage {
 
     public void setHostAddress(String hostAddress) {
         this.hostAddress = hostAddress;
-    }
-
-    public String getMsgContent() {
-        return msgContent;
-    }
-
-    public void setMsgContent(String msgContent) {
-        this.msgContent = msgContent;
     }
 
     public String getNickName() {
@@ -131,15 +106,11 @@ public class SignMessage {
      */
     public String convertProtocolStr() {
         StringBuilder protocolStr = new StringBuilder();
-        protocolStr.append(packetName);
-        protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(hostAddress);
         protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(nickName);
         protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(avatarPosition);
-        protocolStr.append(Const.S_SEPARATOR);
-        protocolStr.append(msgContent);
         protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(String.valueOf(cmd));
         protocolStr.append(Const.S_END);
@@ -153,27 +124,19 @@ public class SignMessage {
      * @return
      */
     public static SignMessage decodeProtocol(String signMessage) {
-
         if (signMessage != null && signMessage.length() > 0) {
             int end = signMessage.indexOf(Const.S_END);
             signMessage = signMessage.subSequence(0, end).toString();
             SignMessage message = new SignMessage();
-
             String[] msgProperties = signMessage.split(Const.S_SEPARATOR);
             if (msgProperties.length == Const.MSG_PROPERTIES_LENGTH) {
-                message.setPacketName(msgProperties[0]);
-                message.setHostAddress(msgProperties[1]);
-                message.setNickName(msgProperties[2]);
-                message.setAvatarPosition(Integer.valueOf(msgProperties[3]));
-                message.setMsgContent(msgProperties[4]);
-                message.setCmd(Integer.valueOf(msgProperties[5]));
+                message.setHostAddress(msgProperties[0]);
+                message.setNickName(msgProperties[1]);
+                message.setAvatarPosition(Integer.valueOf(msgProperties[2]));
+                message.setCmd(Integer.valueOf(msgProperties[3]));
             }
             return message;
         }
         return null;
-    }
-
-    public String getTime() {
-        return String.valueOf(System.currentTimeMillis());
     }
 }

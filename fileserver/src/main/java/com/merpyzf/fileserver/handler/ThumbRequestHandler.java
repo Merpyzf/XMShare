@@ -2,15 +2,14 @@ package com.merpyzf.fileserver.handler;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
+import com.merpyzf.common.utils.IOUtils;
 import com.merpyzf.fileserver.common.Const;
 import com.merpyzf.fileserver.common.bean.FileInfo;
-import com.merpyzf.fileserver.util.BitmapUtils;
+import com.merpyzf.common.utils.BitmapUtils;
 import com.merpyzf.fileserver.util.FileTypeHelper;
-import com.merpyzf.fileserver.util.FileUtils;
-import com.merpyzf.fileserver.util.IOUtils;
-import com.merpyzf.transfermanager.util.FilePathManager;
+import com.merpyzf.common.utils.FileUtils;
+import com.merpyzf.common.utils.FilePathManager;
 import com.yanzhenjie.andserver.SimpleRequestHandler;
 import com.yanzhenjie.andserver.util.HttpRequestParser;
 import com.yanzhenjie.andserver.view.View;
@@ -96,7 +95,7 @@ public class ThumbRequestHandler extends SimpleRequestHandler {
                 FileInfo imageFileInfo = getImageFileByName(fileName);
                 File imageFile = new File(imageFileInfo.getPath());
                 if (imageFile != null) {
-                    if (suffix.equals("gif")) {
+                    if ("gif".equals(suffix)) {
                         fileEntity = new FileEntity(imageFile);
                     } else {
                         // 压缩图片
@@ -136,7 +135,7 @@ public class ThumbRequestHandler extends SimpleRequestHandler {
                     FileInfo f = getImageFileByName(fileName);
                     if (f != null) {
                         File image = new File(f.getPath());
-                        if (suffix.equals("gif")) {
+                        if ("gif".equals(suffix)) {
                             fileEntity = new FileEntity(image);
                         } else {
                             // 压缩图片

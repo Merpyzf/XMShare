@@ -4,28 +4,30 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.merpyzf.common.utils.ToastUtils;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.OnPeerActionListener;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 
 /**
- * Created by wangke on 2017/12/16.
+ *
+ * @author wangke
+ * @date 2017/12/16
  * 接收从子线程转发来的UDP消息，并进行消息内容的处理和回调分发
  */
 public class PeerHandler extends Handler {
     private Context mContext = null;
     private OnPeerActionListener mOnPeerActionListener = null;
-    private PeerTransferBreakCallBack mPeerTransferBreakCallback = null;
 
-    public PeerHandler(Context context, OnPeerActionListener onPeerActionListener) {
-        this.mContext = mContext;
+    public PeerHandler(OnPeerActionListener onPeerActionListener) {
         this.mOnPeerActionListener = onPeerActionListener;
     }
 
-    public PeerHandler(Context mContext) {
-        this.mContext = mContext;
+    public PeerHandler() {
     }
 
     public PeerHandler(Looper looper) {
@@ -60,38 +62,33 @@ public class PeerHandler extends Handler {
 
         switch (cmd) {
             // 设备上线
-            case SignMessage.Cmd.ON_LINE:
+            case SignMessage.CMD.ON_LINE:
                 if (mOnPeerActionListener != null) {
                     mOnPeerActionListener.onDeviceOnLine(peer);
                 }
                 break;
             // 设备下线
-            case SignMessage.Cmd.OFF_LINE:
+            case SignMessage.CMD.OFF_LINE:
                 if (mOnPeerActionListener != null) {
+                    Log.i("ww3k","收到离线广播了" );
                     mOnPeerActionListener.onDeviceOffLine(peer);
                 }
                 break;
-            case SignMessage.Cmd.REQUEST_CONN:
+            case SignMessage.CMD.REQUEST_CONN:
+                Log.i("ww3k","收到收到请求建立连接的广播了" );
                 if (mOnPeerActionListener != null) {
                     mOnPeerActionListener.onRequestConnect(peer);
                 }
                 break;
-            case SignMessage.Cmd.ANSWER_REQUEST_CONN:
+            case SignMessage.CMD.ANSWER_REQUEST_CONN:
                 if (mOnPeerActionListener != null) {
+                    Log.i("ww3k","收到回应了" );
                     mOnPeerActionListener.onAnswerRequestConnect(peer);
                 }
                 break;
-            case SignMessage.Cmd.TRANSFER_BREAK:
-                if (mPeerTransferBreakCallback != null) {
-                    mPeerTransferBreakCallback.onTransferBreak(peer);
-                }
             default:
                 break;
         }
-    }
-
-    public void setTransferBreakListener(PeerTransferBreakCallBack transferBreakListener) {
-        this.mPeerTransferBreakCallback = transferBreakListener;
     }
 
     public void setOnPeerActionListener(OnPeerActionListener onPeerActionListener) {

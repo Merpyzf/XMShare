@@ -4,6 +4,7 @@ package com.merpyzf.transfermanager.receive;
 import android.content.Context;
 import android.util.Log;
 
+import com.merpyzf.common.manager.ThreadPoolManager;
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
@@ -19,13 +20,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by wangke on 2017/12/12.
+ * @author wangke
+ * @date 2017/12/12
  * 负责处理文件的接收
  */
 public class ReceiverManager implements Runnable {
 
     private ServerSocket mServerSocket;
-    private ExecutorService mSingleThreadPool;
     private Socket mSocketClient;
     private P2pTransferHandler mP2pTransferHandler;
     private static ReceiverManager mReceiver;
@@ -42,13 +43,10 @@ public class ReceiverManager implements Runnable {
      * @return
      */
     public static ReceiverManager getInstance(Context context) {
-
         if (mReceiver == null) {
             synchronized (Object.class) {
                 if (mReceiver == null) {
-
                     mReceiver = new ReceiverManager(context);
-
                 }
             }
         }
@@ -62,8 +60,6 @@ public class ReceiverManager implements Runnable {
         this.mContext = context;
         mTransferObserverLists = new ArrayList<>();
         mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
-        mSingleThreadPool = Executors.newSingleThreadExecutor();
-
     }
 
     /**
@@ -101,8 +97,7 @@ public class ReceiverManager implements Runnable {
     /**
      * 开始接收
      */
-    public void startReceive(){
-
+    public void startReceive() {
 
 
     }
@@ -110,25 +105,21 @@ public class ReceiverManager implements Runnable {
     /**
      * 停止接收
      */
-    public void stopReceive(){
+    public void stopReceive() {
 
     }
-
 
 
     @Override
     public void run() {
         try {
             mServerSocket = new ServerSocket();
-            //是否复用未完全关闭的地址端口
             mServerSocket.setReuseAddress(true);
-            //mServerSocket.setReceiveBufferSize(64 * 1024 * 1024);
-            //mServerSocket.setPerformancePreferences(2, 1, 2);
             mServerSocket.bind(new InetSocketAddress(Const.SOCKET_PORT));
             while (!isStop) {
                 mSocketClient = mServerSocket.accept();
                 mReceiveTaskImp = new ReceiveTaskImp(mContext, mSocketClient, mP2pTransferHandler);
-                mSingleThreadPool.execute(mReceiveTaskImp);
+                ThreadPoolManager.getInstance().execute(mReceiveTaskImp);
             }
         } catch (IOException e) {
             e.printStackTrace();

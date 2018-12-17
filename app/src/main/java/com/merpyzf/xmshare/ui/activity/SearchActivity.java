@@ -2,9 +2,7 @@ package com.merpyzf.xmshare.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -34,11 +32,10 @@ import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.db.AppDatabase;
 import com.merpyzf.xmshare.db.entity.FileCache;
 import com.merpyzf.xmshare.observer.FilesStatusObservable;
-import com.merpyzf.xmshare.observer.FilesStatusObserver;
 import com.merpyzf.xmshare.ui.adapter.SearchAdapter;
 import com.merpyzf.xmshare.ui.widget.RecyclerViewDivider;
 import com.merpyzf.xmshare.util.FileTypeHelper;
-import com.merpyzf.xmshare.util.ToastUtils;
+import com.merpyzf.common.utils.ToastUtils;
 
 import net.qiujuer.genius.res.Resource;
 
@@ -78,7 +75,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    protected void initWidget(Bundle savedInstanceState) {
+    protected void doCreateView(Bundle savedInstanceState) {
         mEdtSearch.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         mEdtSearch.setInputType(EditorInfo.TYPE_CLASS_TEXT);
         mRvFileList.setLayoutManager(new LinearLayoutManager(mContext));
@@ -90,7 +87,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    protected void initEvents() {
+    protected void doCreateEvent() {
         mIvBack.setOnClickListener(this);
         mEdtSearch.setOnEditorActionListener(this);
         mSearchAdapter.setOnItemClickListener(this);

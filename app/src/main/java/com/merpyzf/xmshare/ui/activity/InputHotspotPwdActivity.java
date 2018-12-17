@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.merpyzf.qrcodescan.google.activity.CaptureActivity;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseActivity;
-import com.merpyzf.xmshare.util.ToastUtils;
+import com.merpyzf.common.utils.ToastUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +54,7 @@ public class InputHotspotPwdActivity extends BaseActivity {
     }
 
     @Override
-    protected void initWidget(Bundle savedInstanceState) {
+    protected void doCreateView(Bundle savedInstanceState) {
         mConnSsid = getIntent().getStringExtra("ssid");
         mTvTip.setText(mConnSsid + "由Android8.0及以上的设备创建，因系统限制无法直接为您建立连接，请尝试下面的方法。");
         mBtnConn.setEnabled(false);
@@ -70,7 +70,7 @@ public class InputHotspotPwdActivity extends BaseActivity {
     }
 
     @Override
-    protected void initEvents() {
+    protected void doCreateEvent() {
 
         mEdtHotspotPwd.addTextChangedListener(new TextWatcher() {
             @Override

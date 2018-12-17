@@ -159,10 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ll_receive_files"
                 android:layout_margin="10dp"
-                android:text="文件分类"
-
-                />
-
+                android:text="常用文件" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -255,6 +252,7 @@
                             android:layout_height="60dp"
                             android:padding="10dp"
                             android:src="@drawable/ic_type_app" />
+
                         <TextView
                             android:id="@+id/tv_apk"
                             android:layout_width="wrap_content"
@@ -285,8 +283,7 @@
                     android:id="@+id/rl_volume"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:splitMotionEvents="false"
-                    />
+                    android:splitMotionEvents="false" />
 
 
             </LinearLayout>

@@ -4,8 +4,9 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.merpyzf.fileserver.R;
-import com.merpyzf.transfermanager.util.FilePathManager;
+import com.merpyzf.common.utils.FilePathManager;
+import com.merpyzf.common.utils.FileUtils;
+import com.merpyzf.common.utils.IOUtils;
 
 import java.io.File;
 import java.io.InputStream;
