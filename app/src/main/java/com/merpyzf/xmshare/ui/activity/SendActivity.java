@@ -7,31 +7,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.merpyzf.common.utils.ApManager;
 import com.merpyzf.common.utils.PersonalSettingUtils;
-import com.merpyzf.transfermanager.PeerManager;
+import com.merpyzf.common.utils.ToastUtils;
 import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.BaseFileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.observer.AbsTransferObserver;
-import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.send.SenderManager;
-import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.fragment.ScanPeerFragment;
 import com.merpyzf.xmshare.ui.fragment.transfer.TransferSendFragment;
 import com.merpyzf.xmshare.ui.interfaces.OnPairActionListener;
-import com.merpyzf.common.utils.ToastUtils;
 
 import net.qiujuer.genius.ui.animation.AnimatorListener;
 

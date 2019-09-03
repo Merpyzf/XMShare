@@ -68,6 +68,8 @@ public class ApManager {
             }
             Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
             method.invoke(wifimanager, wificonfiguration, !isApOn(context));
+
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,7 +125,6 @@ public class ApManager {
             @Override
             public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
                 super.onStarted(reservation);
-
                 if (hotspotStateCallback != null) {
                     hotspotStateCallback.onStarted(reservation);
                 }
@@ -145,8 +146,6 @@ public class ApManager {
                 }
             }
         }, new Handler());
-
-
     }
 
 
@@ -170,7 +169,7 @@ public class ApManager {
 
     public static void closeAp(Activity mContext) {
         if (isApOn(mContext)) {
-           turnOffAp(mContext);
+            turnOffAp(mContext);
         }
     }
 

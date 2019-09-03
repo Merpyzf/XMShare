@@ -5,10 +5,13 @@
 ## 一款专注于文件传输的Android App  { 因为专注，所以优秀 }
 
 
-<img src="http://otdmrup4y.bkt.clouddn.com/9D9BBC35-536D-483A-BBDD-DB99E1A5E8F0.png" width="40%"></img>
+<img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/ico_launcher.png" width="40%"></img>
 
 ## 运行截图
-<img src="https://raw.githubusercontent.com/Merpyzf/XMShare/master/ScreenShots/Screenshot_2018-02-01-21-35-22-480_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="https://raw.githubusercontent.com/Merpyzf/XMShare/master/ScreenShots/Screenshot_2018-02-01-21-35-36-145_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="https://raw.githubusercontent.com/Merpyzf/XMShare/master/ScreenShots/Screenshot_2018-02-01-21-35-58-502_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="https://raw.githubusercontent.com/Merpyzf/XMShare/master/ScreenShots/Screenshot_2018-01-29-18-37-36-191_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-37-54-739_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-38-23-198_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
+<img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/Screenshot_2019-09-03-16-16-56-231.png" width="30%"/><img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/Screenshot_2019-09-03-16-17-13-957_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/Screenshot_2019-09-03-16-28-01-916_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/Screenshot_2019-09-03-16-17-47-955_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/Screenshot_2019-09-03-16-18-09-385_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/Screenshot_2019-09-03-16-18-53-624_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
+
+## 下载体验
+<img src="https://blog-1252413502.cos.ap-shanghai.myqcloud.com/WX20190903-163357%402x.png"/>
 
 
 ## v1.0 功能介绍
@@ -30,11 +33,11 @@
 
 ## 使用到的技术
 
+* RxJava
 * Socket
-* 文件 I/O
+* I/O
 * UDP协议
-* TCP协议
-
+* TCP/IP协议
 
 
 ## 核心传输功能的实现：

@@ -30,8 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/iv_logo"
         android:gravity="center_horizontal"
-        android:text=" Run Forrest, Run !"
-        />
+        android:text="无网络环境，也能零流量分享！" />
 
 
     <TextView
